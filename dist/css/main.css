@@ -662,17 +662,18 @@ footer.contenedor{
 /* Plantillas */
 .alerta{
 	background-color: brown;
+  color: #ffffff;
 }
 
 .acepta{
 	background-color: aquamarine;
+  color: #000000;
 }
 
 .alerta,
 .acepta{
 	font-size: 1.8rem;
 	text-align: center;
-	color: #ffffff;
 	padding: 2rem;
 	-webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
 	-moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
@@ -685,4 +686,14 @@ footer.contenedor{
 
 .capitalize{
   text-transform: capitalize;
+}
+
+@media (min-width:768px ){
+  .campo-grilla{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .campo-grilla__radio{
+    align-self: center;
+  }
 }

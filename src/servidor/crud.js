@@ -31,6 +31,30 @@ exports.validar = (req,res)=>{
                     //conexion.end();
                 }
             });
+        };
+    });      
+};
+
+exports.actualizar = (req,res)=>{
+    const datos = req.body;
+    console.log(datos);
+    let {nombre, apellido, dni, fecha_nac, telefono, email, domicilio, observaciones, id} = datos;
+    
+    nombre = nombre.toLowerCase();
+    apellido = apellido.toLowerCase();
+    email = email.toLowerCase();
+    domicilio = domicilio.toLowerCase();
+    observaciones = observaciones.toLowerCase();
+
+    let muestra;
+
+    const modifica = `UPDATE alumnos SET nombre = '${nombre}', apellido = '${apellido}', dni='${dni}', fecha_nac = '${fecha_nac}', telefono = '${telefono}', email = '${email}', domicilio = '${domicilio}', observaciones = '${observaciones}' WHERE idalumnos = ${id};`;
+    conexion.query(modifica, (err)=>{
+        if(err){
+            throw err;
+        }else{
+            muestra = "Datos actualizados con exito!!";
+            res.render('index', {muestra});
         }
-    })      
-}
+    })
+};

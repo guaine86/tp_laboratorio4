@@ -45,10 +45,8 @@ router.get('/modifica/:id',(req,res)=>{
         }
     });
 });
-// router.get('/modifica', (req,res)=>{
-//     res.render('modifica');
-// })
 
 router.post('/validar', crud.validar);
+router.post('/actualizar', crud.actualizar);
 
 module.exports = router;

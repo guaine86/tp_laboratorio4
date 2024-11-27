@@ -9,15 +9,20 @@
 <body>
     <%- include('./templates/header-nav.ejs') %>
 
-    <div class="contenedor sombras">         
+    <main class="contenedor sombras">         
         <% if(alumno){ %> 
         <section>
             <h2 class="titulo mgb-2">Cambie Campos en el Formulario</h2>
+            <% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('Ya')) ? 'alerta' : 'acepta'; %> 
+				<p class="contenedor centrar-texto <%= fondo %>">
+					<%= muestra %>
+				</p>
+			<% } %>
+
               
-            <form class="formulario" action="/validar" method="post" enctype="text/html">
+            <form class="formulario" action="/actualizar" method="post" enctype="text/html">
                 <fieldset>
                     <legend>Modificar Alumno Cargado</legend>
-                    <!-- <input hidden id="id" name="id" value="<%= alumno.idalumnos %>"> -->
                     <div class="formulario-campos">	
                         <div class="campo">
                             <label for="nombre">Nombre:</label>
@@ -61,15 +66,22 @@
                         </div>
                     </div>
                     
-                    <div class="alinear-derecha flex">
-                        <input class="boton w100" type="submit" value="Confirmar">
+                    <div class="campo-grilla">
+                        <div class="campo-grilla__radio">
+                            <input type="radio" id="id" name="id" value="<%= alumno.idalumnos %>" checked >
+                            <label for="id" class= >ID alumno: <%= alumno.idalumnos %> </label>
+                        </div>
+                        <div class="alinear-derecha flex">
+                            <input class="boton w100" type="submit" value="Confirmar">
+                            <a href="/consulta" class="boton w100">Cancelar</a>
+                        </div>
                     </div>
     
                 </fieldset>
             </form>
         </section>
         <% } %>
-    </div>  
+    </main>  
 
     <%- include('./templates/footer.ejs') %>
 </body>

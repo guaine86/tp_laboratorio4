@@ -7,6 +7,11 @@
 <body>
 	<%- include('./templates/header-nav.ejs') %>
 
+	<% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; %> 
+		<p class="contenedor centrar-texto <%= fondo %>">
+			<%= muestra %>
+		</p>
+	<% } %>
 	<section class="escritorio" >
 		<div class="escritorio__contenido">
 			<h2 class="titulo">Laboratorio IV <span>CUDI - UTN</span></h2>
@@ -72,11 +77,7 @@
 		<section>
 			<h2 class="titulo mgb-2">Completa el Formulario</h2>
 
-			<% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; %> 
-				<p class="contenedor centrar-texto <%= fondo %>">
-					<%= muestra %>
-				</p>
-			<% } %>
+			
 
 			<form class="formulario" action="/validar" method="post" enctype="text/html">
 				<fieldset>
