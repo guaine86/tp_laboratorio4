@@ -46,6 +46,21 @@ router.get('/modifica/:id',(req,res)=>{
     });
 });
 
+// Ruta para Eliminar Registros
+router.get('/elimina/:id',(req,res)=>{
+    const id = req.params.id;
+    let muestra;
+    const elimina = `DELETE FROM alumnos WHERE idalumnos = ${id};`;
+    conexion.query(elimina,(err)=>{
+        if(err){
+            throw err;
+        }else{
+            muestra = "Registro eliminado con exito!!";
+            res.render('index', {muestra});
+        }
+    })
+});
+
 router.post('/validar', crud.validar);
 router.post('/actualizar', crud.actualizar);
 

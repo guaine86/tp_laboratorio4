@@ -4,7 +4,7 @@ USE `tp_laboratorio4`;
 --
 -- Host: localhost    Database: tp_laboratorio4
 -- ------------------------------------------------------
--- Server version	8.0.39
+-- Server version	8.0.40
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -33,21 +33,11 @@ CREATE TABLE `alumnos` (
   `telefono` varchar(15) NOT NULL,
   `email` varchar(30) NOT NULL,
   `domicilio` varchar(45) NOT NULL,
-  `mensaje` varchar(140) DEFAULT NULL,
+  `observaciones` varchar(140) DEFAULT '---',
   PRIMARY KEY (`idalumnos`),
   UNIQUE KEY `dni_UNIQUE` (`dni`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `alumnos`
---
-
-LOCK TABLES `alumnos` WRITE;
-/*!40000 ALTER TABLE `alumnos` DISABLE KEYS */;
-INSERT INTO `alumnos` VALUES (1,'Edward Wayne','Cruz','92783036','1986-03-05','11 5977-3824','ewcruz@yahoo.com.ar','av san martin 1860','probando');
-/*!40000 ALTER TABLE `alumnos` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -58,7 +48,7 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `bi_alumnos` BEFORE INSERT ON `alumnos` FOR EACH ROW BEGIN
- insert into log_alumnos values(null, concat('Alta en proceso - ID: ', new.idalumnos), now(), user(), 'alumnos', database());
+ insert into log_alumnos values(null, 'Solicitud de alta', now(), user(), 'alumnos', database());
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -92,7 +82,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `bu_alumnos` BEFORE UPDATE ON `alumnos` FOR EACH ROW BEGIN
-	insert into log_alumnos values(null, concat('Cambio en alumno: ', old.idalumnos), now(), user(),'alumnos',database());
+	insert into log_alumnos values(null, concat('Cambio solicitado - ID: ', old.idalumnos), now(), user(),'alumnos',database());
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -109,7 +99,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `au_alumnos` AFTER UPDATE ON `alumnos` FOR EACH ROW BEGIN
-	insert into log_alumnos values(null, concat('Datos modificados con exito! - Alumno: ',new.idalumnos ), now(), user(), 'alumnos', database());
+	insert into log_alumnos values(null, concat('Datos modificados con exito - ID: ',new.idalumnos ), now(), user(), 'alumnos', database());
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -126,7 +116,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `bd_alumnos` BEFORE DELETE ON `alumnos` FOR EACH ROW BEGIN
-	insert into log_alumnos values(null, concat('baja: ', old.nombre, old.apellido), now(), user(), 'alumnos', database() );
+	insert into log_alumnos values(null, concat('Baja Solicitada: ', old.nombre,' ', old.apellido), now(), user(), 'alumnos', database() );
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -143,7 +133,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `ad_alumnos` AFTER DELETE ON `alumnos` FOR EACH ROW BEGIN
-	insert into log_alumnos values(null, concat('Baja Confirmada: ', old.nombre, old.apellido, 'ID: ', old.idalumnos),now(), user(),'alumnos', database());
+	insert into log_alumnos values(null, concat('Baja Confirmada: ', old.nombre,' ',old.apellido, '-', 'ID: ', old.idalumnos),now(), user(),'alumnos', database());
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -160,4 +150,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-26  8:55:14
+-- Dump completed on 2024-11-27 11:56:28
