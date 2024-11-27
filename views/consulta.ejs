@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Consulta</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body>
+    <%- include('./templates/header-nav.ejs') %>
+    
+    <div class="contenedor sombras" style="max-width: 120rem;">
+        <a href="/" class="btn btn-outline-primary mt-4"><i class='bx bxs-plus-circle bx-md'></i></a>
+        <table class="table table-bordered table-striped text-center mt-4">
+            <thead>
+                <tr class="bg-warning text-white">
+                    <th>ID <a href="/consulta"><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th>Nombre</th>
+                    <th>Apellido <a href="/consulta/<%= 'apellido' %>"><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th>DNI <a href="/consulta/<%= 'dni' %>"><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Telefono</th>
+                    <th>Email</th>
+                    <th>Domicilio</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+               <% if(resultados.length === 0){ %>
+                    <tr>
+                        <td>Aun no hay alumnos cargados!!</td>
+                    </tr>
+               <% }else { %>
+                <% resultados.forEach((alumno)=>{ %>
+                <tr>
+                    <td ><%= alumno.idalumnos %></td>
+                    <td class="capitalize"><%= alumno.nombre %></td>
+                    <td class="capitalize"><%= alumno.apellido %></td>
+                    <td><%= alumno.dni %></td>
+                    <td><%= alumno.fecha_nac.toLocaleDateString() %></td>
+                    <td><%= alumno.telefono %></td>
+                    <td><%= alumno.email %></td>
+                    <td class="capitalize"><%= alumno.domicilio %></td>
+                    <td><%= alumno.observaciones %></td>
+                    <td>
+                        <a href="/modifica/<%= alumno.idalumnos %>" class="btn btn-outline-info">editar</a>
+                        <a href="/elimina" class="btn btn-outline-danger">borrar</a>
+                    </td>
+                </tr>
+               <% })} %>
+            </tbody>
+        </table>
+
+    </div>
+
+    <%- include('./templates/footer.ejs') %>
+</body>
+</html>

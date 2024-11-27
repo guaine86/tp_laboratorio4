@@ -1,0 +1,32 @@
+{
+  "name": "tp-laboratorio-iv",
+  "version": "1.0.0",
+  "description": "Tp Laboratorio IV",
+  "main": "./src/servidor/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "nodemon .src/servidor/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "axios": "^1.7.7",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "express": "^4.21.1",
+    "html-webpack-plugin": "^5.6.3",
+    "lodash": "^4.17.21",
+    "mini-css-extract-plugin": "^2.9.2",
+    "nodemon": "^3.1.7",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-middleware": "^7.4.2"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "mysql2": "^3.11.4"
+  }
+}
