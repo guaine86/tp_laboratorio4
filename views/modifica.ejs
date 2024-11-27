@@ -26,17 +26,17 @@
                     <div class="formulario-campos">	
                         <div class="campo">
                             <label for="nombre">Nombre:</label>
-                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" required>
+                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" pattern="\D+\s?\D*\s?\D*" minlength="3" maxlength="35" required>
                         </div>
     
                         <div class="campo">
                             <label for="apellido">Apellido/s:</label>
-                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" required>
+                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" pattern="\D+\s?\D*\s?\D*" minlength="3" maxlength="35" required>
                         </div>
     
                         <div class="campo">
                             <label for="dni">DNI:</label>
-                            <input class="input" type="text" name="dni" id="dni" value="<%= alumno.dni %>" required >
+                            <input class="input" type="text" name="dni" id="dni" value="<%= alumno.dni %>" pattern="\d{7,10}" required >
                         </div>
     
                         <div class="campo">
@@ -46,23 +46,23 @@
     
                         <div class="campo">
                             <label for="telefono">Telefono:</label>
-                            <input class="input" type="tel" name="telefono" id="telefono" value="<%= alumno.telefono %>" pattern="\d{2}|\d{3}\' '|\'-' " required>
+                            <input class="input" type="tel" name="telefono" id="telefono" value="<%= alumno.telefono %>" pattern="\d+\s?\d+-?\d+" minlength="8" maxlength="15" required>
                         </div>
     
             
                         <div class="campo">
                               <label for="email">Correo:</label>
-                            <input class="input" type="email" name="email" id="email" value="<%= alumno.email %>" size="30">
+                            <input class="input" type="email" name="email" id="email" value="<%= alumno.email %>" maxlength="30">
                         </div>
             
                         <div class="campo">
                             <label for="domicilio">Domicilio:</label>
-                            <input class="input capitalize" type="text" name="domicilio" id="domicilio" value="<%= alumno.domicilio %>" required>
+                            <input class="input capitalize" type="text" name="domicilio" id="domicilio" value="<%= alumno.domicilio %>" minlength="3" maxlength="45" required>
                         </div>
     
                         <div class="campo">
                             <label for>Observaciones:</label>
-                            <textarea class="input" name="observaciones" id="observaciones"><%= alumno.observaciones %></textarea>
+                            <textarea class="input" name="observaciones" id="observaciones" maxlength="140"><%= alumno.observaciones %></textarea>
                         </div>
                     </div>
                     
