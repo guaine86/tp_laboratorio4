@@ -500,6 +500,23 @@ h1.titulo span{
 	}
 }
 
+/* Encabezado */
+.header-titulo{
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.header-span{
+  grid-row: 2/3;
+}
+
+@media(min-width:860px){
+  .header-titulo,
+  .header-span{
+    display: block;
+  }
+}
+
 /*Navegador*/
 .nav-bg{
 	background-color: var(--verde);
@@ -531,11 +548,17 @@ h1.titulo span{
 }
 
 /*Contenidos*/
+.webp .escritorio{
+  background-image: url(../assets/desk.webp);
+}
+
+.no-webp .escritorio{
+  background-image: url(../assets/desk.jpg);
+}
 .escritorio{
-	background-image: url(../assets/desk.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
-	background-position: center;
+	background-position: center center;
 	color: var(--amarillo);
 	height: 40rem;
 	position: relative;
@@ -560,6 +583,10 @@ h1.titulo span{
 }
 
 /*Servicios*/
+.servicio{
+  margin: 3rem 0;
+}
+
 @media(min-width: 768px){
 	.servicios{
 		display: grid;
@@ -571,11 +598,13 @@ h1.titulo span{
 .servicios h3{
 	color: var(--verde);
 	font-weight: normal;
+  margin-bottom: 1rem;
 }
 
 .servicios p{
 	line-height: 2;
 	text-align: center;
+  margin-top: 1rem;
 }
 
 .servicios .iconos{

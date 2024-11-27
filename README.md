@@ -4,4 +4,4 @@
 ```
 npm install
 ```
-### El proyecto tiene estilos CDN de bootstrap y boxicon, porfavor mirar con conexion a internet
+### El proyecto tiene estilos CDN de boxicon y fuentes de Google Fonts, por favor mirar con conexion a internet

@@ -2,6 +2,7 @@ const conexion = require('./bbdd.js');
 
 exports.validar = (req,res)=>{
     const datos = req.body;
+    // console.log(datos);
     let {nombre, apellido, dni, fecha_nac, telefono, email, domicilio, observaciones} = datos
     
     nombre = nombre.toLowerCase();
@@ -21,7 +22,7 @@ exports.validar = (req,res)=>{
             res.render('index',{muestra})
             //conexion.end();
         }else{
-            const inserta = `INSERT INTO alumnos (nombre, apellido, dni, fecha_nac, telefono, email, domicilio, observaciones) VALUES ('${nombre}', '${apellido}','${dni}','${fecha_nac}','${telefono}','${email}','${domicilio}','${observaciones}');`
+            const inserta = `INSERT INTO alumnos (nombre, apellido, dni, fecha_nac, telefono, email, domicilio, observaciones) VALUES ('${nombre}', '${apellido}','${dni}','${fecha_nac}','${telefono}','${email}','${domicilio}','${(observaciones === ''||observaciones === ' ') ? '-' : observaciones}');`
             conexion.query(inserta, (err)=>{
                 if(err){
                     throw err;
@@ -37,7 +38,7 @@ exports.validar = (req,res)=>{
 
 exports.actualizar = (req,res)=>{
     const datos = req.body;
-    console.log(datos);
+    // console.log(datos);
     let {nombre, apellido, dni, fecha_nac, telefono, email, domicilio, observaciones, id} = datos;
     
     nombre = nombre.toLowerCase();
@@ -48,7 +49,7 @@ exports.actualizar = (req,res)=>{
 
     let muestra;
 
-    const modifica = `UPDATE alumnos SET nombre = '${nombre}', apellido = '${apellido}', dni='${dni}', fecha_nac = '${fecha_nac}', telefono = '${telefono}', email = '${email}', domicilio = '${domicilio}', observaciones = '${observaciones}' WHERE idalumnos = ${id};`;
+    const modifica = `UPDATE alumnos SET nombre = '${nombre}', apellido = '${apellido}', dni='${dni}', fecha_nac = '${fecha_nac}', telefono = '${telefono}', email = '${email}', domicilio = '${domicilio}', observaciones = '${(observaciones === ''||observaciones === ' ') ? '-' : observaciones}' WHERE idalumnos = ${id};`;
     conexion.query(modifica, (err)=>{
         if(err){
             throw err;
