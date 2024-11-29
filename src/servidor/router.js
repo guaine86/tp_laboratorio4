@@ -15,7 +15,6 @@ router.get('/consulta', (req,res)=>{
         if(err){
             throw err;
         }else{
-            // res.send(registros);
             res.render('consulta',{resultados: registros});
         }
     });

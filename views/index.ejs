@@ -94,7 +94,7 @@
 
             			<div class="campo">
 							<label for="dni">DNI:</label>
-							<input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]+(\.[0-9]+)?$" minlength="7" maxlength="10" required >
+							<input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*(\.[0-9]*)*$" minlength="7" maxlength="10" required >
 						</div>
 
             			<div class="campo">
@@ -104,7 +104,7 @@
 
 						<div class="campo">
 							<label for="telefono">Telefono:</label>
-							<input class="input" type="tel" name="telefono" id="telefono" placeholder="Telefono (011 5555-1234)" pattern="^\d+[- ]?\d*$" minlength="8" maxlength="15" required>
+							<input class="input" type="tel" name="telefono" id="telefono" placeholder="Telefono (011 5555-1234)" pattern="^\d*[-|\s]*\d*[-|\s]*\d*$" minlength="8" maxlength="15" required>
 						</div>
 
             
@@ -136,6 +136,5 @@
 	
 	<%- include('./templates/footer.ejs') %>
 	<%- include('./templates/scripts.ejs') %>
-	<script src="/js/index.js"></script>
 </body>
 </html>

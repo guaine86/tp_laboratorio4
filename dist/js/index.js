@@ -13,25 +13,31 @@ function validaChar(evento){
     patron = new RegExp(/^[a-zA-Z\s]*$/);
     cadena = evento.target.value;
     if(!patron.test(cadena)){
-        alert('No es un caracter alfabetico');
+        setTimeout(()=>{
+            alert('No es un caracter alfabetico!!');
+        },30);
         return
     }
 }
 
 function validaNum(evento){
-    patron = new RegExp(/^[0-9]*(\.[0-9]*)?$/)
+    patron = new RegExp(/^[0-9]*(\.[0-9]*)*$/)
     campoDni = evento.target.value;
     if(!patron.test(campoDni)){
-        alert('Solo admite numeros para el DNI!!');
+        setTimeout(()=>{
+            alert('Solo admite numeros para el DNI!!');
+        },30);
         return
     }
 }
 
 function validaTel(evento){
-    patron = new RegExp(/^\d*[- ]*\d*$/);
+    patron = new RegExp(/^\d*[-|\s]*\d*[-|\s]*\d*$/);
     campoTel = evento.target.value;
     if(!patron.test(campoTel)){
-        alert('Ingrese telefono con el siguiente fomato 11 5555-6666');
+        setTimeout(()=>{
+            alert('Ingrese telefono con el siguiente fomato 11 5555-6666');
+        },30);
         return
     }
 }
