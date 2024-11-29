@@ -21,7 +21,7 @@ function validaChar(evento){
 }
 
 function validaNum(evento){
-    patron = new RegExp(/^[0-9]*(\.[0-9]*)*$/)
+    patron = new RegExp(/^[0-9]*(\.[0-9]*)*$/);
     campoDni = evento.target.value;
     if(!patron.test(campoDni)){
         setTimeout(()=>{

@@ -21,13 +21,26 @@ module.exports = {
             test: /\.css$/,
             use: [MiniCssExtractPlugin.loader, "css-loader"],
           },
+          {
+            test: /\.m?js$/,
+            exclude: /node_modules/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                targets: "defaults",
+                presets: [
+                  ['@babel/preset-env']
+                ]
+              }
+            }
+          }
         ],
     },
     optimization: {
         minimizer: [
           new CssMinimizerPlugin(),
         ],
-        minimize: true,
+        //minimize: true,
     },
     plugins: [
         new MiniCssExtractPlugin({

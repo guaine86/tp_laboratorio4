@@ -20,7 +20,7 @@ export class ValidaCadena{
         return
     }
     valida(){
-        if(!this.patron.test(this.campo)){
+        if(!this.patron.test(this.valor)){
             alert(this.mensaje);
             return
         }
