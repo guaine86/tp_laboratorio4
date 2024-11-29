@@ -1,5 +1,4 @@
 import '../css/normalize.css'
-import '../css/bootstrap.min.css'
 import '../css/styles.css'
 import './class/valida.class.js'
 import { ValidaCadena } from './class/valida.class.js';

@@ -6,7 +6,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
-app.use(express.static('dist'));
+app.use(express.static('public'));
 app.use('/', require('./router'));
 
 app.listen(3000, ()=>{

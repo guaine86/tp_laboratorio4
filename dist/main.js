@@ -2,29 +2,6 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 26:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(601);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(314);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `// extracted by mini-css-extract-plugin
-export {};`, ""]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
 /***/ 63:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -532,35 +509,6 @@ var update = injectStylesIntoStyleTag_default()(normalize/* default */.A, option
 
 
        /* harmony default export */ const css_normalize = (normalize/* default */.A && normalize/* default */.A.locals ? normalize/* default */.A.locals : undefined);
-
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./src/front/css/bootstrap.min.css
-var bootstrap_min = __webpack_require__(26);
-;// ./src/front/css/bootstrap.min.css
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var bootstrap_min_options = {};
-
-bootstrap_min_options.styleTagTransform = (styleTagTransform_default());
-bootstrap_min_options.setAttributes = (setAttributesWithoutAttributes_default());
-bootstrap_min_options.insert = insertBySelector_default().bind(null, "head");
-bootstrap_min_options.domAPI = (styleDomAPI_default());
-bootstrap_min_options.insertStyleElement = (insertStyleElement_default());
-
-var bootstrap_min_update = injectStylesIntoStyleTag_default()(bootstrap_min/* default */.A, bootstrap_min_options);
-
-
-
-
-       /* harmony default export */ const css_bootstrap_min = (bootstrap_min/* default */.A && bootstrap_min/* default */.A.locals ? bootstrap_min/* default */.A.locals : undefined);
 
 // EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/mini-css-extract-plugin/dist/loader.js!./node_modules/css-loader/dist/cjs.js!./src/front/css/styles.css
 var styles = __webpack_require__(962);

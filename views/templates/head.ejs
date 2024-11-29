@@ -7,7 +7,8 @@
 <link rel="prefetch" href="http://localhost:3000/consulta">
  
 <!-- Preload imagenes -->
-<!-- <link rel="preload" href="/assets/desk.webp" as="image"> -->
+<link rel="preload" href="/assets/desk.webp" as="image" type="image/webp">
+<link rel="preload" href="/assets/descarga.webp" as="image" type="image/webp">
 
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,10 +18,14 @@
 <!-- Boxicons CDN -->
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-<!-- Estilos Normalize, Bootstrap y el propio en un bundle -->
+<!-- Bootstrap -->
+<link rel="preload" href="/css/bootstrap.min.css" as="style">
+<link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+
+<!-- Estilos Normalize y el propio minificado -->
 <link rel="preload" href="/css/main.css" as="style">				
 <link rel="stylesheet" href="/css/main.css"  type="text/css">
 
 <!-- Hojas de Js -->
 <script defer src="/js/modernizr.js"></script>
-<script defer src="/main.js"></script>
+<!-- <script defer src="/js/main.js"></script> -->
