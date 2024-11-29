@@ -84,17 +84,17 @@
 					<div class="formulario-campos">	
 						<div class="campo">
 							<label for="nombre">Nombre:</label>
-							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre" pattern="\D+\s?\D*\s?\D*" minlength="3" maxlength="35" required>
+							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre" pattern="^[a-zA-Z\s]+$" minlength="3" maxlength="35" required autocomplete="off">
 						</div>
 
             			<div class="campo">
 							<label for="apellido">Apellido/s:</label>
-							<input class="input" type="text" name="apellido" id="apellido" placeholder="Ingrese apellido" pattern="\D+\s?\D*\s?\D*" minlength="3" maxlength="35" required>
+							<input class="input" type="text" name="apellido" id="apellido" placeholder="Ingrese apellido" pattern="^[a-zA-Z\s]+$" minlength="3" maxlength="35" required>
 						</div>
 
             			<div class="campo">
 							<label for="dni">DNI:</label>
-							<input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="\d{7,10}" required >
+							<input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]+(\.[0-9]+)?$" minlength="7" maxlength="10" required >
 						</div>
 
             			<div class="campo">
@@ -104,7 +104,7 @@
 
 						<div class="campo">
 							<label for="telefono">Telefono:</label>
-							<input class="input" type="tel" name="telefono" id="telefono" placeholder="Telefono (011 5555-1234)" pattern="\d+\s?\d+-?\d+" minlength="8" maxlength="15" required>
+							<input class="input" type="tel" name="telefono" id="telefono" placeholder="Telefono (011 5555-1234)" pattern="^\d+[- ]?\d*$" minlength="8" maxlength="15" required>
 						</div>
 
             
@@ -135,6 +135,7 @@
 	</main>
 	
 	<%- include('./templates/footer.ejs') %>
-	<!-- <%- include('./templates/scripts.ejs') %> -->
+	<%- include('./templates/scripts.ejs') %>
+	<script src="/js/index.js"></script>
 </body>
 </html>

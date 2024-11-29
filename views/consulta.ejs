@@ -4,13 +4,15 @@
     <title>Consulta</title>
     <%- include('./templates/head.ejs') %>
 </head>
-<body>
-    <%- include('./templates/header-nav.ejs') %>
-    
-    <main class="contenedor sombras" style="max-width: 120rem;">
-        <a href="/" class="btn btn-outline-primary mt-4"><i class='bx bxs-plus-circle bx-md'></i></a>
+<body class="body-consulta">
+    <div>
+        <%- include('./templates/header-nav.ejs') %>
+    </div>
+
+    <main class="contenedor sombras" style="max-width: 140rem;">
+        <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md'></i></a>
         
-        <table class="table table-bordered table-striped text-center mt-4">
+        <table class="table table-bordered table-striped text-center mt-2" style="vertical-align: middle;">
             <thead>
                 <tr class="bg-warning text-white">
                     <th>ID <a href="/consulta"><i class='bx bx-caret-down-circle'></i></a></th>
@@ -25,12 +27,13 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-               <% if(resultados.length === 0){ %>
-                    <tr>
+            <% if(resultados.length === 0){ %>
+                    <!-- <tr>
                         <td><strong>Aun no hay alumnos cargados!!</strong></td>
-                    </tr>
-               <% }else { %>
+                    </tr> -->
+                    <p class="centrar-texto alerta"><strong>Aun no hay alumnos cargados!!</strong></p>
+            <% }else { %>
+            <tbody>
                 <% resultados.forEach((alumno)=>{ %>
                 <tr>
                     <td ><%= alumno.idalumnos %></td>
@@ -47,13 +50,12 @@
                         <a href="/elimina/<%= alumno.idalumnos %>" class="btn btn-outline-danger">borrar</a>
                     </td>
                 </tr>
-               <% })} %>
+                <% })} %>
             </tbody>
         </table>
-
     </main>
 
     <%- include('./templates/footer.ejs') %>
-    <!-- <%- include('./templates/scripts.ejs') %> -->
+    <%- include('./templates/scripts.ejs') %>
 </body>
 </html>

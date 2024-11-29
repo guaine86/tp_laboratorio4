@@ -1,4 +1,5 @@
-:root{											/*Custom Properties*/
+/*Custom Properties*/
+:root{											
 	--blanco:#ffffff;
 	--negro:#212121;
 	--amarillo:#ffc107;
@@ -13,7 +14,7 @@
 html{
 	font-size: 62.5%;
 	box-sizing: border-box;		/*Evitar romper tamaño de cajas*/
-	scroll-snap-type: y mandatory; /*Para aplicar un scroll vertical y que me lleve a las proximas secciones*/
+	/*scroll-snap-type: y mandatory; /*Para aplicar un scroll vertical y que me lleve a las proximas secciones*/
 }
 
 /*Secciones Scroll Snap*/
@@ -145,23 +146,60 @@ h1.titulo span{
 	}
 }
 
+.centrar-texto{
+  text-align: center;
+}
+
 /* Encabezado */
+/*agregar al repositorio*/
+.header{
+  display:grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.header-img{
+  grid-row: 1/2;
+}
+
+.header-img img{
+  max-width: 100%;
+  width: 10rem;
+}
+
 .header-titulo{
-	display: grid;
-	grid-template-rows: 1fr auto;
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
 
 .header-span{
-	grid-row: 2/3;
+  grid-row: 2/3;
 }
 
-@media(min-width:860px){
-	.header-titulo,
-	.header-span{
-		display: block;
-	}
+@media (min-width: 768px){
+  .header{
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: unset;
+  }
+
+  .header-titulo{
+    grid-column: 2/3;
+  }
+
+  .header-img{
+    grid-column: 3/4;
+  }
 }
 
+@media(min-width: 1000px){
+  .header-titulo,
+  .header-span{
+    display: block;
+  }
+}
+/*hasta aqui 28/11*/
 /*Navegador*/
 .nav-bg{
 	background-color: var(--verde);
@@ -194,18 +232,16 @@ h1.titulo span{
 
 /*Contenidos*/
 .webp .escritorio{
-	background-image: url(../assets/desk.webp);
-}
-  
-.no-webp .escritorio{
-	background-image: url(../assets/desk.jpg);
+  background-image: url(../assets/desk.webp);
 }
 
+.no-webp .escritorio{
+  background-image: url(../assets/desk.jpg);
+}
 .escritorio{
-	/* background-image: url(../../../dist/assets/desk.jpg); */
 	background-repeat: no-repeat;
 	background-size: cover;
-	background-position: center;
+	background-position: center center;
 	color: var(--amarillo);
 	height: 40rem;
 	position: relative;
@@ -231,7 +267,7 @@ h1.titulo span{
 
 /*Servicios*/
 .servicio{
-	margin: 3rem 0;
+  margin: 3rem 0;
 }
 
 @media(min-width: 768px){
@@ -245,13 +281,14 @@ h1.titulo span{
 .servicios h3{
 	color: var(--verde);
 	font-weight: normal;
-	margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .servicios p{
 	line-height: 2;
 	text-align: center;
-	margin-top: 1rem;
+  margin-top: 1rem;
+  padding: 2rem;
 }
 
 .servicios .iconos{
@@ -330,7 +367,7 @@ h1.titulo span{
 	}
 }
 
-footer.contenedor{
+.footer-contenedor{
 	text-align: center;
 	font-size: 1.8rem;
 }
@@ -338,12 +375,12 @@ footer.contenedor{
 /* Plantillas */
 .alerta{
 	background-color: brown;
-	color: #ffffff;
+  color: #ffffff;
 }
 
 .acepta{
 	background-color: aquamarine;
-	color: #000000;
+  color: #000000;
 }
 
 .alerta,
@@ -361,15 +398,22 @@ footer.contenedor{
 }
 
 .capitalize{
-	text-transform: capitalize;
+  text-transform: capitalize;
 }
 
 @media (min-width:768px ){
-	.campo-grilla{
-	  display: grid;
-	  grid-template-columns: repeat(2, 1fr);
-	}
-	.campo-grilla__radio{
-	  align-self: center;
-	}
+  .campo-grilla{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .campo-grilla__radio{
+    align-self: center;
+  }
+}
+
+.body-consulta{
+  height: 100%;
+  display: grid;
+  grid-template-rows:auto 1fr auto;
+  min-height: 100vh;
 }

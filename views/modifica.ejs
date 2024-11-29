@@ -13,30 +13,24 @@
         <% if(alumno){ %> 
         <section>
             <h2 class="titulo mgb-2">Cambie Campos en el Formulario</h2>
-            <% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('Ya')) ? 'alerta' : 'acepta'; %> 
-				<p class="contenedor centrar-texto <%= fondo %>">
-					<%= muestra %>
-				</p>
-			<% } %>
-
-              
+        
             <form class="formulario" action="/actualizar" method="post" enctype="text/html">
                 <fieldset>
                     <legend>Modificar Alumno Cargado</legend>
                     <div class="formulario-campos">	
                         <div class="campo">
                             <label for="nombre">Nombre:</label>
-                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" pattern="\D+\s?\D*\s?\D*" minlength="3" maxlength="35" required>
+                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" pattern="^[a-zA-Z\s]+$" minlength="3" maxlength="35" required>
                         </div>
     
                         <div class="campo">
                             <label for="apellido">Apellido/s:</label>
-                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" pattern="\D+\s?\D*\s?\D*" minlength="3" maxlength="35" required>
+                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" pattern="^[a-zA-Z\s]+$" minlength="3" maxlength="35" required>
                         </div>
     
                         <div class="campo">
                             <label for="dni">DNI:</label>
-                            <input class="input" type="text" name="dni" id="dni" value="<%= alumno.dni %>" pattern="\d{7,10}" required >
+                            <input class="input" type="text" name="dni" id="dni" value="<%= alumno.dni %>" pattern="^[0-9]+(\.[0-9]+)?$" minlength="7" maxlength="10" required >
                         </div>
     
                         <div class="campo">
@@ -46,7 +40,7 @@
     
                         <div class="campo">
                             <label for="telefono">Telefono:</label>
-                            <input class="input" type="tel" name="telefono" id="telefono" value="<%= alumno.telefono %>" pattern="\d+\s?\d+-?\d+" minlength="8" maxlength="15" required>
+                            <input class="input" type="tel" name="telefono" id="telefono" value="<%= alumno.telefono %>" pattern="^\d+[- ]?\d*$" minlength="8" maxlength="15" required>
                         </div>
     
             
@@ -84,6 +78,6 @@
     </main>  
 
     <%- include('./templates/footer.ejs') %>
-    <!-- <%- include('./templates/scripts.ejs') %> -->
+    <%- include('./templates/scripts.ejs') %>
 </body>
 </html>
