@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const conexion = require('./bbdd');
+const bbdd = require('./bbdd');
 const crud = require('./crud');
 
 // Ruta Principal
@@ -10,6 +10,8 @@ router.get('/',(req,res)=>{
 
 // Ruta Consultas
 router.get('/consulta', (req,res)=>{
+    const conexion = bbdd.creaConexion();
+
     const consulta = 'SELECT * FROM alumnos';
     conexion.query(consulta, (err, registros)=>{
         if(err){
@@ -18,10 +20,14 @@ router.get('/consulta', (req,res)=>{
             res.render('consulta',{resultados: registros});
         }
     });
+
+    conexion.end();
 });
 
 router.get('/consulta/:ordena',(req,res)=>{
     const ordena = req.params.ordena;
+    const conexion = bbdd.creaConexion();
+
     const orderBy = `SELECT * FROM alumnos ORDER BY ${ordena};`;
     conexion.query(orderBy,(err, registros)=>{
         if(err){
@@ -30,11 +36,15 @@ router.get('/consulta/:ordena',(req,res)=>{
             res.render('consulta',{resultados: registros});
         }
     });
+
+    conexion.end();
 });
 
 // Ruta Editar Registros
 router.get('/modifica/:id',(req,res)=>{
     const id = req.params.id;
+    const conexion = bbdd.creaConexion();
+
     const busca = `SELECT * FROM alumnos WHERE idalumnos = ${id};`;
     conexion.query(busca,(err, registro)=>{
         if(err){
@@ -43,11 +53,15 @@ router.get('/modifica/:id',(req,res)=>{
             res.render('modifica', {alumno: registro[0]});
         }
     });
+
+    conexion.end();
 });
 
 // Ruta para Eliminar Registros
 router.get('/elimina/:id',(req,res)=>{
     const id = req.params.id;
+    const conexion = bbdd.creaConexion();
+
     let muestra;
     const elimina = `DELETE FROM alumnos WHERE idalumnos = ${id};`;
     conexion.query(elimina,(err)=>{
@@ -58,6 +72,8 @@ router.get('/elimina/:id',(req,res)=>{
             res.render('index', {muestra});
         }
     })
+
+    conexion.end();
 });
 
 router.post('/validar', crud.validar);

@@ -9,7 +9,7 @@
     "start": "nodemon .src/servidor/app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Edward Wayne Cruz",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.26.0",

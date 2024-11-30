@@ -27,7 +27,7 @@ module.exports = {
             use: {
               loader: 'babel-loader',
               options: {
-                targets: "defaults",
+                // targets: "defaults",
                 presets: [
                   ['@babel/preset-env']
                 ]
@@ -38,7 +38,7 @@ module.exports = {
     },
     optimization: {
         minimizer: [
-          new CssMinimizerPlugin(),
+          new CssMinimizerPlugin(),'...',
         ],
         //minimize: true,
     },

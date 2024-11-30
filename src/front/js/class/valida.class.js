@@ -10,7 +10,7 @@ export class ValidaCadena{
             this.patron = new RegExp(/^[a-zA-Z\s]*$/);
             this.mensaje = 'Este campo solo admite caracteres alfabeticos!!';
         }else if(this.campo === 'dni'){
-            this.patron = new RegExp(/^[0-9]*(\.[0-9]*)*$/);
+            this.patron = new RegExp(/^[0-9]*$/);
             this.mensaje = 'Solo se admiten numeros para ingresar DNI!!';
         }else if(this.campo === 'telefono'){
             this.patron = new RegExp(/^\d*[-|\s]*\d*[-|\s]*\d*$/);
