@@ -12,12 +12,13 @@ const conexion = mysql.createPool({
     queueLimit: 0
 });
 
-// conexion.connect((err)=>{
-//     if(err){
-//         throw err;
-//     }else{
-//         console.log("Conexion exitosa a la BBDD!!");
-//     }
-// });
+conexion.getConnection((err, db)=>{
+    if(err){
+        throw err;
+    }else{
+        console.log("Conexion exitosa a la BBDD!!");
+        db.release();
+    }
+});
 
 module.exports = conexion;
