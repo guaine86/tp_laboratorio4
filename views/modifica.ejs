@@ -46,7 +46,7 @@
             
                         <div class="campo">
                               <label for="email">Correo:</label>
-                            <input class="input" type="email" name="email" id="email" value="<%= alumno.email %>" maxlength="30" required autocomplete="off">
+                            <input class="input" type="email" name="email" id="email" value="<%= alumno.email %>" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Ingresa un email valido (algo@mail.com)" maxlength="30" required autocomplete="off">
                         </div>
             
                         <div class="campo">
