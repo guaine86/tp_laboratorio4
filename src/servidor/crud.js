@@ -1,4 +1,4 @@
-const bbdd = require('./bbdd.js');
+const conexion = require('./bbdd.js');
 
 exports.validar = (req,res)=>{
     const datos = req.body;
@@ -12,8 +12,6 @@ exports.validar = (req,res)=>{
     
     let muestra;
     
-    const conexion = bbdd.creaConexion();
-    
     const busca = `SELECT * FROM alumnos WHERE dni = ${dni};`
     conexion.query(busca, (err, rows)=>{
         if(err){
@@ -22,7 +20,6 @@ exports.validar = (req,res)=>{
             muestra = "No se puede volver a cargar el mismo alumno!";
             res.render('index',{muestra});
         }else{
-            const conexion = bbdd.creaConexion();
             const inserta = `INSERT INTO alumnos (nombre, apellido, dni, fecha_nac, telefono, email, domicilio, observaciones) VALUES ('${nombre}', '${apellido}','${dni}','${fecha_nac}','${telefono}','${email}','${domicilio}','${(observaciones === ''||observaciones === ' ') ? '-' : observaciones}');`
             conexion.query(inserta, (err)=>{
                 if(err){
@@ -33,8 +30,7 @@ exports.validar = (req,res)=>{
                 }
             });
         };
-    });
-    conexion.end();     
+    });    
 };
 
 exports.actualizar = (req,res)=>{
@@ -49,8 +45,6 @@ exports.actualizar = (req,res)=>{
 
     let muestra;
 
-    const conexion = bbdd.creaConexion();
-
     const modifica = `UPDATE alumnos SET nombre = '${nombre}', apellido = '${apellido}', dni='${dni}', fecha_nac = '${fecha_nac}', telefono = '${telefono}', email = '${email}', domicilio = '${domicilio}', observaciones = '${(observaciones === ''||observaciones === ' ') ? '-' : observaciones}' WHERE idalumnos = ${id};`;
     conexion.query(modifica, (err)=>{
         if(err){
@@ -60,5 +54,4 @@ exports.actualizar = (req,res)=>{
             res.render('index', {muestra});
         }
     })
-    conexion.end();
 };

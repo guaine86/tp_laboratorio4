@@ -21,7 +21,9 @@ export class ValidaCadena{
     }
     valida(){
         if(!this.patron.test(this.valor)){
-            alert(this.mensaje);
+            setTimeout(()=>{
+                alert(this.mensaje);
+            },30);
             return
         }
     }
