@@ -84,17 +84,17 @@
 					<div class="formulario-campos">	
 						<div class="campo">
 							<label for="nombre">Nombre:</label>
-							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre" pattern="^[a-zA-Z\s]+$" title="Requiere un minimo de 3 letras!!" minlength="3" maxlength="35" required autocomplete="off">
+							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="3" maxlength="35" required autocomplete="off">
 						</div>
 
             			<div class="campo">
 							<label for="apellido">Apellido/s:</label>
-							<input class="input" type="text" name="apellido" id="apellido" placeholder="Ingrese apellido" pattern="^[a-zA-Z\s]+$" title="Requiere un minimo de 3 letras!!" minlength="3" maxlength="35" required autocomplete="off">
+							<input class="input" type="text" name="apellido" id="apellido" placeholder="Ingrese apellido" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="3" maxlength="35" required autocomplete="off">
 						</div>
 
             			<div class="campo">
 							<label for="dni">DNI:</label>
-							<input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" minlength="7" maxlength="8" required autocomplete="off">
+							<input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" title="Este campo admite solo caracteres numericos con minimo 7 digitos y maximo 8" minlength="7" maxlength="8" required autocomplete="off">
 						</div>
 
             			<div class="campo">
@@ -104,18 +104,18 @@
 
 						<div class="campo">
 							<label for="telefono">Telefono:</label>
-							<input class="input" type="tel" name="telefono" id="telefono" placeholder="Telefono (011 5555-1234)" pattern="^\d*[-|\s]?\d*[-|\s]?\d*$" minlength="8" maxlength="15" required autocomplete="off">
+							<input class="input" type="tel" name="telefono" id="telefono" placeholder="Telefono (011 5555-1234)" pattern="^\d*[-|\s]?\d*[-|\s]?\d*$" title="Ingrese con el formato especificado" minlength="8" maxlength="15" required autocomplete="off">
 						</div>
 
             
 						<div class="campo">
               				<label for="email">Correo:</label>
-							<input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Ingresa un email valido (algo@mail.com)" maxlength="30" required autocomplete="off">
+							<input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Formato valido (algo@mail.com)" maxlength="30" required autocomplete="off">
 						</div>
             
 						<div class="campo">
 							<label for="domicilio">Domicilio:</label>
-							<input class="input" type="text" name="domicilio" id="domicilio" placeholder="Ingrese domicilio" minlength="3" maxlength="45" required autocomplete="off">
+							<input class="input" type="text" name="domicilio" id="domicilio" placeholder="Ingrese domicilio" minlength="5" maxlength="45" required autocomplete="off">
 						</div>
 
 						<div class="campo">
