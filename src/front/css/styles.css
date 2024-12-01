@@ -205,6 +205,15 @@ h1.titulo span{
 	background-color: var(--verde);
 }
 
+@media(min-width: 768px){
+	.nav-sticky{
+		position: sticky;
+		top: 0px;
+		left: 0px;
+		z-index: 1;
+	}
+}
+
 .navegacion-principal{
 	display: flex;
 	flex-direction: column;
@@ -232,11 +241,11 @@ h1.titulo span{
 
 /*Contenidos*/
 .webp .escritorio{
-  background-image: url(../assets/desk.webp);
+  background-image: url(../../../public/assets/desk.webp);
 }
 
 .no-webp .escritorio{
-  background-image: url(../assets/desk.jpg);
+  background-image: url(../../../public/assets/desk.jpg);
 }
 .escritorio{
 	background-repeat: no-repeat;

@@ -34,4 +34,4 @@ USE `tp_laboratorio4`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-27 11:56:29
+-- Dump completed on 2024-12-01 11:31:45
