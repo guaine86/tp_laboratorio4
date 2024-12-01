@@ -427,3 +427,24 @@ h1.titulo span{
   grid-template-rows:auto 1fr auto;
   min-height: 100vh;
 }
+
+.table-header{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	column-gap: 0.1rem;
+	text-decoration: none;
+	color: #000000;
+}
+
+table{
+	min-width: 900px;
+	font-size: 1.2rem;
+}
+
+@media(min-width: 768px){
+	table{
+		min-width: 110px;
+		font-size: 1.4rem;
+	}
+}
