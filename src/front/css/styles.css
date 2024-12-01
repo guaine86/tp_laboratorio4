@@ -241,12 +241,13 @@ h1.titulo span{
 
 /*Contenidos*/
 .webp .escritorio{
-  background-image: url(../../../public/assets/desk.webp);
+  background-image: url(../assets/desk.webp);
 }
 
 .no-webp .escritorio{
-  background-image: url(../../../public/assets/desk.jpg);
+  background-image: url(../assets/desk.jpg);
 }
+
 .escritorio{
 	background-repeat: no-repeat;
 	background-size: cover;
