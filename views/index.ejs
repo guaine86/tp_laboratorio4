@@ -122,10 +122,13 @@
 							<label for="carrera">Carrera:</label>
 							 <select class="input" name="carrera" id="carrera" required title="Elija una carrera en las opciones listadas">
 								<option class="input-select" value="" selected disabled>Elija una carrera:</option>
-								<option class="input-carrera" value="1">Tecnicatura Universitaria en Programacion</option>
+								<% if(typeof rows !== "undefined"){rows.forEach((carrera)=>{ %>
+									<option class="input-carrera capitalize" value="<%= carrera.idcarrera %>"><%= carrera.nomenclatura %></option>
+								<% })} %>
+								<!-- <option class="input-carrera" value="1">Tecnicatura Universitaria en Programacion</option>
 								<option class="input-carrera" value="2">Tecnicatura Universitaria en Tecnología de los Alimentos</option>
 								<option class="input-carrera" value="3">Tecnicatura Universitaria en Diseño Industrial</option>
-								<option class="input-carrera" value="4">Licenciatura en Obstetricia</option>
+								<option class="input-carrera" value="4">Licenciatura en Obstetricia</option> -->
 							 </select>
 						</div>
 

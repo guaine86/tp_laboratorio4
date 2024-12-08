@@ -5,7 +5,25 @@ const crud = require('./crud');
 
 // Ruta Principal
 router.get('/',(req,res)=>{
-    res.render('index');
+    const carreras = `SELECT * FROM carrera;`;
+    conexion.query(carreras,(err, resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            res.render('index',{rows: resultados});
+        }
+    });
+});
+
+router.get('/index',(req,res)=>{
+    const carreras = `SELECT * FROM carrera;`;
+    conexion.query(carreras,(err, resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            res.render('index',{rows: resultados});
+        }
+    });
 });
 
 // Ruta Consultas
@@ -45,7 +63,14 @@ router.get('/modifica/:id/:carrera',(req,res)=>{
         if(err){
             throw err;
         }else{
-            res.render('modifica', {alumno: registro[0]});
+            const carreras = `SELECT * FROM carrera;`
+            conexion.query(carreras, (err, resultados)=>{
+                if(err){
+                    throw err;
+                }else{
+                    res.render('modifica', {alumno: registro[0], rows: resultados});
+                }
+            })
         }
     });
 });

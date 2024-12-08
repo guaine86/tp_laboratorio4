@@ -59,10 +59,13 @@
 							<!-- <input class="input" type="text" name="domicilio" id="domicilio" placeholder="Ingrese domicilio" minlength="5" maxlength="45" required autocomplete="off"> -->
                             <select class="input capitalize" name="carrera" id="carrera" required title="Elija una carrera en las opciones listadas">
 								<option class="input-carrera" selected><%= alumno.carrera %></option>
-								<option class="input-carrera" value="tecnicatura universitaria en programacion">Tecnicatura Universitaria en Programacion</option>
+								<% rows.forEach((carrera)=>{ %>
+                                    <option class="input-carrera capitalize" value="<%= carrera.nomenclatura %>"><%= carrera.nomenclatura %></option>
+                                <% }) %>
+                                <!-- <option class="input-carrera" value="tecnicatura universitaria en programacion">Tecnicatura Universitaria en Programacion</option>
 								<option class="input-carrera" value="tecnicatura universitaria en tecnologia de los alimentos">Tecnicatura Universitaria en Tecnología de los Alimentos</option>
 								<option class="input-carrera" value="tecnicatura universitaria en diseño industrial">Tecnicatura Universitaria en Diseño Industrial</option>
-								<option class="input-carrera" value="licenciatura en obstetricia">Licenciatura en Obstetricia</option>
+								<option class="input-carrera" value="licenciatura en obstetricia">Licenciatura en Obstetricia</option> -->
 							 </select>
 						</div>
     

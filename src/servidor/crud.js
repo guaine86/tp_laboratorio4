@@ -12,6 +12,16 @@ exports.validar = (req,res)=>{
     observaciones = observaciones.toLowerCase();
     
     let muestra;
+    let lista_carreras = [];
+
+    const carreras = `SELECT * FROM carrera;`;
+    conexion.query(carreras, (err,resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            lista_carreras = resultados;
+        }
+    });
     
     const busca = `SELECT * FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac WHERE a.dni = ${dni} AND ac.CARRERA_idcarrera = '${carrera}';`
     conexion.query(busca, (err, rows)=>{
@@ -29,7 +39,7 @@ exports.validar = (req,res)=>{
                             throw err;
                         }else{
                             muestra = "Alumno Ingresado con Exito!!";
-                            res.render('index',{muestra});
+                            res.render('index',{muestra, rows: lista_carreras});
                         }
                     })
                 }else{
@@ -43,10 +53,10 @@ exports.validar = (req,res)=>{
                             conexion.query(inserta2,(err)=>{
                                 if(err){
                                     muestra = "No se puede volver a cargar el mismo alumno a la misma carrera!!";
-                                    res.render('index',{muestra});
+                                    res.render('index',{muestra, rows: lista_carreras});
                                 }else{
                                     muestra = "Alumno Ingresado con Exito!!";
-                                    res.render('index',{muestra});
+                                    res.render('index',{muestra, rows: lista_carreras});
                                 }
                             });
                         }
@@ -66,7 +76,7 @@ exports.validar = (req,res)=>{
                             throw err;
                         }else{
                             muestra = "Alumno Ingresado con Exito!";
-                            res.render('index',{muestra});
+                            res.render('index',{muestra, rows: lista_carreras});
                         }
                     });
                 }else{
@@ -82,7 +92,7 @@ exports.validar = (req,res)=>{
                                     throw err;
                                 }else{
                                     muestra = "Alumno Ingresado con Exito!!";
-                                    res.render('index',{muestra});
+                                    res.render('index',{muestra, rows: lista_carreras});
                                 }
                             });
                         };
@@ -106,6 +116,16 @@ exports.actualizar = (req,res)=>{
     observaciones = observaciones.toLowerCase();
 
     let muestra;
+    let lista_carreras = [];
+
+    const carreras = `SELECT * FROM carrera;`;
+    conexion.query(carreras, (err,resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            lista_carreras = resultados;
+        }
+    });
 
     const modifica = `UPDATE alumnos SET nombre = '${nombre}', apellido = '${apellido}', dni='${dni}', fecha_nac = '${fecha_nac}', telefono = '${telefono}', email = '${email}', domicilio = '${domicilio}', observaciones = '${(observaciones === ''||observaciones === ' ') ? '-' : observaciones}' WHERE idalumnos = ${id};`;
     conexion.query(modifica, (err)=>{
@@ -131,19 +151,19 @@ exports.actualizar = (req,res)=>{
                                             throw err;
                                         }else{
                                             muestra = "Datos actualizados con exito!!";
-                                            res.render('index', {muestra});
+                                            res.render('index', {muestra, rows: lista_carreras});
                                         }
                                     });
                                 }
                             })
                         }else{
                             muestra = 'No se puede volver a cargar el mismo alumno a la misma carrera!!';
-                            res.render('index', {muestra});
+                            res.render('index', {muestra, rows: lista_carreras});
                         }
                     });
                 }else{
                     muestra = "Datos actualizados con exito!!";
-                    res.render('index', {muestra});
+                    res.render('index', {muestra, rows: lista_carreras});
                 }
             })
         }
