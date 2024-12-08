@@ -4,7 +4,7 @@ USE `tp_laboratorio4`;
 --
 -- Host: localhost    Database: tp_laboratorio4
 -- ------------------------------------------------------
--- Server version	8.0.40
+-- Server version	8.0.39
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -34,9 +34,8 @@ CREATE TABLE `alumnos` (
   `email` varchar(30) NOT NULL,
   `domicilio` varchar(45) NOT NULL,
   `observaciones` varchar(140) DEFAULT '-',
-  PRIMARY KEY (`idalumnos`),
-  UNIQUE KEY `dni_UNIQUE` (`dni`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`idalumnos`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -133,7 +132,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `ad_alumnos` AFTER DELETE ON `alumnos` FOR EACH ROW BEGIN
-	insert into log_alumnos values(null, concat('Baja Confirmada: ', old.nombre,' ',old.apellido, ' - ', 'ID: ', old.idalumnos),now(), user(),'alumnos', database());
+	insert into log_alumnos values(null, concat('Baja Confirmada: ', old.nombre,' ',old.apellido, '-', 'ID: ', old.idalumnos),now(), user(),'alumnos', database());
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -150,4 +149,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-01 11:31:44
+-- Dump completed on 2024-12-08 14:23:33

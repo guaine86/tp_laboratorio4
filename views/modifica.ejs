@@ -14,18 +14,18 @@
         <section>
             <h2 class="titulo mgb-2">Cambie Campos en el Formulario</h2>
         
-            <form class="formulario" action="/actualizar" method="post" enctype="text/html">
+            <form class="formulario" action="/actualizar/<%= alumno.carrera %>" method="post" enctype="text/html">
                 <fieldset>
                     <legend>Modificar Alumno Cargado</legend>
                     <div class="formulario-campos">	
                         <div class="campo">
                             <label for="nombre">Nombre:</label>
-                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="3" maxlength="35" required autocomplete="off">
+                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="2" maxlength="35" required autocomplete="off">
                         </div>
     
                         <div class="campo">
                             <label for="apellido">Apellido/s:</label>
-                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="3" maxlength="35" required autocomplete="off">
+                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="2" maxlength="35" required autocomplete="off">
                         </div>
     
                         <div class="campo">
@@ -35,7 +35,7 @@
     
                         <div class="campo">
                             <label for="fecha_nac">Fecha de Nacimiento:</label>
-                            <input class="input" type="date" name="fecha_nac" id="fecha_nac" value="<%= `${alumno.fecha_nac.getFullYear()}-${(alumno.fecha_nac.getMonth()<10) ? `0${alumno.fecha_nac.getMonth()+1}` : alumno.fecha_nac.getMonth()+1 }-${(alumno.fecha_nac.getDate()<10) ? `0${alumno.fecha_nac.getDate()}`: alumno.fecha_nac.getDate()}` %>" min="1900-01-01" required >
+                            <input class="input" type="date" name="fecha_nac" id="fecha_nac" value="<%= `${alumno.fecha_nac.getFullYear()}-${(alumno.fecha_nac.getMonth()<10) ? `0${alumno.fecha_nac.getMonth()+1}` : alumno.fecha_nac.getMonth()+1 }-${(alumno.fecha_nac.getDate()<10) ? `0${alumno.fecha_nac.getDate()}`: alumno.fecha_nac.getDate()}` %>" min="1900-01-01" max="2012-01-01" title="Seleccione una fecha del calendario" required >
                         </div>
     
                         <div class="campo">
@@ -53,6 +53,18 @@
                             <label for="domicilio">Domicilio:</label>
                             <input class="input capitalize" type="text" name="domicilio" id="domicilio" value="<%= alumno.domicilio %>" minlength="5" maxlength="45" required autocomplete="off">
                         </div>
+
+                        <div class="campo">
+							<label for="carrera">Carrera:</label>
+							<!-- <input class="input" type="text" name="domicilio" id="domicilio" placeholder="Ingrese domicilio" minlength="5" maxlength="45" required autocomplete="off"> -->
+                            <select class="input capitalize" name="carrera" id="carrera" required title="Elija una carrera en las opciones listadas">
+								<option class="input-carrera" selected><%= alumno.carrera %></option>
+								<option class="input-carrera" value="tecnicatura universitaria en programacion">Tecnicatura Universitaria en Programacion</option>
+								<option class="input-carrera" value="tecnicatura universitaria en tecnologia de los alimentos">Tecnicatura Universitaria en Tecnología de los Alimentos</option>
+								<option class="input-carrera" value="tecnicatura universitaria en diseño industrial">Tecnicatura Universitaria en Diseño Industrial</option>
+								<option class="input-carrera" value="licenciatura en obstetricia">Licenciatura en Obstetricia</option>
+							 </select>
+						</div>
     
                         <div class="campo">
                             <label for="observaciones">Observaciones:</label>

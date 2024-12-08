@@ -84,12 +84,12 @@
 					<div class="formulario-campos">	
 						<div class="campo">
 							<label for="nombre">Nombre:</label>
-							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="3" maxlength="35" required autocomplete="off">
+							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="2" maxlength="35" required autocomplete="off">
 						</div>
 
             			<div class="campo">
 							<label for="apellido">Apellido/s:</label>
-							<input class="input" type="text" name="apellido" id="apellido" placeholder="Ingrese apellido" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="3" maxlength="35" required autocomplete="off">
+							<input class="input" type="text" name="apellido" id="apellido" placeholder="Ingrese apellido" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="2" maxlength="35" required autocomplete="off">
 						</div>
 
             			<div class="campo">
@@ -99,7 +99,7 @@
 
             			<div class="campo">
 							<label for="fecha_nac">Fecha de Nacimiento:</label>
-							<input class="input" type="date" name="fecha_nac" id="fecha_nac" value="2000-11-23" min="1900-01-01" required >
+							<input class="input" type="date" name="fecha_nac" id="fecha_nac" value="2000-11-23" min="1900-01-01" max="2008-01-01" title="Seleccione una fecha del calendario" required >
 						</div>
 
 						<div class="campo">
@@ -116,6 +116,17 @@
 						<div class="campo">
 							<label for="domicilio">Domicilio:</label>
 							<input class="input" type="text" name="domicilio" id="domicilio" placeholder="Ingrese domicilio" minlength="5" maxlength="45" required autocomplete="off">
+						</div>
+
+						<div class="campo">
+							<label for="carrera">Carrera:</label>
+							 <select class="input" name="carrera" id="carrera" required title="Elija una carrera en las opciones listadas">
+								<option class="input-select" value="" selected disabled>Elija una carrera:</option>
+								<option class="input-carrera" value="1">Tecnicatura Universitaria en Programacion</option>
+								<option class="input-carrera" value="2">Tecnicatura Universitaria en Tecnología de los Alimentos</option>
+								<option class="input-carrera" value="3">Tecnicatura Universitaria en Diseño Industrial</option>
+								<option class="input-carrera" value="4">Licenciatura en Obstetricia</option>
+							 </select>
 						</div>
 
 						<div class="campo">

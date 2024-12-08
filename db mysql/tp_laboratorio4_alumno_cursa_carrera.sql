@@ -18,8 +18,23 @@ USE `tp_laboratorio4`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping routines for database 'tp_laboratorio4'
+-- Table structure for table `alumno_cursa_carrera`
 --
+
+DROP TABLE IF EXISTS `alumno_cursa_carrera`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `alumno_cursa_carrera` (
+  `ALUMNOS_idalumnos` int NOT NULL,
+  `CARRERA_idcarrera` int NOT NULL,
+  `fecha_inscripcion` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `confirma` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`ALUMNOS_idalumnos`,`CARRERA_idcarrera`),
+  KEY `CARRERA_idcarrera_idx` (`CARRERA_idcarrera`),
+  CONSTRAINT `fk_ALUMNOS_idalumnos` FOREIGN KEY (`ALUMNOS_idalumnos`) REFERENCES `alumnos` (`idalumnos`),
+  CONSTRAINT `fk_CARRERA_idcarrera` FOREIGN KEY (`CARRERA_idcarrera`) REFERENCES `carrera` (`idcarrera`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -30,4 +45,4 @@ USE `tp_laboratorio4`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-08 14:23:34
+-- Dump completed on 2024-12-08 14:23:33

@@ -15,14 +15,15 @@
         <table class="table table-bordered table-striped text-center mt-2" style="vertical-align: middle;">
             <thead>
                 <tr class="bg-warning text-white">
-                    <th><a href="/consulta" class="table-header"><span>ID </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><a href="/consulta" class="encabezado"><span>ID </span><i class='bx bx-caret-down-circle'></i></a></th>
                     <th>Nombre</th>
-                    <th><a href="/consulta/<%= 'apellido' %>" class="table-header"><span>Apellido </span><i class='bx bx-caret-down-circle'></i></a></th>
-                    <th><a href="/consulta/<%= 'dni' %>" class="table-header"><span>DNI </span><i class='bx bx-caret-down-circle'></i></a></th>
-                    <th><div class="table-header" style="column-gap: 0.3rem;"><span>Fecha </span><span>Nacimiento</span></div></th>
+                    <th><a href="/consulta/<%= 'apellido' %>" class="encabezado"><span>Apellido </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><a href="/consulta/<%= 'dni' %>" class="encabezado"><span>DNI </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><div class="encabezado" style="column-gap: 0.3rem;"><span>Fecha </span><span>Nacimiento</span></div></th>
                     <th>Telefono</th>
                     <th>Email</th>
                     <th>Domicilio</th>
+                    <th>Carrera</th>
                     <th>Observaciones</th>
                     <th>Acciones</th>
                 </tr>
@@ -44,10 +45,11 @@
                     <td><%= alumno.telefono %></td>
                     <td><%= alumno.email %></td>
                     <td class="capitalize"><%= alumno.domicilio %></td>
+                    <td class="capitalize"><%= alumno.carrera %></td>
                     <td><%= alumno.observaciones %></td>
                     <td>
-                        <a href="/modifica/<%= alumno.idalumnos %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
-                        <a href="/elimina/<%= alumno.idalumnos %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a>
+                        <a href="/modifica/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
+                        <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a>
                     </td>
                 </tr>
                 <% })} %>
