@@ -120,7 +120,7 @@
 
 						<div class="campo">
 							<label for="carrera">Carrera:</label>
-							 <select class="input" name="carrera" id="carrera" required title="Elija una carrera en las opciones listadas">
+							 <select class="input capitalize" name="carrera" id="carrera" required title="Elija una carrera en las opciones listadas">
 								<option class="input-select" value="" selected disabled>Elija una carrera:</option>
 								<% if(typeof rows !== "undefined"){rows.forEach((carrera)=>{ %>
 									<option class="input-carrera capitalize" value="<%= carrera.idcarrera %>"><%= carrera.nomenclatura %></option>
