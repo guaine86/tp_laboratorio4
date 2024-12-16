@@ -92,6 +92,16 @@ router.get('/elimina/:id/:carrera',(req,res)=>{
     })
 });
 
+//Ruta para el login
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+//Ruta para el registro
+router.get('/register', (req, res) => {
+    res.render('register');
+});
+
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
 

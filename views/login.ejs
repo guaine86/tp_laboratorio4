@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Login</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body class="body-consulta">
+    <div>
+        <%- include('./templates/header-nav.ejs') %>
+    </div>
+
+    <main class="contenedor sombras" style="display: grid; align-items: center;">
+       <div>
+           <h2 class="titulo mgb-2">Login</h2>
+           <form class="formulario" action="/ingresar" method="post" enctype="text/html">
+               <fieldset>
+                   <div class="formulario-campos formulario-campos__login">
+                       <div class="campo">
+                           <label for="usuario">Ingrese usuario:</label>
+                           <input class="input" type="text" name="usuario" id="usuario" placeholder="Ingrese Usuario Registrado" title="Ingrese su usuario" autocomplete="off" required>
+                       </div>
+                       <div class="campo">
+                           <label for="pass">Ingrese su contraseña:</label>
+                           <input type="password" class="input" name="pass" id="pass" placeholder="Ingrese una contraseña valida" title="Ingrese su contraseña" autocomplete="off" required>
+                       </div>
+                   </div>
+                   <div class="alinear-derecha flex">
+                       <input class="boton w100" type="submit" value="Enviar">
+                       <!-- <input class="boton w100" type="reset" value="Borrar"> -->
+                       <a class="boton w100" href="/register" target="_self">Registrar</a>
+                   </div>
+               </fieldset>
+           </form>
+       </div>
+    </main>
+
+    <%- include('./templates/footer.ejs') %>
+</body>
+</html>

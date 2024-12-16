@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Registrar</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body class="body-consulta">
+    <div>
+        <%- include('./templates/header-nav.ejs') %>
+    </div>
+
+    <main class="contenedor sombras" style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
+        <h2 class="titulo mgb-2">Registrarse</h2>
+        <form class="formulario" action="/registrar" method="post" enctype="text/html">
+            <fieldset>
+                <div class="formulario-campos formulario-campos__login">
+                    <div class="campo">
+                        <label for="nombre">Ingrese nombre completo:</label>
+                        <input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre y apellido" title="Ingrese su nombre completo" minlength="5" maxlength="65" autocomplete="off" required>
+                    </div>
+                    <div class="campo">
+                        <label for="email">Correo:</label>
+                        <input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Formato valido (algo@mail.com)" maxlength="30" required autocomplete="off">
+                    </div>
+                    <div class="campo">
+                        <label for="usuario">Ingrese usuario:</label>
+                        <input class="input" type="text" name="usuario" id="usuario" placeholder="Ingrese Usuario Deseado" title="Ingrese su usuario" autocomplete="off" required>
+                    </div>
+                    <div class="campo">
+                        <label for="pass">Ingrese su contraseña:</label>
+                        <input type="password" class="input" name="pass" id="pass" placeholder="Ingrese Contraseña Nueva" title="Ingrese su contraseña" autocomplete="off" required>
+                    </div>
+                </div>
+                <div class="alinear-derecha flex">
+                    <input class="boton w100" type="submit" value="Enviar">
+                    <!-- <input class="boton w100" type="reset" value="Borrar"> -->
+                    <a class="boton w100" href="/" target="_self">Cancelar</a>
+                </div>
+            </fieldset>
+        </form>
+    </main>
+
+    <%- include('./templates/footer.ejs') %>
+    <%- include('./templates/scripts.ejs') %>
+</body>
+</html>
