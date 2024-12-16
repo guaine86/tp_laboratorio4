@@ -2,11 +2,11 @@
   "name": "tp-laboratorio-iv",
   "version": "1.0.0",
   "description": "Tp Laboratorio IV",
-  "main": "./src/servidor/app.js",
+  "main": "./server/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start": "nodemon ./src/servidor/app.js"
+    "start": "nodemon ./server/app.js"
   },
   "keywords": [],
   "author": "Edward Wayne Cruz",

@@ -1,7 +1,9 @@
+const path = require('path');
 const express = require('express');
 const router = express.Router();
-const conexion = require('./bbdd');
-const crud = require('./crud');
+const conexion = require('./bbdd.js');
+const crud = require('./crud.js');
+const autenticacion = require('../controllers/auth.controller.js');
 
 // Ruta Principal
 router.get('/',(req,res)=>{
@@ -104,5 +106,6 @@ router.get('/register', (req, res) => {
 
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
+router.post('/registrar', autenticacion.registrar);
 
 module.exports = router;

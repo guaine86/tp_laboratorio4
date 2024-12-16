@@ -1,4 +1,4 @@
-export class ValidaCadena{
+class ValidaCadena{
     constructor(campo, valor){
         this.campo = campo;
         this.valor = valor;
@@ -28,3 +28,34 @@ export class ValidaCadena{
         }
     }
 }
+
+function valida(evento){
+    const validaCadena = new ValidaCadena(evento.target.id, evento.target.value);
+    mensaje(evento);
+    return
+}
+
+function mensaje(evento){
+    const campo = evento.target;
+    const validaCampo = campo.validity;
+
+    if(validaCampo.tooShort){
+        campo.setCustomValidity(`El campo ${evento.target.id.toUpperCase()} requiere ${evento.target.minLength} caracteres como minimo`);
+    }else{
+        campo.setCustomValidity("");
+    }
+    campo.reportValidity();
+    return
+};
+
+function mostrarPass(evento, campo){
+    const box = evento.target.checked;
+    if(box){
+        campo.type = 'text';
+    }else{
+        campo.type = 'password';
+    }
+    return
+};
+
+export{valida, mensaje, mostrarPass};
