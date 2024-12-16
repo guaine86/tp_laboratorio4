@@ -9,7 +9,7 @@ exports.registrar = async(req,res) => {
         let {nombre, email, usuario, pass} = datos;
         nombre = nombre.toLowerCase();
         email = email.toLowerCase();
-        usuario = usuario.toLowerCase();
+        usuario = usuario.toLowerCase();const Swal = require('sweetalert2')
         let passHash = await bcryptjs.hash(pass, 8);
         let muestra;
         
@@ -34,5 +34,22 @@ exports.registrar = async(req,res) => {
         });
     } catch (error) {
         throw error;
+    }
+};
+
+exports.ingresar = async(req, res) => {
+    try{
+        const datos = req.body;
+        let {usuario, pass} = datos;
+        // console.log(`${usuario} ${pass}`);
+
+        if(!usuario || !pass){
+            res.render('login', {
+                alert:true, 
+            });
+        }
+
+    }catch (error){
+        throw err;
     }
 };

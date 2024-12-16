@@ -23,11 +23,11 @@
                    <div class="formulario-campos formulario-campos__login">
                        <div class="campo">
                            <label for="usuario">Ingrese usuario:</label>
-                           <input class="input" type="text" name="usuario" id="usuario" placeholder="Ingrese Usuario Registrado" title="Ingrese su usuario" minlength="3" maxlength="45" autocomplete="off" required>
+                           <input class="input" type="text" name="usuario" id="usuario" placeholder="Ingrese Usuario Registrado" title="Ingrese su usuario" minlength="3" maxlength="45" autocomplete="off" >
                        </div>
                        <div class="campo" id="campo-pass">
                            <label for="pass">Ingrese su contraseña:</label>
-                           <input type="password" class="input" name="pass" id="pass" placeholder="Ingrese una contraseña valida" title="Ingrese su contraseña" minlength="4" autocomplete="off" required>
+                           <input type="password" class="input" name="pass" id="pass" placeholder="Ingrese una contraseña valida" title="Ingrese su contraseña" minlength="4" autocomplete="off" >
                        </div>
                         <div class="campo">
                             <input type="checkbox" name="ver" id="ver" value="ver-pass">Mostrar contraseña
@@ -45,5 +45,15 @@
 
     <%- include('./templates/footer.ejs') %>
     <script type="module" src="/js/login.js"></script>
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <% if(typeof alert !== "undefined"){if(alert){ %> 
+    <script >
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "No pueden quedar vacios estos campos!",
+            });
+    </script>
+    <% }} %>
 </body>
 </html>

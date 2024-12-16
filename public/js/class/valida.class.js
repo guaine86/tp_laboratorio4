@@ -22,7 +22,11 @@ class ValidaCadena{
     valida(){
         if(!this.patron.test(this.valor)){
             setTimeout(()=>{
-                alert(this.mensaje);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: this.mensaje,
+                });
             },30);
             return
         }

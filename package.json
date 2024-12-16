@@ -37,6 +37,7 @@
     "ejs": "^3.1.10",
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.11.4"
+    "mysql2": "^3.11.4",
+    "sweetalert2": "^11.15.1"
   }
 }

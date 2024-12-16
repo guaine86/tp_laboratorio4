@@ -107,5 +107,6 @@ router.get('/register', (req, res) => {
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
 router.post('/registrar', autenticacion.registrar);
+router.post('/ingresar', autenticacion.ingresar);
 
 module.exports = router;
