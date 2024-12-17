@@ -422,6 +422,13 @@ h1.titulo span{
   text-transform: capitalize;
 }
 
+.campo-grilla__radio{
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline; 
+	margin-top: 1rem;
+}
+
 @media (min-width:768px ){
   .campo-grilla{
     display: grid;
@@ -429,6 +436,7 @@ h1.titulo span{
   }
   .campo-grilla__radio{
     align-self: center;
+	padding-right: 2rem;
   }
 }
 
@@ -438,6 +446,12 @@ h1.titulo span{
   grid-template-rows:auto 1fr auto;
   min-height: 100vh;
 }
+
+.consulta-barra{display: flex; justify-content: space-between;}
+
+.consulta-form{display: flex; align-items: center; gap: 2rem;}
+
+.consulta-form__select{margin-top: 1.4rem;}
 
 .encabezado{
 	display: flex;

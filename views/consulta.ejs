@@ -10,8 +10,34 @@
     </div>
 
     <main class="contenedor sombras" style="max-width: 140rem;">
-        <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md'></i></a>
-        
+        <div class="consulta-barra">
+            <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md'></i></a>
+            <div>
+                <form class="consulta-form" action="/filtra" method="post">
+                    <div class="consulta-form__select">
+                        <label for="carrera">Carrera:</label>
+                        <select class="capitalize" name="carrera" id="carrera"  title="Elija una carrera en las opciones listadas">
+                            <option class="input-select" value="todas" selected >Elija una carrera:</option>
+                            <option class="input-carrera" value="todas">Todas</option>
+                            <% if(typeof rows !== "undefined"){rows.forEach((carrera)=>{ %>
+                                <option class="input-carrera capitalize" value="<%= carrera.idcarrera %>"><%= carrera.nomenclatura %></option>
+                            <% })} %>
+                        </select>
+                    </div>
+                    <div class="consulta-form__select">
+                        <label for="egresado">Egresado:</label>
+                        <select name="egresado" id="egresado" title="Elija si busca alumno egresado o cursando">
+                            <option class="input-select" value="todas" selected >Elija condicion:</option>
+                            <option class="input-carrera" value="todas">Todas</option>
+                            <option value="0" class="input-carrera">No</option>
+                            <option value="1" class="input-carrera">Si</option>
+                        </select>
+                    </div>
+                    <!-- <a href="/consulta/<%= 5 %>/<%= 1 %>" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bx-search-alt-2 bx-md'></i></a> -->
+                     <button class="btn btn-outline-primary mt-4 mb-2" type="submit"><i class='bx bx-search-alt-2 bx-md'></i></button>
+                </form>
+            </div>
+        </div>
         <table class="table table-bordered table-striped text-center mt-2" style="vertical-align: middle;">
             <thead>
                 <tr class="bg-warning text-white">

@@ -107,8 +107,8 @@ exports.actualizar = (req,res)=>{
     const datos = req.body;
     const carrera_anterior = req.params.carrera_anterior;
 
-    let {nombre, apellido, dni, fecha_nac, telefono, email, domicilio, carrera, observaciones, id} = datos;
-    
+    let {nombre, apellido, dni, fecha_nac, telefono, email, domicilio, carrera, observaciones, id, egresado} = datos;
+
     nombre = nombre.toLowerCase();
     apellido = apellido.toLowerCase();
     email = email.toLowerCase();
@@ -132,7 +132,7 @@ exports.actualizar = (req,res)=>{
         if(err){
             throw err;
         }else{
-            const modifica2 = `UPDATE alumno_cursa_carrera SET CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}') WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera_anterior}');`;
+            const modifica2 = `UPDATE alumno_cursa_carrera SET CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}'), egresado = ${egresado} WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera_anterior}');`;
             conexion.query(modifica2, (err)=>{
                 if(err){
                     const busca_previo = `SELECT * FROM alumno_cursa_carrera WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}') AND confirma = 0;`;

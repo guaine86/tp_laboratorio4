@@ -43,16 +43,20 @@
        </div>
     </main>
 
-    <%- include('./templates/footer.ejs') %>
+    <%- include('./templates/footer.ejs') %> 
     <script type="module" src="/js/login.js"></script>
     <script src="/js/sweetalert2.all.min.js"></script>
     <% if(typeof alert !== "undefined"){if(alert){ %> 
     <script >
             Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "No pueden quedar vacios estos campos!",
-            });
+                icon: "<%= alertIcon %>",
+                title: "<%= alertTitle %>",
+                text: "<%= alertMessage %>",
+                // showConfirmButton: <%= showConfirmationButton %>,
+                // timer: <%= timer %>
+            })
+            .then
+                window.location = "/<%= ruta %>"
     </script>
     <% }} %>
 </body>

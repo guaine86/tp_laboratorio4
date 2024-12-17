@@ -45,10 +45,53 @@ exports.ingresar = async(req, res) => {
 
         if(!usuario || !pass){
             res.render('login', {
-                alert:true, 
+                alert: true,
+                alertTitle: "Advertencia",
+                alertMessage: "Ingrese un usuario y un password!!" ,
+                alertIcon: "info",
+                showConfirmationButton: true,
+                timer: false,
+                ruta: 'login'
+            });
+        }else{
+            const busca = `SELECT * FROM usuarios WHERE usuario = '${usuario}';`;
+            conexion.query(busca, async(err, resultados)=>{
+                if(err){
+                    throw err;
+                }else if(resultados.length === 0 || !(await bcryptjs.compare(pass, resultados[0].pass))){
+                    res.render('login', {
+                        alert: true,
+                        alertTitle: "Advertencia",
+                        alertMessage: "Ingrese un usuario y un password validos!!" ,
+                        alertIcon: "info",
+                        showConfirmationButton: true,
+                        timer: false,
+                        ruta: 'login'
+                    });
+                }else{
+                    const id = resultados[0].idusuarios;
+                    const token = jwt.sign({id: id}, process.env.JWT_SECRETO, {
+                        expiresIn: process.env.JWT_EXPIRA
+                    })
+                    console.log(`Usuario: ${usuario} - Token: ${token}`);
+
+                    const cookieOptions = {
+                        expires: new Date(Date.now() + process.env.JWT_COOKIE * 24 * 60 * 60 *1000),
+                        httpOnly: true
+                    }
+                    res.cookie('jwt', token, cookieOptions)
+                    res.render('login', {
+                        alert: true,
+                        alertTitle: "Conexion Exitosa!!",
+                        alertMessage: `Bienvenido ${usuario}` ,
+                        alertIcon: 'success',
+                        showConfirmationButton: false,
+                        timer: 800,
+                        ruta:'consulta'
+                    })
+                }
             });
         }
-
     }catch (error){
         throw err;
     }
