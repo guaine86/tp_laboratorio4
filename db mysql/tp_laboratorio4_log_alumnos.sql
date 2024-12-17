@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `tp_laboratorio4` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `tp_laboratorio4`;
--- MySQL dump 10.13  Distrib 8.0.22, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
 -- Host: localhost    Database: tp_laboratorio4
 -- ------------------------------------------------------
--- Server version	8.0.39
+-- Server version	8.4.3
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,8 +32,18 @@ CREATE TABLE `log_alumnos` (
   `tabla` varchar(30) NOT NULL,
   `bbdd` varchar(30) NOT NULL,
   PRIMARY KEY (`idlog_alumnos`)
-) ENGINE=InnoDB AUTO_INCREMENT=188 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log_alumnos`
+--
+
+LOCK TABLES `log_alumnos` WRITE;
+/*!40000 ALTER TABLE `log_alumnos` DISABLE KEYS */;
+INSERT INTO `log_alumnos` VALUES (188,'Solicitud de alta','2024-12-15','root@localhost','alumnos','tp_laboratorio4'),(189,'Alta confirmada - ID: 19','2024-12-15','root@localhost','alumnos','tp_laboratorio4'),(190,'Solicitud de alta','2024-12-16','root@localhost','alumnos','tp_laboratorio4'),(191,'Alta confirmada - ID: 20','2024-12-16','root@localhost','alumnos','tp_laboratorio4'),(192,'Solicitud de alta','2024-12-16','root@localhost','alumnos','tp_laboratorio4'),(193,'Alta confirmada - ID: 21','2024-12-16','root@localhost','alumnos','tp_laboratorio4');
+/*!40000 ALTER TABLE `log_alumnos` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -44,4 +54,4 @@ CREATE TABLE `log_alumnos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-08 14:23:33
+-- Dump completed on 2024-12-16 22:19:16
