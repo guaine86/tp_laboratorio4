@@ -63,8 +63,6 @@ exports.ingresar = async(req, res) => {
                         alertTitle: "Advertencia",
                         alertMessage: "Ingrese un usuario y un password validos!!" ,
                         alertIcon: "info",
-                        showConfirmationButton: true,
-                        timer: false,
                         ruta: 'login'
                     });
                 }else{
@@ -83,8 +81,6 @@ exports.ingresar = async(req, res) => {
                         alertTitle: "Conexion Exitosa!!",
                         alertMessage: `Bienvenido ${usuario}` ,
                         alertIcon: 'success',
-                        showConfirmationButton: false,
-                        timer: 800,
                         ruta:'consulta'
                     })
                 }

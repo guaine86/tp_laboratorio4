@@ -46,17 +46,17 @@
     <%- include('./templates/footer.ejs') %> 
     <script type="module" src="/js/login.js"></script>
     <script src="/js/sweetalert2.all.min.js"></script>
-    <% if(typeof alert !== "undefined"){if(alert){ %> 
-    <script >
+    <% if(typeof alert !== "undefined"){if(alert){ %>
+        <script > 
             Swal.fire({
                 icon: "<%= alertIcon %>",
                 title: "<%= alertTitle %>",
                 text: "<%= alertMessage %>",
-                // showConfirmButton: <%= showConfirmationButton %>,
-                // timer: <%= timer %>
             })
             .then
+            setTimeout(()=>{
                 window.location = "/<%= ruta %>"
+            },5000);
     </script>
     <% }} %>
 </body>

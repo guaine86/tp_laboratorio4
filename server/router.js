@@ -4,6 +4,67 @@ const router = express.Router();
 const conexion = require('./bbdd.js');
 const crud = require('./crud.js');
 const autenticacion = require('../controllers/auth.controller.js');
+const nodemailer = require('nodemailer');
+
+// Configurar Nodemailer
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth:{
+        user: 'guaine86@gmail.com',
+        pass: 'gebj asgo hlvh cgao'
+    },
+});
+
+// Ruta enviar correo
+router.post('/enviar-correo', async(req, res) => {
+    try {
+        const datos = req.body;
+        const{nombre, email, empresa, puesto, mensaje} = datos;
+    
+        const mailOptions = {
+            from: email,
+            to: 'guaine86@gmail.com',
+            subject: 'Solicitud Empleador',
+            html:`
+                <h3>Detalles de la solicitud:</h3>
+                <ul>
+                    <li><strong>Nombre: </strong>${nombre}</li>
+                    <li><strong>Correo Electronico: </strong>${email}</li>
+                    <li><strong>Tipo de Empresa: </strong>${empresa}</li>
+                    <li><strong>Puesto Solicitado: </strong>${puesto}</li>
+                </ul>
+                <p><strong>Mensaje:</strong></p>
+                <p>${mensaje}</p>
+    
+            `,
+        };
+    
+        await transporter.sendMail(mailOptions, (err, info) =>{
+            if(err){
+                console.error('Error al enviar el correo:', err)
+                //return res.status(500).send('Error al enviar el correo!!');
+                res.render('contacto', {
+                    alert: true,
+                    alertTitle: "Error al Enviar el correo",
+                    alertMessage: "Ingrese un mail valido!!" ,
+                    alertIcon: "info",
+                    ruta: 'contacto'
+                });
+            }
+            //res.send('Correo Enviado con Exito!!');
+            res.render('contacto', {
+                alert: true,
+                alertTitle: "Correo Enviado con Exito",
+                alertMessage: "En breve nos pondremos en contacto con ud" ,
+                alertIcon: 'success',
+                ruta:'index'
+            })
+        });
+        
+    }catch (error){
+        throw error;
+    }
+});
 
 // Ruta Principal
 router.get('/',(req,res)=>{
@@ -159,14 +220,19 @@ router.get('/elimina/:id/:carrera', autenticacion.autenticado,(req,res)=>{
     })
 });
 
-//Ruta para el login
+// Ruta para el login
 router.get('/login', (req, res) => {
     res.render('login');
 });
 
-//Ruta para el registro
+// Ruta para el registro
 router.get('/register', (req, res) => {
     res.render('register');
+});
+
+// Ruta para el contacto
+router.get('/contacto', (req, res) => {
+    res.render('contacto');
 });
 
 router.post('/validar', crud.validar);
@@ -175,14 +241,14 @@ router.post('/registrar', autenticacion.registrar);
 router.post('/ingresar', autenticacion.ingresar);
 router.get('/logout', autenticacion.logout);
 
-router.get('/set-cookie', (req, res)=>{
-    res.cookie('testCookie', 'cookieValue',{httpOnly: true});
-    res.send('Cookie establecida')
-});
+// router.get('/set-cookie', (req, res)=>{
+//     res.cookie('testCookie', 'cookieValue',{httpOnly: true});
+//     res.send('Cookie establecida')
+// });
 
-router.get('/get-cookie',(req, res)=>{
-    const cookieValue = req.cookies.testCookie;
-    res.send(`Valor de la cookie ${cookieValue || 'No hay cookie disponible'}`);
-})
+// router.get('/get-cookie',(req, res)=>{
+//     const cookieValue = req.cookies.testCookie;
+//     res.send(`Valor de la cookie ${cookieValue || 'No hay cookie disponible'}`);
+// })
 
 module.exports = router;
