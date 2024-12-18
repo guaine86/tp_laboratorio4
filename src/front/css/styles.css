@@ -447,11 +447,20 @@ h1.titulo span{
   min-height: 100vh;
 }
 
-.consulta-barra{display: flex; justify-content: space-between;}
+.consulta-barra{
+	display: flex; 
+	justify-content: space-between;
+}
 
-.consulta-form{display: flex; align-items: center; gap: 2rem;}
+.consulta-form{
+	display: flex; 
+	align-items: center; 
+	gap: 2rem;
+}
 
-.consulta-form__select{margin-top: 1.4rem;}
+.consulta-form__select{
+	margin-top: 1.4rem;
+}
 
 .encabezado{
 	display: flex;

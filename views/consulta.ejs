@@ -49,8 +49,9 @@
                     <th>Telefono</th>
                     <th>Email</th>
                     <th>Domicilio</th>
-                    <th>Carrera</th>
+                    <th><a href="#" class="encabezado"><span>Carrera </span><i class='bx bx-caret-down-circle'></i></a></th>
                     <th>Observaciones</th>
+                    <th>Egresado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -73,6 +74,7 @@
                     <td class="capitalize"><%= alumno.domicilio %></td>
                     <td class="capitalize"><%= alumno.carrera %></td>
                     <td><%= alumno.observaciones %></td>
+                    <td><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></td>
                     <td>
                         <a href="/modifica/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
                         <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a>
@@ -84,5 +86,6 @@
     </main>
 
     <%- include('./templates/footer.ejs') %>
+    <script src="/js/consulta.js"></script>
 </body>
 </html>
