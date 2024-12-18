@@ -29,7 +29,7 @@ router.get('/index',(req,res)=>{
 });
 
 // Ruta Consultas
-router.get('/consulta', (req,res)=>{
+router.get('/consulta', autenticacion.autenticado,(req,res)=>{
     let lista_carreras = [];
 
     const carreras = `SELECT * FROM carrera;`;
@@ -46,12 +46,12 @@ router.get('/consulta', (req,res)=>{
         if(err){
             throw err;
         }else{
-            res.render('consulta',{resultados: registros, rows: lista_carreras});
+            res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario});
         }
     });
 });
 
-router.get('/consulta/:ordena',(req,res)=>{
+router.get('/consulta/:ordena', autenticacion.autenticado,(req,res)=>{
     const ordena = req.params.ordena;
     let lista_carreras = [];
 
@@ -70,12 +70,12 @@ router.get('/consulta/:ordena',(req,res)=>{
         if(err){
             throw err;
         }else{
-            res.render('consulta',{resultados: registros, rows: lista_carreras});
+            res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario});
         }
     });
 });
 
-router.post('/filtra',(req,res)=>{
+router.post('/filtra', autenticacion.autenticado, (req,res)=>{
     const datos = req.body;
     const {carrera: id_carrera, egresado} = datos;
    
@@ -103,7 +103,7 @@ router.post('/filtra',(req,res)=>{
             if(err){
                 throw err;
             }else{
-                res.render('consulta',{resultados: registros, rows: lista_carreras});
+                res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario});
             }
         });
     }else{
@@ -112,7 +112,7 @@ router.post('/filtra',(req,res)=>{
             if(err){
                 throw err;
             }else{
-                res.render('consulta',{resultados: registros, rows: lista_carreras});
+                res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario});
             }
         });
     }
@@ -120,7 +120,7 @@ router.post('/filtra',(req,res)=>{
 });
 
 // Ruta Editar Registros
-router.get('/modifica/:id/:carrera',(req,res)=>{
+router.get('/modifica/:id/:carrera', autenticacion.autenticado,(req,res)=>{
     const id = req.params.id;
     const carrera = req.params.carrera.toLowerCase();
 
@@ -143,7 +143,7 @@ router.get('/modifica/:id/:carrera',(req,res)=>{
 });
 
 // Ruta para Eliminar Registros
-router.get('/elimina/:id/:carrera',(req,res)=>{
+router.get('/elimina/:id/:carrera', autenticacion.autenticado,(req,res)=>{
     const id = req.params.id;
     const carrera = req.params.carrera.toLowerCase();
     let muestra;
@@ -173,5 +173,16 @@ router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
 router.post('/registrar', autenticacion.registrar);
 router.post('/ingresar', autenticacion.ingresar);
+router.get('/logout', autenticacion.logout);
+
+router.get('/set-cookie', (req, res)=>{
+    res.cookie('testCookie', 'cookieValue',{httpOnly: true});
+    res.send('Cookie establecida')
+});
+
+router.get('/get-cookie',(req, res)=>{
+    const cookieValue = req.cookies.testCookie;
+    res.send(`Valor de la cookie ${cookieValue || 'No hay cookie disponible'}`);
+})
 
 module.exports = router;

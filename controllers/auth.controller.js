@@ -41,7 +41,6 @@ exports.ingresar = async(req, res) => {
     try{
         const datos = req.body;
         let {usuario, pass} = datos;
-        // console.log(`${usuario} ${pass}`);
 
         if(!usuario || !pass){
             res.render('login', {
@@ -73,11 +72,10 @@ exports.ingresar = async(req, res) => {
                     const token = jwt.sign({id: id}, process.env.JWT_SECRETO, {
                         expiresIn: process.env.JWT_EXPIRA
                     })
-                    console.log(`Usuario: ${usuario} - Token: ${token}`);
 
                     const cookieOptions = {
                         expires: new Date(Date.now() + process.env.JWT_COOKIE * 24 * 60 * 60 *1000),
-                        httpOnly: true
+                        httpOnly: true,
                     }
                     res.cookie('jwt', token, cookieOptions)
                     res.render('login', {
@@ -95,4 +93,31 @@ exports.ingresar = async(req, res) => {
     }catch (error){
         throw err;
     }
+};
+
+exports.autenticado = async(req, res, next) =>{
+    let token = req.cookies.jwt
+    if(token){
+        try {
+            const decodificar = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRETO);
+            const consulta = `SELECT * FROM usuarios WHERE idusuarios = ${decodificar.id};`;
+            conexion.query(consulta, (err, resultado) => {
+                if(err){
+                    throw err;
+                }
+                if(!resultado){return next()}
+                req.usuario = resultado[0];
+                return next()
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    }else{
+        res.render('login');
+    }
+};
+
+exports.logout = (req, res) => {
+    res.clearCookie('jwt');
+    return res.render('index')
 };

@@ -10,6 +10,16 @@
     </div>
 
     <main class="contenedor sombras" style="max-width: 140rem;">
+        <div style="display:grid; grid-template-columns: 1fr 2fr 1fr;">
+            <div style="grid-column: 2/3;">
+                <% if(typeof usuario !== "undefined"){ %>
+                    <h2 class="capitalize" style="align-self: flex-end;">Bienvenido: <%= usuario.nombre %>!!</h2>
+                <% } %>
+            </div>
+            <div style="display: flex; justify-content: end;">
+                <a class="btn btn-outline-danger mt-4 mb-2" href="/logout">Logout</a>
+            </div>
+        </div>
         <div class="consulta-barra">
             <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md'></i></a>
             <div>
