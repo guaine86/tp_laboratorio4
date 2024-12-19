@@ -29,6 +29,7 @@ CREATE TABLE `alumno_cursa_carrera` (
   `CARRERA_idcarrera` int NOT NULL,
   `fecha_inscripcion` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `confirma` tinyint NOT NULL DEFAULT '1',
+  `egresado` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`ALUMNOS_idalumnos`,`CARRERA_idcarrera`),
   KEY `CARRERA_idcarrera_idx` (`CARRERA_idcarrera`),
   CONSTRAINT `fk_ALUMNOS_idalumnos` FOREIGN KEY (`ALUMNOS_idalumnos`) REFERENCES `alumnos` (`idalumnos`),
@@ -42,7 +43,7 @@ CREATE TABLE `alumno_cursa_carrera` (
 
 LOCK TABLES `alumno_cursa_carrera` WRITE;
 /*!40000 ALTER TABLE `alumno_cursa_carrera` DISABLE KEYS */;
-INSERT INTO `alumno_cursa_carrera` VALUES (19,5,'2024-12-15 01:14:36',1),(20,5,'2024-12-16 21:16:48',1),(21,7,'2024-12-16 21:50:35',1);
+INSERT INTO `alumno_cursa_carrera` VALUES (19,5,'2024-12-15 01:14:36',1,1),(20,5,'2024-12-16 21:16:48',1,0),(21,7,'2024-12-16 21:50:35',1,0);
 /*!40000 ALTER TABLE `alumno_cursa_carrera` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-16 22:19:16
+-- Dump completed on 2024-12-19 11:41:34

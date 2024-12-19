@@ -30,8 +30,9 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(100) NOT NULL,
   `email` varchar(45) NOT NULL,
   `pass` varchar(255) NOT NULL,
+  `confirma` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`idusuarios`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +41,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'guaine86','edward wayne cruz','guaine86@gmail.com','$2a$08$AiDzeGjUgPhMmxIe3W5QnOPp7R32Ocuf1tlq0OoKsvSJeZgCZpMnq'),(2,'guaine86@gmail.com','edward wayne cruz','wayne86@gmail.com','$2a$08$w04jdbMsmv1LjgVUe9A/reEowHY9LFF0BfvMOb5c25JG9/04hSsC6'),(3,'ewcruz','edward cruz','ewcruz@yahoo.com.ar','$2a$08$B0xCNpm4T5GR9WAdA.L9Tu6YPsXfz38c3utE3u14yl8LyuItqFXh.'),(4,'ecruz','edward wayne quattrone cruz','ecruz@cfp421.org.ar','$2a$08$GDWM4oAdksxbjrsLMa1e8O6GGhj7bx4TFl3D/Dq8btY9D5lUlZ6am');
+INSERT INTO `usuarios` VALUES (1,'guaine86','edward wayne cruz','guaine86@gmail.com','$2a$08$AiDzeGjUgPhMmxIe3W5QnOPp7R32Ocuf1tlq0OoKsvSJeZgCZpMnq',1),(2,'guaine86@gmail.com','edward wayne cruz','wayne86@gmail.com','$2a$08$w04jdbMsmv1LjgVUe9A/reEowHY9LFF0BfvMOb5c25JG9/04hSsC6',1),(4,'ecruz','edward wayne quattrone cruz','ecruz@cfp421.org.ar','$2a$08$GDWM4oAdksxbjrsLMa1e8O6GGhj7bx4TFl3D/Dq8btY9D5lUlZ6am',1),(5,'ewcruz','edward wayne quattrone ','ewcruz@yahoo.com.ar','$2a$08$zlsHoQmMtF4GKNHsOpnkZ.br5B7up.vENYCvBHJzOa4CIIJMDkfym',1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-16 22:19:16
+-- Dump completed on 2024-12-19 11:41:34

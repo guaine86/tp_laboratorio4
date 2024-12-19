@@ -44,7 +44,7 @@ CREATE TABLE `alumnos` (
 
 LOCK TABLES `alumnos` WRITE;
 /*!40000 ALTER TABLE `alumnos` DISABLE KEYS */;
-INSERT INTO `alumnos` VALUES (19,'edward wayne','cruz','92783036','1986-03-05','1159773824','guaine86@gmail.com','av san martin 1860','-'),(20,'bruno valentino','cruz gonzalez','54957857','2007-12-18','1158773824','guaine86@gmail.com','av san martin 1860','-'),(21,'ed','cruz','92783099','2000-11-23','1135357541','ewcruz@yahoo.com.ar','av san martin 1860','-');
+INSERT INTO `alumnos` VALUES (19,'edward wayne','cruz quattrone','92783036','1986-03-05','1159773824','guaine86@gmail.com','av san martin 1860','-'),(20,'bruno valentino','cruz gonzalez','54957857','2007-12-18','1158773824','guaine86@gmail.com','av san martin 1860','-'),(21,'ed','cruz','92783099','2000-11-23','1135357541','ewcruz@yahoo.com.ar','av san martin 1860','-');
 /*!40000 ALTER TABLE `alumnos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -159,4 +159,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-16 22:19:16
+-- Dump completed on 2024-12-19 11:41:34
