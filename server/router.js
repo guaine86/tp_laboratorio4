@@ -5,66 +5,17 @@ const conexion = require('./bbdd.js');
 const crud = require('./crud.js');
 const autenticacion = require('../controllers/auth.controller.js');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const transporter = require('./email.js');
 
 // Configurar Nodemailer
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth:{
-        user: 'guaine86@gmail.com',
-        pass: 'gebj asgo hlvh cgao'
-    },
-});
-
-// Ruta enviar correo
-router.post('/enviar-correo', async(req, res) => {
-    try {
-        const datos = req.body;
-        const{nombre, email, empresa, puesto, mensaje} = datos;
-    
-        const mailOptions = {
-            from: email,
-            to: 'guaine86@gmail.com',
-            subject: 'Solicitud Empleador',
-            html:`
-                <h3>Detalles de la solicitud:</h3>
-                <ul>
-                    <li><strong>Nombre: </strong>${nombre}</li>
-                    <li><strong>Correo Electronico: </strong>${email}</li>
-                    <li><strong>Tipo de Empresa: </strong>${empresa}</li>
-                    <li><strong>Puesto Solicitado: </strong>${puesto}</li>
-                </ul>
-                <p><strong>Mensaje:</strong></p>
-                <p>${mensaje}</p>
-    
-            `,
-        };
-    
-        await transporter.sendMail(mailOptions, (err, info) =>{
-            if(err){
-                console.error('Error al enviar el correo:', err)
-                //return res.status(500).send('Error al enviar el correo!!');
-                res.render('contacto', {
-                    alert: true,
-                    alertTitle: "Error al Enviar el correo",
-                    alertMessage: "Ingrese un mail valido!!" ,
-                    alertIcon: "info",
-                    ruta: 'contacto'
-                });
-            }
-            //res.send('Correo Enviado con Exito!!');
-            res.render('contacto', {
-                alert: true,
-                alertTitle: "Correo Enviado con Exito",
-                alertMessage: "En breve nos pondremos en contacto con ud" ,
-                alertIcon: 'success',
-                ruta:'index'
-            })
-        });
-        
-    }catch (error){
-        throw error;
-    }
-});
+// const transporter = nodemailer.createTransport({
+//     service: 'Gmail',
+//     auth:{
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS
+//     },
+// });
 
 // Ruta Principal
 router.get('/',(req,res)=>{
@@ -235,11 +186,115 @@ router.get('/contacto', (req, res) => {
     res.render('contacto');
 });
 
+// Ruta para verificar correo
+router.get('/verificar/:token', async(req, res) => {
+    try {
+        const {token} = req.params;
+        const decoded = jwt.verify(token, process.env.JWT_SECRETO);
+
+        const email = decoded.email;
+        
+        // const buscaUsuario = `SELECT usuario FROM usuarios WHERE email = '${email}';`;
+        // conexion.query(buscaUsuario, (err, resultado)=>{
+        //     if(err){
+        //         throw err;
+        //     }else if(resultado.length === 0){
+        //         res.status(404).render('verificar', {
+        //             alert: true,
+        //             alertTitle: "Advertencia",
+        //             alertMessage: "Usuario no encontrado!!" ,
+        //             alertIcon: "info",
+        //             ruta: 'register'
+        //         })
+        //     }else{
+        //         res.status(406).send('verificar',{usuario: resultado[0]});
+        //     }
+        // })
+        
+        const confirma = `UPDATE usuarios SET confirma = 1 WHERE email = '${email}';`;
+        conexion.query(confirma, (err) =>{
+            if(err){
+                throw err;
+            }else{
+                res.render('verificar',{
+                        alert: true,
+                        alertTitle: "Usuario Verificado con Exito!!",
+                        alertMessage: "Ya puede ingresar al sistema" ,
+                        alertIcon: "success",
+                        showConfirmationButton: true,
+                        timer: false,
+                        ruta: 'login'
+                });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(400).render('verificar', {
+            alert: true,
+            alertTitle: "Advertencia",
+            alertMessage: "Enlace de verificacion invalido o expirado!!" ,
+            alertIcon: "info",
+            ruta: 'register'
+        })
+    }
+})
+
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
 router.post('/registrar', autenticacion.registrar);
 router.post('/ingresar', autenticacion.ingresar);
 router.get('/logout', autenticacion.logout);
+
+// Ruta enviar correo
+router.post('/enviar-correo', async(req, res) => {
+    try {
+        const datos = req.body;
+        const{nombre, email, empresa, puesto, mensaje} = datos;
+    
+        const mailOptions = {
+            from: email,
+            to: 'guaine86@gmail.com',
+            subject: 'Solicitud Empleador',
+            html:`
+                <h3>Detalles de la solicitud:</h3>
+                <ul>
+                    <li><strong>Nombre: </strong>${nombre}</li>
+                    <li><strong>Correo Electronico: </strong>${email}</li>
+                    <li><strong>Tipo de Empresa: </strong>${empresa}</li>
+                    <li><strong>Puesto Solicitado: </strong>${puesto}</li>
+                </ul>
+                <p><strong>Mensaje:</strong></p>
+                <p>${mensaje}</p>
+    
+            `,
+        };
+    
+        await transporter.sendMail(mailOptions, (err, info) =>{
+            if(err){
+                console.error('Error al enviar el correo:', err)
+                //return res.status(500).send('Error al enviar el correo!!');
+                res.render('contacto', {
+                    alert: true,
+                    alertTitle: "Error al Enviar el correo",
+                    alertMessage: "Ingrese un mail valido!!" ,
+                    alertIcon: "info",
+                    ruta: 'contacto'
+                });
+            }
+            //res.send('Correo Enviado con Exito!!');
+            res.render('contacto', {
+                alert: true,
+                alertTitle: "Correo Enviado con Exito",
+                alertMessage: "En breve nos pondremos en contacto con ud" ,
+                alertIcon: 'success',
+                ruta:'index'
+            })
+        });
+        
+    }catch (error){
+        throw error;
+    }
+});
 
 // router.get('/set-cookie', (req, res)=>{
 //     res.cookie('testCookie', 'cookieValue',{httpOnly: true});

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Verifica Correo</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body>
+    <%- include('./templates/header-nav.ejs') %>
+    <h1>Link de Verificacion</h1>
+    <%- include('./templates/footer.ejs') %>
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <% if(typeof alert !== "undefined"){if(alert){ %> 
+        <script >
+                Swal.fire({
+                    icon: "<%= alertIcon %>",
+                    title: "<%= alertTitle %>",
+                    text: "<%= alertMessage %>",
+                })
+                .then
+                setTimeout(()=>{
+                    window.location = "/<%= ruta %>"
+                },4000);    
+        </script>
+    <% }} %>
+</body>
+</html>
