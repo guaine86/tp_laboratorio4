@@ -6,6 +6,7 @@ const crud = require('./crud.js');
 const autenticacion = require('../controllers/auth.controller.js');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const bcryptjs = require('bcryptjs');
 const transporter = require('./email.js');
 
 // Configurar Nodemailer
@@ -186,6 +187,17 @@ router.get('/contacto', (req, res) => {
     res.render('contacto');
 });
 
+// Ruta Reestablecer contraseña
+router.get('/reset-pass', (req,res)=>{
+    res.render('reset-pass');
+})
+
+// Ruta nueva contraseña
+router.get('/nuevo-pass/:token', (req, res)=>{
+    const valida = req.params.token;
+    res.render('nuevo-pass', {tokenPass: valida});
+})
+
 // Ruta para verificar correo
 router.get('/verificar/:token', async(req, res) => {
     try {
@@ -210,7 +222,7 @@ router.get('/verificar/:token', async(req, res) => {
         //         res.status(406).send('verificar',{usuario: resultado[0]});
         //     }
         // })
-        
+
         const confirma = `UPDATE usuarios SET confirma = 1 WHERE email = '${email}';`;
         conexion.query(confirma, (err) =>{
             if(err){
@@ -237,7 +249,7 @@ router.get('/verificar/:token', async(req, res) => {
             ruta: 'register'
         })
     }
-})
+});
 
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
@@ -296,6 +308,66 @@ router.post('/enviar-correo', async(req, res) => {
     }
 });
 
+// Accion restablecer contraseña
+router.post('/restablecer',async(req,res)=>{
+    const {email} = req.body;
+    let muestra;
+
+    const token = jwt.sign({ email }, process.env.JWT_SECRETO, { expiresIn: '1h'});
+    const resetLink = `http://localhost:${process.env.PORT}/nuevo-pass/${token}`;
+    
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Restablecimiento de contraseña',
+        html: `
+            <h1>Hola</h1>
+            <p>Solicitaste un cambio de  contraseña!! Por favor, verifica tu cuenta haciendo click en el siguiente enlace:</p>
+            <a href="${resetLink}">Verificar cuenta</a>
+        `
+    }
+
+    await transporter.sendMail(mailOptions);
+    
+    muestra = 'Enlace de restablecimiento enviado a tu correo!!';
+    res.render('login', {muestra});
+});
+
+// Accion nueva contraseña
+router.post('/nueva/:token', async(req, res)=>{
+    try {
+        const {token} = req.params;
+        const {pass} = req.body;
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRETO);
+
+        let passHash = await bcryptjs.hash(pass, 8);
+
+        const modifica = `UPDATE usuarios SET pass = '${passHash}' WHERE email = '${decoded.email}'`
+        conexion.query(modifica, (err)=>{
+            if(err){
+                throw err;
+            }else{
+                res.render('nuevo-pass',{
+                    alert: true,
+                    alertTitle: "Contraseña Actualizada!!",
+                    alertMessage: "Ya puede ingresar nuevamente" ,
+                    alertIcon: 'success',
+                    ruta:'login'
+                })
+            }
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(400).render('verificar', {
+            alert: true,
+            alertTitle: "Advertencia",
+            alertMessage: "Enlace de verificacion invalido o expirado!!" ,
+            alertIcon: "info",
+            ruta: 'register'
+        })
+    }
+})
 // router.get('/set-cookie', (req, res)=>{
 //     res.cookie('testCookie', 'cookieValue',{httpOnly: true});
 //     res.send('Cookie establecida')

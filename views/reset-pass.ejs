@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Login</title>
+    <title>Restablecer Contraseña</title>
     <%- include('./templates/head.ejs') %>
 </head>
 <body class="body-consulta">
@@ -17,11 +17,16 @@
 
     <main class="contenedor sombras" style="display: grid; align-items: center;">
        <div>
-           <h2 class="titulo mgb-2">Login</h2>
-           <form class="formulario" action="/ingresar" method="post" enctype="text/html">
+           <h2 class="titulo mgb-2">Restablecer:</h2>
+           <form class="formulario" action="/restablecer" method="post" enctype="text/html">
                <fieldset>
-                   <div class="formulario-campos formulario-campos__login">
-                       <div class="campo">
+                   <h4 class="titulo mgb-2">Se enviara un mail con el link para confirmar su identidad</h4>
+                    <div class="formulario-campos formulario-campos__login">
+                        <div class="campo">
+                            <label for="email">Correo:</label>
+                            <input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Formato valido (algo@mail.com)" maxlength="30"  autocomplete="off">
+                        </div>  
+                    <!-- <div class="campo">
                            <label for="usuario">Ingrese usuario:</label>
                            <input class="input" type="text" name="usuario" id="usuario" placeholder="Ingrese Usuario Registrado" title="Ingrese su usuario" minlength="3" maxlength="45" autocomplete="off" >
                        </div>
@@ -31,18 +36,15 @@
                        </div>
                         <div class="campo">
                             <input type="checkbox" name="ver" id="ver" value="ver-pass">Mostrar contraseña
-                        </div>
+                        </div> -->
                    </div>
                    <div class="alinear-derecha flex">
                        <input class="boton w100" type="submit" value="Enviar">
                        <!-- <input class="boton w100" type="reset" value="Borrar"> -->
-                       <a class="boton w100" href="/register" target="_self">Registrar</a>
+                       <a class="boton w100" href="/login" target="_self">Cancelar</a>
                    </div>
-                </fieldset>
-            </form>
-            <div>
-                 <a href="/reset-pass">Olvido su contraseña?</a>
-            </div>
+               </fieldset>
+           </form>
        </div>
     </main>
 

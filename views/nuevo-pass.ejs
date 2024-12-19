@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Contraseña Nueva</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body class="body-consulta">
+    <div>
+        <%- include('./templates/header-nav.ejs') %>
+        
+        <% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; %> 
+            <p class="contenedor centrar-texto <%= fondo %>">
+                <%= muestra %>
+            </p>
+	    <% } %>
+    </div>
+
+    <% if(typeof tokenPass !== "undefined"){ %>
+    <main class="contenedor sombras" style="display: grid; align-items: center;">
+       <div>
+                <h2 class="titulo mgb-2">Ingrese nueva contraseña:</h2>
+                <form class="formulario" action="/nueva/<%= tokenPass %>" method="post" enctype="text/html">
+                    <fieldset>
+                         <div class="formulario-campos formulario-campos__login">
+                            <div class="campo" id="campo-pass">
+                                <label for="pass">Ingrese su contraseña:</label>
+                                <input type="password" class="input" name="pass" id="pass" placeholder="Ingrese nueva contraseña" title="Ingrese su contraseña" minlength="4" autocomplete="off" >
+                            </div>
+                             <div class="campo">
+                                 <input type="checkbox" name="ver" id="ver" value="ver-pass">Mostrar contraseña
+                             </div>
+                        </div>
+                        <div class="alinear-derecha flex">
+                            <input class="boton w100" type="submit" value="Enviar">
+                            <!-- <input class="boton w100" type="reset" value="Borrar"> -->
+                            <a class="boton w100" href="/login" target="_self">Cancelar</a>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+    </main>
+    <% } %>
+
+    <%- include('./templates/footer.ejs') %> 
+    <script type="module" src="/js/login.js"></script>
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <% if(typeof alert !== "undefined"){if(alert){ %>
+        <script > 
+            Swal.fire({
+                icon: "<%= alertIcon %>",
+                title: "<%= alertTitle %>",
+                text: "<%= alertMessage %>",
+            })
+            .then
+            setTimeout(()=>{
+                window.location = "/<%= ruta %>"
+            },3000);
+    </script>
+    <% }} %>
+</body>
+</html>
