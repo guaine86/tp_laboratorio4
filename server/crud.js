@@ -23,7 +23,7 @@ exports.validar = (req,res)=>{
         to: email,
         subject: 'Verificacion de Solicitud de Inscripcion',
         html: `
-            <h1>Hola, ${nombre}</h1>
+            <h1 style="text-transform: capitalize;">Hola, ${nombre}</h1>
             <p>Gracias por inscribirte!! Por favor, verifica tu correo asi podemos contactarnos con vos haciendo click en el siguiente enlace:</p>
             <a href="${verificacionLink}">Verificar email contacto</a>
         `
@@ -53,7 +53,7 @@ exports.validar = (req,res)=>{
                         if(err){
                             throw err;
                         }else{
-                            muestra = "Alumno Ingresado con Exito!!Prueba";
+                            muestra = "Alumno Reingresado con Exito!!";
                             res.render('index',{muestra, rows: lista_carreras});
                         }
                     })

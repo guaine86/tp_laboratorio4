@@ -23,7 +23,7 @@ exports.registrar = async(req,res) => {
             to: email,
             subject: 'Verificacion de cuenta',
             html: `
-                <h1>Hola, ${nombre}</h1>
+                <h1 style="text-transform: capitalize;">Hola, ${nombre}</h1>
                 <p>Gracias por registrarte!! Por favor, verifica tu cuenta haciendo click en el siguiente enlace:</p>
                 <a href="${verificacionLink}">Verificar cuenta</a>
             `
@@ -79,13 +79,29 @@ exports.registrar = async(req,res) => {
                                 }
                             }
                             else{
-                                const registra = `INSERT INTO usuarios (usuario, nombre, email, pass) VALUES ('${usuario}', '${nombre}', '${email}', '${passHash}');`;
-                                conexion.query(registra, (err) => {
+                                const buscaAuth = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni ='${dni}';`;
+                                conexion.query(buscaAuth, (err, resultado)=>{
                                     if(err){
                                         throw err;
                                     }else{
-                                        muestra = 'Usuario ingresado con exito!! Verifique su cuenta a traves del correo enviado a su email para poder iniciar sesion';
-                                        res.render('login', {muestra});
+                                        const idAuth = resultado[0].idusuarios_autorizados;
+
+                                        const cargaNombre = `UPDATE usuarios_autorizados SET nombre_completo = '${nombre}' WHERE idusuarios_autorizados = ${idAuth};`;
+                                        conexion.query(cargaNombre,(err,resultado)=>{
+                                            if(err){
+                                                throw err;
+                                            }
+                                        })
+
+                                        const registra = `INSERT INTO usuarios (usuario, nombre, email, pass, AUTH_idusuarios_autorizados) VALUES ('${usuario}', '${nombre}', '${email}', '${passHash}', ${idAuth});`;
+                                        conexion.query(registra, (err) => {
+                                            if(err){
+                                                throw err;
+                                            }else{
+                                                muestra = 'Usuario ingresado con exito!! Verifique su cuenta a traves del correo enviado a su email para poder iniciar sesion';
+                                                res.render('login', {muestra});
+                                            }
+                                        });
                                     }
                                 });
                             }      

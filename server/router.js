@@ -270,6 +270,19 @@ router.get('/verificar/:token/:tipo/:dni', async(req, res) => {
     }
 });
 
+// Ruta usuarios autorizados
+router.get('/agregar', autenticacion.autenticado ,(req,res)=>{
+    const carreras = `SELECT * FROM rol;`;
+    conexion.query(carreras,(err, resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            res.render('agregar',{rows: resultados});
+        }
+    });
+});
+
+
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
 router.post('/registrar', autenticacion.registrar);
@@ -387,6 +400,49 @@ router.post('/nueva/:token', async(req, res)=>{
         })
     }
 })
+
+// Accion agregar autorizado
+router.post('/agregarAuth', (req,res)=>{
+    const datos = req.body;
+    const {dni, rol} = datos;
+    let muestra;
+
+    lista_roles = [];
+    const carreras = `SELECT * FROM rol;`;
+    conexion.query(carreras,(err, resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            lista_roles = resultados;
+        }
+    });
+
+    const agrega = `INSERT INTO usuarios_autorizados (dni) VALUES ('${dni}');`;
+    conexion.query(agrega, (err, insertado,next)=>{
+        if(err){
+            muestra = "No se puede autorizar al mismo DNI!!"
+            res.render('agregar', {muestra, rows: lista_roles});
+        }else{
+            const id_creado = insertado.insertId;
+            const agrega2= `INSERT INTO roles_autorizados (AUTH_idusuarios_autorizados, ROL_idrol) VALUES (${id_creado}, ${rol});`;
+            conexion.query(agrega2, (err)=>{
+                if(err){
+                    throw err;
+                }else{
+                    res.render('agregar', {
+                        alert: true,
+                        alertTitle: "Autorizacion agregada Correctamente!!",
+                        alertMessage: "Cuando el usuario se registre podra ingresar al sistema" ,
+                        alertIcon: 'success',
+                        ruta:'consulta'
+                    })
+                }
+            })
+        }
+    })
+
+})
+
 // router.get('/set-cookie', (req, res)=>{
 //     res.cookie('testCookie', 'cookieValue',{httpOnly: true});
 //     res.send('Cookie establecida')

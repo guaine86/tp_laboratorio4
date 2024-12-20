@@ -6,7 +6,7 @@ const miModulo = (()=>{
     const dni = document.querySelector('#dni');
     const telefono = document.querySelector('#telefono');
     const direccion = document.querySelector('#domicilio');
-    const formulario = document.querySelector('.formulario')
+    const formulario = document.querySelector('.formulario');
     
     nombre.addEventListener('input', valida);
     apellido.addEventListener('input', valida);
