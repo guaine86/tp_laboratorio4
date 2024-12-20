@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Consulta</title>
+    <title>Modificar Permisos</title>
     <%- include('./templates/head.ejs') %>
 </head>
 <body class="body-consulta">
@@ -17,11 +17,11 @@
                 <% } %>
             </div>
             <div style="display: flex; justify-content: end;">
-                <a class="btn btn-outline-primary mt-4 mb-2" style="margin-right: 1rem;" href="/agregar">Adminitrar Usuarios</a>
+                <a class="btn btn-outline-primary mt-4 mb-2" style="margin-right: 1rem;" href="/agregar">Agregar Usuarios</a>
                 <a class="btn btn-outline-danger mt-4 mb-2" href="/logout">Logout</a>
             </div>
         </div>
-        <div class="consulta-barra">
+        <!-- <div class="consulta-barra">
             <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md'></i></a>
             <div>
                 <form class="consulta-form" action="/filtra" method="post">
@@ -44,51 +44,38 @@
                             <option value="1" class="input-carrera">Si</option>
                         </select>
                     </div>
-                    <!-- <a href="/consulta/<%= 5 %>/<%= 1 %>" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bx-search-alt-2 bx-md'></i></a> -->
+                    
                      <button class="btn btn-outline-primary mt-4 mb-2" type="submit"><i class='bx bx-search-alt-2 bx-md'></i></button>
                 </form>
             </div>
-        </div>
+        </div> -->
         <table class="table table-bordered table-striped text-center mt-2" style="vertical-align: middle;">
             <thead>
                 <tr class="bg-warning text-white">
-                    <th><a href="/consulta" class="encabezado"><span>ID </span><i class='bx bx-caret-down-circle'></i></a></th>
-                    <th>Nombre</th>
-                    <th><a href="/consulta/<%= 'apellido' %>" class="encabezado"><span>Apellido </span><i class='bx bx-caret-down-circle'></i></a></th>
-                    <th><a href="/consulta/<%= 'dni' %>" class="encabezado"><span>DNI </span><i class='bx bx-caret-down-circle'></i></a></th>
-                    <th><div class="encabezado" style="column-gap: 0.3rem;"><span>Fecha </span><span>Nacimiento</span></div></th>
-                    <th>Telefono</th>
+                    <th><a href="#" class="encabezado"><span>ID </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><a href="#" class="encabezado"><span>Usuario </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><a href="#" class="encabezado"><span>Nombre Completo </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><a href="#" class="encabezado"><span>DNI </span><i class='bx bx-caret-down-circle'></i></a></th>
                     <th>Email</th>
-                    <th>Domicilio</th>
-                    <th><a href="#" class="encabezado"><span>Carrera </span><i class='bx bx-caret-down-circle'></i></a></th>
-                    <th>Observaciones</th>
-                    <th>Egresado</th>
+                    <th>Rol</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <% if(resultados.length === 0){ %>
-                    <!-- <tr>
-                        <td><strong>Aun no hay alumnos cargados!!</strong></td>
-                    </tr> -->
-                    <p class="centrar-texto alerta"><strong>Aun no hay alumnos cargados!!</strong></p>
+                    <p class="centrar-texto alerta"><strong>Aun no hay Usuarios Registrados!!</strong></p>
             <% }else { %>
             <tbody>
-                <% resultados.forEach((alumno)=>{ %>
+                <% resultados.forEach((usuario)=>{ %>
                 <tr>
-                    <td ><%= alumno.idalumnos %></td>
-                    <td class="capitalize"><%= alumno.nombre %></td>
-                    <td class="capitalize"><%= alumno.apellido %></td>
-                    <td><%= alumno.dni %></td>
-                    <td><%= alumno.fecha_nac.toLocaleDateString() %></td>
-                    <td><%= alumno.telefono %></td>
-                    <td><%= alumno.email %></td>
-                    <td class="capitalize"><%= alumno.domicilio %></td>
-                    <td class="capitalize"><%= alumno.carrera %></td>
-                    <td><%= alumno.observaciones %></td>
-                    <td><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></td>
+                    <td ><%= usuario.id %></td>
+                    <td><%= usuario.usuario %></td>
+                    <td class="capitalize"><%= usuario.nombre %></td>
+                    <td><%= usuario.dni %></td>
+                    <td><%= usuario.email %></td>
+                    <td class="capitalize"><%= usuario.rol %></td>
                     <td>
-                        <a href="/modifica/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
-                        <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a>
+                        <a href="/modifica-permisos/<%= usuario.id %>/<%= usuario.rol %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
+                        <a href="/elimina-usuario/<%= usuario.id %>/<%= usuario.rol %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a>
                     </td>
                 </tr>
                 <% })} %>

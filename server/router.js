@@ -277,10 +277,37 @@ router.get('/agregar', autenticacion.autenticado ,(req,res)=>{
         if(err){
             throw err;
         }else{
-            res.render('agregar',{rows: resultados});
+            res.render('agregar',{rows: resultados, usuario: req.usuario});
         }
     });
 });
+
+router.get('/modifica-usuario', autenticacion.autenticado, (req,res)=>{
+    const usuarios = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+    conexion.query(usuarios, (err, resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            res.render('modifica-usuario',{resultados});
+        }
+    })
+})
+
+router.get('/elimina-usuario/:id/:rol', autenticacion.autenticado, (req,res)=>{
+    const id = req.params.id;
+    const rol = req.params.rol;
+    let muestra;
+
+    const baja = `UPDATE usuarios_autorizados SET baja = 1 WHERE idusuarios_autorizados = (SELECT AUTH_idusuarios_autorizados FROM usuarios WHERE idusuarios = ${id});`;
+    conexion.query(baja, (err)=>{
+        if(err){
+            throw err;
+        }else{
+            muestra = "Usuario eliminado con Exito!!";
+            res.render('agregar', {muestra})
+        }
+    })
+})
 
 
 router.post('/validar', crud.validar);
@@ -420,8 +447,30 @@ router.post('/agregarAuth', (req,res)=>{
     const agrega = `INSERT INTO usuarios_autorizados (dni) VALUES ('${dni}');`;
     conexion.query(agrega, (err, insertado,next)=>{
         if(err){
-            muestra = "No se puede autorizar al mismo DNI!!"
-            res.render('agregar', {muestra, rows: lista_roles});
+            const buscaBaja = `SELECT * FROM usuarios_autorizados WHERE dni = '${dni}' AND baja = 1;`;
+            conexion.query(buscaBaja, (err, resultados)=>{
+                if(err){
+                    throw err;
+                }else if(resultados.length>0){
+                    const modificaBaja = `UPDATE usuarios_autorizados SET baja = 0 WHERE dni = '${dni}';`;
+                    conexion.query(modificaBaja, (err)=>{
+                        if (err){
+                            throw err;
+                        }else{
+                            res.render('agregar', {
+                                alert: true,
+                                alertTitle: "Autorizacion reingresada Correctamente!!",
+                                alertMessage: "El usuario ya puede ingresar al sistema nuevamente" ,
+                                alertIcon: 'success',
+                                ruta:'consulta'
+                            })
+                        }
+                    });
+                }else{
+                    muestra = "No se puede autorizar al mismo DNI!!"
+                    res.render('agregar', {muestra, rows: lista_roles});
+                }
+            })
         }else{
             const id_creado = insertado.insertId;
             const agrega2= `INSERT INTO roles_autorizados (AUTH_idusuarios_autorizados, ROL_idrol) VALUES (${id_creado}, ${rol});`;

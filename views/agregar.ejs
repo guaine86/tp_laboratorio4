@@ -7,7 +7,22 @@
 <body class="body-consulta">
     <div>
         <%- include('./templates/header-nav.ejs') %>
-        
+        <div style="display:grid; grid-template-columns:  auto 1fr;">
+            <div style="grid-column: 2/3; justify-self: flex-end;">
+                <% if(typeof usuario !== "undefined"){ %>
+                    <p class="capitalize" style="align-self: flex-end; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.nombre %></small></p>
+                <% } %>
+            </div>
+            <div style="grid-column: 3/4">
+                <div style="display: flex; justify-content: end; margin-right: 1rem;">
+                    <a class="btn btn-outline-primary mt-1 mb-4" style="margin-right: 1rem;" href="/modifica-usuario">Modificar Usuarios</a>
+                    <a class="btn btn-outline-danger mt-1 mb-4" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>      
         <% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; %> 
             <p class="contenedor centrar-texto <%= fondo %>">
                 <%= muestra %>
@@ -16,7 +31,8 @@
     </div>
 
     <main class="contenedor sombras" style="display: grid; align-items: center;">
-       <div>
+
+        <div>
            <h2 class="titulo mgb-2">Agregar autorizacion Usuario</h2>
            <form class="formulario" action="/agregarAuth" method="post" enctype="text/html">
                <fieldset>
