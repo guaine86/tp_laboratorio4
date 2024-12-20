@@ -1,4 +1,6 @@
 const conexion = require('./bbdd.js');
+const transporter = require('./email.js');
+const jwt = require('jsonwebtoken');
 
 exports.validar = (req,res)=>{
     const datos = req.body;
@@ -14,6 +16,19 @@ exports.validar = (req,res)=>{
     let muestra;
     let lista_carreras = [];
 
+    const token = jwt.sign({email}, process.env.JWT_SECRETO, {expiresIn: '1h'});
+    const verificacionLink = `http://localhost:${process.env.PORT}/verificar/${token}/${carrera}/${dni}`;
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Verificacion de Solicitud de Inscripcion',
+        html: `
+            <h1>Hola, ${nombre}</h1>
+            <p>Gracias por inscribirte!! Por favor, verifica tu correo asi podemos contactarnos con vos haciendo click en el siguiente enlace:</p>
+            <a href="${verificacionLink}">Verificar email contacto</a>
+        `
+    }
+
     const carreras = `SELECT * FROM carrera;`;
     conexion.query(carreras, (err,resultados)=>{
         if(err){
@@ -28,17 +43,17 @@ exports.validar = (req,res)=>{
         if(err){
             throw err;
         }else if(rows.length>0){
-            const busca2 = `SELECT confirma FROM alumno_cursa_carrera WHERE ALUMNOS_idalumnos = (SELECT idalumnos FROM alumnos WHERE dni = '${dni}') AND CARRERA_idcarrera = ${carrera} AND confirma = 0;`;
+            const busca2 = `SELECT muestra FROM alumno_cursa_carrera WHERE ALUMNOS_idalumnos = (SELECT idalumnos FROM alumnos WHERE dni = '${dni}') AND CARRERA_idcarrera = ${carrera} AND muestra = 0;`;
             conexion.query(busca2,(err,resultado)=>{
                 if(err){
                     throw err;
                 }else if(resultado.length>0){
-                    const modifica = `UPDATE alumno_cursa_carrera SET confirma = 1 WHERE ALUMNOS_idalumnos = (SELECT idalumnos FROM alumnos WHERE dni = '${dni}') AND CARRERA_idcarrera = ${carrera};`;
+                    const modifica = `UPDATE alumno_cursa_carrera SET muestra = 1 WHERE ALUMNOS_idalumnos = (SELECT idalumnos FROM alumnos WHERE dni = '${dni}') AND CARRERA_idcarrera = ${carrera};`;
                     conexion.query(modifica, (err)=>{
                         if(err){
                             throw err;
                         }else{
-                            muestra = "Alumno Ingresado con Exito!!";
+                            muestra = "Alumno Ingresado con Exito!!Prueba";
                             res.render('index',{muestra, rows: lista_carreras});
                         }
                     })
@@ -55,7 +70,8 @@ exports.validar = (req,res)=>{
                                     muestra = "No se puede volver a cargar el mismo alumno a la misma carrera!!";
                                     res.render('index',{muestra, rows: lista_carreras});
                                 }else{
-                                    muestra = "Alumno Ingresado con Exito!!";
+                                    transporter.sendMail(mailOptions);
+                                    muestra = "Alumno Ingresado con Exito!! Confirma tu inscripcion con el link enviado a tu correo";
                                     res.render('index',{muestra, rows: lista_carreras});
                                 }
                             });
@@ -91,7 +107,8 @@ exports.validar = (req,res)=>{
                                 if(err){
                                     throw err;
                                 }else{
-                                    muestra = "Alumno Ingresado con Exito!!";
+                                    transporter.sendMail(mailOptions);
+                                    muestra = "Alumno Ingresado con Exito!! Confirma tu inscripcion con el link enviado a tu correo";
                                     res.render('index',{muestra, rows: lista_carreras});
                                 }
                             });
@@ -135,17 +152,17 @@ exports.actualizar = (req,res)=>{
             const modifica2 = `UPDATE alumno_cursa_carrera SET CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}'), egresado = ${egresado} WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera_anterior}');`;
             conexion.query(modifica2, (err)=>{
                 if(err){
-                    const busca_previo = `SELECT * FROM alumno_cursa_carrera WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}') AND confirma = 0;`;
+                    const busca_previo = `SELECT * FROM alumno_cursa_carrera WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}') AND muestra = 0;`;
                     conexion.query(busca_previo,(err, resultado)=>{
                         if(err){
                             throw err;
                         }else if(resultado.length>0){
-                            const modifica3 = `UPDATE alumno_cursa_carrera SET confirma = 1 WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}');`;
+                            const modifica3 = `UPDATE alumno_cursa_carrera SET muestra = 1 WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}');`;
                             conexion.query(modifica3,(err)=>{
                                 if(err){
                                     throw err;
                                 }else{
-                                    const modifica4 = `UPDATE alumno_cursa_carrera SET confirma = 0 WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera_anterior}');`;
+                                    const modifica4 = `UPDATE alumno_cursa_carrera SET muestra = 0 WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera_anterior}');`;
                                     conexion.query(modifica4, (err)=>{
                                         if(err){
                                             throw err;

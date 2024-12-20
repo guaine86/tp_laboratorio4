@@ -7,7 +7,7 @@ const transporter = require ('../server/email.js');
 exports.registrar = async(req,res) => {
     try {
         const datos = req.body;
-        let {nombre, email, usuario, pass} = datos;
+        let {nombre, dni, email, usuario, pass} = datos;
         nombre = nombre.toLowerCase();
         email = email.toLowerCase();
         usuario = usuario.toLowerCase();
@@ -17,7 +17,7 @@ exports.registrar = async(req,res) => {
         let muestra;
         let modifica;
 
-        const verificacionLink = `http://localhost:${process.env.PORT}/verificar/${token}`;
+        const verificacionLink = `http://localhost:${process.env.PORT}/verificar/${token}/registro/usuario`;
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
@@ -29,52 +29,70 @@ exports.registrar = async(req,res) => {
             `
         }
         
-        const busca = `SELECT * FROM usuarios WHERE (usuario = '${usuario}' OR email = '${email}') AND confirma = 1;`;
-        conexion.query(busca, async (err, resultados) => {
+
+        const buscaAuth = `SELECT * FROM usuarios_autorizados WHERE dni = ${dni};`;
+        conexion.query(buscaAuth,(err, resultados) => {
             if(err){
                 throw err;
-            }else if(resultados.length > 0){
-                muestra = 'No se puede registrar el mismo usuario o email!!';
-                res.render('register',{muestra});
+            }else if(resultados.length===0){
+                return res.render('register',{
+                    alert: true,
+                    alertTitle: "Advertencia",
+                    alertMessage: "Ud no esta autorizado para registrarse" ,
+                    alertIcon: "info",
+                    ruta: 'index'
+                });
             }else{
-                await transporter.sendMail(mailOptions);
-                
-                const busca2 = `SELECT * FROM usuarios WHERE (usuario = '${usuario}' OR email = '${email}') AND confirma = 0;`;
-                conexion.query(busca2,(err, resultados)=>{
+
+                const busca = `SELECT * FROM usuarios WHERE (usuario = '${usuario}' OR email = '${email}') AND confirma = 1;`;
+                conexion.query(busca, async (err, resultados) => {
                     if(err){
                         throw err;
-                    }else if(resultados.length >0){
-                        if(resultados[0].usuario === usuario || resultados[0] === email){
-                            if(resultados[0].usuario === usuario){
-                                modifica = `UPDATE usuarios SET email = '${email}' WHERE usuario = '${usuario}';`;
-                            }else if(resultados[0].email === email){
-                                modifica = `UPDATE usuarios SET usuario = '${usuario}' WHERE email = '${email}'; `;
-                            }
-                            conexion.query(modifica, (err)=>{
-                                if(err){
-                                    throw err;
-                                }else{
-                                    muestra = `
-                                    Usuario o Email modificado con exito!! 
-                                    Verifique su cuenta a traves del correo enviado a su email para poder iniciar sesion
-                                    `;
-                                    res.render('login', {muestra});
-                                }
-                            });
-                        }
-                    }
-                    else{
-                        const registra = `INSERT INTO usuarios (usuario, nombre, email, pass) VALUES ('${usuario}', '${nombre}', '${email}', '${passHash}');`;
-                        conexion.query(registra, (err) => {
+                    }else if(resultados.length > 0){
+                        muestra = 'No se puede registrar el mismo usuario o email!!';
+                        res.render('register',{muestra});
+                    }else{
+                        await transporter.sendMail(mailOptions);
+                        
+                        const busca2 = `SELECT * FROM usuarios WHERE (usuario = '${usuario}' OR email = '${email}') AND confirma = 0;`;
+                        conexion.query(busca2,(err, resultados)=>{
                             if(err){
                                 throw err;
-                            }else{
-                                muestra = 'Usuario ingresado con exito!! Verifique su cuenta a traves del correo enviado a su email para poder iniciar sesion';
-                                res.render('login', {muestra});
+                            }else if(resultados.length >0){
+                                if(resultados[0].usuario === usuario || resultados[0] === email){
+                                    if(resultados[0].usuario === usuario){
+                                        modifica = `UPDATE usuarios SET email = '${email}' WHERE usuario = '${usuario}';`;
+                                    }else if(resultados[0].email === email){
+                                        modifica = `UPDATE usuarios SET usuario = '${usuario}' WHERE email = '${email}'; `;
+                                    }
+                                    conexion.query(modifica, (err)=>{
+                                        if(err){
+                                            throw err;
+                                        }else{
+                                            muestra = `
+                                            Usuario o Email modificado con exito!! 
+                                            Verifique su cuenta a traves del correo enviado a su email para poder iniciar sesion
+                                            `;
+                                            res.render('login', {muestra});
+                                        }
+                                    });
+                                }
                             }
-                        });
-                    }      
-                });                  
+                            else{
+                                const registra = `INSERT INTO usuarios (usuario, nombre, email, pass) VALUES ('${usuario}', '${nombre}', '${email}', '${passHash}');`;
+                                conexion.query(registra, (err) => {
+                                    if(err){
+                                        throw err;
+                                    }else{
+                                        muestra = 'Usuario ingresado con exito!! Verifique su cuenta a traves del correo enviado a su email para poder iniciar sesion';
+                                        res.render('login', {muestra});
+                                    }
+                                });
+                            }      
+                        });                  
+                    }
+                });
+
             }
         });
     } catch (error) {

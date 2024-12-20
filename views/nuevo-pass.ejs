@@ -42,7 +42,6 @@
     <% } %>
 
     <%- include('./templates/footer.ejs') %> 
-    <script type="module" src="/js/login.js"></script>
     <script src="/js/sweetalert2.all.min.js"></script>
     <% if(typeof alert !== "undefined"){if(alert){ %>
         <script > 
@@ -57,5 +56,18 @@
             },3000);
     </script>
     <% }} %>
+    <script>
+        const pass = document.querySelector('#pass');
+        const ver = document.querySelector('#ver');
+        ver.addEventListener('click', (evento) => {
+            const box = evento.target.checked;
+            if(box){
+                pass.type = 'text';
+            }else{
+                pass.type = 'password';
+            }
+            return
+        });
+    </script>
 </body>
 </html>

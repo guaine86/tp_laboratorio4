@@ -54,7 +54,7 @@ router.get('/consulta', autenticacion.autenticado,(req,res)=>{
         }
     });
     
-    const consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1;';
+    const consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
     conexion.query(consulta, (err, registros)=>{
         if(err){
             throw err;
@@ -161,7 +161,7 @@ router.get('/elimina/:id/:carrera', autenticacion.autenticado,(req,res)=>{
     const carrera = req.params.carrera.toLowerCase();
     let muestra;
     //const elimina = `DELETE FROM alumnos WHERE idalumnos = ${id};`;
-    const elimina = `UPDATE alumno_cursa_carrera SET confirma = 0 WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}');`;
+    const elimina = `UPDATE alumno_cursa_carrera SET muestra = 0 WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = (SELECT idcarrera FROM carrera WHERE nomenclatura = '${carrera}');`;
     conexion.query(elimina,(err)=>{
         if(err){
             throw err;
@@ -199,46 +199,65 @@ router.get('/nuevo-pass/:token', (req, res)=>{
 })
 
 // Ruta para verificar correo
-router.get('/verificar/:token', async(req, res) => {
+router.get('/verificar/:token/:tipo/:dni', async(req, res) => {
     try {
-        const {token} = req.params;
+        const token = req.params.token;
+        const tipo = req.params.tipo;
+        const dni = req.params.dni;
         const decoded = jwt.verify(token, process.env.JWT_SECRETO);
 
         const email = decoded.email;
+        let confirma;
+        let titulo;
+        let mensaje;
         
-        // const buscaUsuario = `SELECT usuario FROM usuarios WHERE email = '${email}';`;
-        // conexion.query(buscaUsuario, (err, resultado)=>{
-        //     if(err){
-        //         throw err;
-        //     }else if(resultado.length === 0){
-        //         res.status(404).render('verificar', {
-        //             alert: true,
-        //             alertTitle: "Advertencia",
-        //             alertMessage: "Usuario no encontrado!!" ,
-        //             alertIcon: "info",
-        //             ruta: 'register'
-        //         })
-        //     }else{
-        //         res.status(406).send('verificar',{usuario: resultado[0]});
-        //     }
-        // })
+        if(tipo === 'registro'){
+            confirma = `UPDATE usuarios SET confirma = 1 WHERE email = '${email}';`;
+            titulo = "Usuario Verificado con Exito!!";
+            mensaje = "Ya puede ingresar al sistema";
 
-        const confirma = `UPDATE usuarios SET confirma = 1 WHERE email = '${email}';`;
-        conexion.query(confirma, (err) =>{
-            if(err){
-                throw err;
-            }else{
-                res.render('verificar',{
-                        alert: true,
-                        alertTitle: "Usuario Verificado con Exito!!",
-                        alertMessage: "Ya puede ingresar al sistema" ,
-                        alertIcon: "success",
-                        showConfirmationButton: true,
-                        timer: false,
-                        ruta: 'login'
-                });
-            }
-        });
+            conexion.query(confirma, (err) =>{
+                if(err){
+                    throw err;
+                }else{
+                    res.render('verificar',{
+                            alert: true,
+                            alertTitle: `${titulo}`,
+                            alertMessage: `${mensaje}`,
+                            alertIcon: "success",
+                            showConfirmationButton: true,
+                            timer: false,
+                            ruta: 'login'
+                    });
+                }
+            });
+        }else{
+            conexion.query(`SELECT a.idalumnos FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac WHERE a.dni = ${dni} AND a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = ${tipo}`, (err, resultado)=>{
+                if(err){
+                    throw err
+                }else{
+                    const id = resultado[0].idalumnos;
+                    confirma = `UPDATE alumno_cursa_carrera SET confirma = 1 WHERE ALUMNOS_idalumnos = ${id} AND CARRERA_idcarrera = ${tipo};`;
+                    titulo = "Solicitud recibida con exito!!";
+                    mensaje = "Pondremos tu contacto a disposicion de las busquedas";
+                    conexion.query(confirma, (err) =>{
+                        if(err){
+                            throw err;
+                        }else{
+                            res.render('verificar',{
+                                    alert: true,
+                                    alertTitle: `${titulo}`,
+                                    alertMessage: `${mensaje}`,
+                                    alertIcon: "success",
+                                    showConfirmationButton: true,
+                                    timer: false,
+                                    ruta: 'index'
+                            });
+                        }
+                    });
+                }
+            })
+        }
     } catch (error) {
         console.error(error);
         res.status(400).render('verificar', {
