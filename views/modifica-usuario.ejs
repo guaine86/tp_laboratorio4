@@ -18,7 +18,9 @@
             </div>
             <div style="grid-column: 3/4;">
                 <div style="display: flex; justify-content: end;">
+                <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>   
                     <a class="btn btn-outline-primary mt-1 mb-4" style="margin-right: 1rem;" href="/agregar">Agregar Usuarios</a>
+                <% }} %>      
                     <a class="btn btn-outline-danger mt-1 mb-4" href="/logout">Logout</a>
                 </div>
             </div>

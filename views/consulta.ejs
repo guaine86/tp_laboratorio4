@@ -17,10 +17,20 @@
                 <% } %>
             </div>
             <div style="display: flex; justify-content: end;">
-                <a class="btn btn-outline-primary mt-4 mb-2" style="margin-right: 1rem;" href="/agregar">Adminitrar Usuarios</a>
+                <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>
+                <a class="btn btn-outline-primary mt-4 mb-2" style="margin-right: 1rem;" href="/agregar">Administrar Usuarios</a>
+                <% }} %> 
                 <a class="btn btn-outline-danger mt-4 mb-2" href="/logout">Logout</a>
             </div>
         </div>
+        <div>
+            <% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; %> 
+		    <p class="contenedor centrar-texto <%= fondo %>">
+			    <%= muestra %>
+		    </p>
+	        <% } %>
+        </div>
+
         <div class="consulta-barra">
             <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md'></i></a>
             <div>

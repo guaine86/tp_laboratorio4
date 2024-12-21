@@ -79,12 +79,14 @@ exports.registrar = async(req,res) => {
                                 }
                             }
                             else{
-                                const buscaAuth = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni ='${dni}';`;
+                                // const buscaAuth = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni ='${dni}';`;
+                                const buscaAuth = `SELECT ua.idusuarios_autorizados, ra.ROL_idrol FROM usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN usuarios as u WHERE ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ua.dni '${dni}' AND u.usuario = '${usuario}';`
                                 conexion.query(buscaAuth, (err, resultado)=>{
                                     if(err){
                                         throw err;
                                     }else{
                                         const idAuth = resultado[0].idusuarios_autorizados;
+                                        const idRol = resultado[0].ROL_idrol;
 
                                         const cargaNombre = `UPDATE usuarios_autorizados SET nombre_completo = '${nombre}' WHERE idusuarios_autorizados = ${idAuth};`;
                                         conexion.query(cargaNombre,(err,resultado)=>{
@@ -93,7 +95,7 @@ exports.registrar = async(req,res) => {
                                             }
                                         })
 
-                                        const registra = `INSERT INTO usuarios (usuario, nombre, email, pass, AUTH_idusuarios_autorizados) VALUES ('${usuario}', '${nombre}', '${email}', '${passHash}', ${idAuth});`;
+                                        const registra = `INSERT INTO usuarios (usuario, nombre, email, pass, AUTH_idusuarios_autorizados, ROL_idrol) VALUES ('${usuario}', '${nombre}', '${email}', '${passHash}', ${idAuth}, ${idRol});`;
                                         conexion.query(registra, (err) => {
                                             if(err){
                                                 throw err;

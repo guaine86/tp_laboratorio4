@@ -64,29 +64,29 @@ router.get('/consulta', autenticacion.autenticado,(req,res)=>{
     });
 });
 
-router.get('/consulta/:ordena', autenticacion.autenticado,(req,res)=>{
-    const ordena = req.params.ordena;
-    let lista_carreras = [];
+// router.get('/consulta/:ordena', autenticacion.autenticado,(req,res)=>{
+//     const ordena = req.params.ordena;
+//     let lista_carreras = [];
 
-    const carreras = `SELECT * FROM carrera;`;
-    conexion.query(carreras, (err,resultados)=>{
-        if(err){
-            throw err;
-        }else{
-            lista_carreras = resultados;
-        }
-    });
+//     const carreras = `SELECT * FROM carrera;`;
+//     conexion.query(carreras, (err,resultados)=>{
+//         if(err){
+//             throw err;
+//         }else{
+//             lista_carreras = resultados;
+//         }
+//     });
     
 
-    const orderBy = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 ORDER BY ${ordena};`;
-    conexion.query(orderBy,(err, registros)=>{
-        if(err){
-            throw err;
-        }else{
-            res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario});
-        }
-    });
-});
+//     const orderBy = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 ORDER BY ${ordena};`;
+//     conexion.query(orderBy,(err, registros)=>{
+//         if(err){
+//             throw err;
+//         }else{
+//             res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario});
+//         }
+//     });
+// });
 
 router.post('/filtra', autenticacion.autenticado, (req,res)=>{
     const datos = req.body;
@@ -167,7 +167,15 @@ router.get('/elimina/:id/:carrera', autenticacion.autenticado,(req,res)=>{
             throw err;
         }else{
             muestra = "Registro eliminado con exito!!";
-            res.render('index', {muestra});
+            const carreras = `SELECT * FROM carrera;`;
+            conexion.query(carreras,(err, resultados)=>{
+                if(err){
+                    throw err;
+                }else{
+                    res.render('index',{rows: resultados, muestra});
+                }
+            });
+            // res.render('index', {muestra});
         }
     })
 });
@@ -272,69 +280,163 @@ router.get('/verificar/:token/:tipo/:dni', async(req, res) => {
 
 // Ruta usuarios autorizados
 router.get('/agregar', autenticacion.autenticado ,(req,res)=>{
-    const roles = `SELECT * FROM rol;`;
-    conexion.query(roles,(err, resultados)=>{
-        if(err){
-            throw err;
-        }else{
-            res.render('agregar',{rows: resultados, usuario: req.usuario});
-        }
-    });
+    const infoUsuario = req.usuario;
+    let muestra;
+    if(infoUsuario.ROL_idrol === 1){
+        const roles = `SELECT * FROM rol;`;
+        conexion.query(roles,(err, resultados)=>{
+            if(err){
+                throw err;
+            }else{
+                res.render('agregar',{rows: resultados, usuario: req.usuario});
+            }
+        });
+    }else{
+        muestra = "No esta autorizado para ver esta pagina!!";
+        const consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
+        conexion.query(consulta, (err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                const carreras = `SELECT * FROM carrera`;
+                conexion.query(carreras, (err, rows) =>{
+                    if (err){
+                        throw err;
+                    }else{
+                        res.render('consulta',{resultados: registros, rows, usuario: req.usuario, muestra});
+                    }
+                })
+            }
+        });
+    }
 });
 
 router.get('/modifica-usuario', autenticacion.autenticado, (req,res)=>{
-    const usuarios = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
-    conexion.query(usuarios, (err, resultados)=>{
-        if(err){
-            throw err;
-        }else{
-            const roles = `SELECT * FROM rol;`;
-            conexion.query(roles, (err, rows)=>{
-                if(err){
-                    throw err;
-                }else{
-                    res.render('modifica-usuario',{resultados, rows, usuario: req.usuario});
-                }
-            })
-        }
-    })
-})
-
-router.get('/elimina-usuario/:id/:rol', autenticacion.autenticado, (req,res)=>{
-    const id = req.params.id;
-    const rol = req.params.rol;
+    const infoUsuario = req.usuario;
     let muestra;
 
-    const baja = `UPDATE usuarios_autorizados SET baja = 1 WHERE idusuarios_autorizados = (SELECT AUTH_idusuarios_autorizados FROM usuarios WHERE idusuarios = ${id});`;
-    conexion.query(baja, (err)=>{
-        if(err){
-            throw err;
-        }else{
-            muestra = "Usuario eliminado con Exito!!";
-            res.render('agregar', {muestra})
-        }
-    })
-})
+    if(infoUsuario.ROL_idrol === 1){
+        const usuarios = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+        conexion.query(usuarios, (err, resultados)=>{
+            if(err){
+                throw err;
+            }else{
+                const roles = `SELECT * FROM rol;`;
+                conexion.query(roles, (err, rows)=>{
+                    if(err){
+                        throw err;
+                    }else{
+                        console.log(req.usuario);
+                        res.render('modifica-usuario',{resultados, rows, usuario: req.usuario});
+                    }
+                });
+            }
+        });
+    }else{
+        muestra = "No esta autorizado para ver esta pagina!!";
+        const consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
+        conexion.query(consulta, (err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                const carreras = `SELECT * FROM carrera`;
+                conexion.query(carreras, (err, rows) =>{
+                    if (err){
+                        throw err;
+                    }else{
+                        res.render('consulta',{resultados: registros, rows, usuario: req.usuario, muestra});
+                    }
+                })
+            }
+        });
+    }
+});
+
+router.get('/elimina-usuario/:id/:rol', autenticacion.autenticado, (req,res)=>{
+    const infoUsuario = req.usuario;
+    let muestra;
+    
+    if(infoUsuario.ROL_idrol === 1){
+        const id = req.params.id;
+        const rol = req.params.rol;
+    
+        const baja = `UPDATE usuarios_autorizados SET baja = 1 WHERE idusuarios_autorizados = (SELECT AUTH_idusuarios_autorizados FROM usuarios WHERE idusuarios = ${id});`;
+        conexion.query(baja, (err)=>{
+            if(err){
+                throw err;
+            }else{
+                muestra = "Usuario eliminado con Exito!!";
+                const roles = `SELECT * FROM rol;`;
+                conexion.query(roles, (err, rows)=>{
+                    if(err){
+                        throw err;
+                    }else{
+                        res.render('agregar', {muestra, rows, usuario: req.usuario});
+                    }
+                })
+            }
+        });
+    }else{
+        muestra = "No esta autorizado para ver esta pagina!!";
+        const consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
+        conexion.query(consulta, (err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                const carreras = `SELECT * FROM carrera`;
+                conexion.query(carreras, (err, rows) =>{
+                    if (err){
+                        throw err;
+                    }else{
+                        res.render('consulta',{resultados: registros, rows, usuario: req.usuario, muestra});
+                    }
+                });
+            }
+        });
+    }
+});
 
 router.get('/modifica-permisos/:dni/:rol', autenticacion.autenticado,(req, res)=>{
-    const dni = req.params.dni;
-    const rol = req.params.rol;
+    const infoUsuario = req.usuario;
+    let muestra;
 
-    const busca = `SELECT * FROM usuarios_autorizados WHERE dni = '${dni}';`;
-    conexion.query(busca, (err, resultados)=>{
-        if(err){
-            throw err;
-        }else{
-            const roles = `SELECT * FROM rol;`;
-            conexion.query(roles, (err, rows) =>{
-                if(err){
-                    throw err;
-                }else{
-                    res.render('modifica-permisos', {rolActual: rol, resultados: resultados[0], rows, usuario: req.usuario})
-                }
-            })
-        }
-    })
+    if(infoUsuario.ROL_idrol===1){
+        const dni = req.params.dni;
+        const rol = req.params.rol;
+    
+        const busca = `SELECT * FROM usuarios_autorizados WHERE dni = '${dni}';`;
+        conexion.query(busca, (err, resultados)=>{
+            if(err){
+                throw err;
+            }else{
+                const roles = `SELECT * FROM rol;`;
+                conexion.query(roles, (err, rows) =>{
+                    if(err){
+                        throw err;
+                    }else{
+                        res.render('modifica-permisos', {rolActual: rol, resultados: resultados[0], rows, usuario: req.usuario})
+                    }
+                })
+            }
+        });
+    }else{
+        muestra = "No esta autorizado para ver esta pagina!!";
+        const consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
+        conexion.query(consulta, (err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                const carreras = `SELECT * FROM carrera`;
+                conexion.query(carreras, (err, rows) =>{
+                    if (err){
+                        throw err;
+                    }else{
+                        res.render('consulta',{resultados: registros, rows, usuario: req.usuario, muestra});
+                    }
+                })
+            }
+        });
+    }
 });
 
 router.post('/validar', crud.validar);
