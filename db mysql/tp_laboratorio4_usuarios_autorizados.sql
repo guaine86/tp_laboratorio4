@@ -40,7 +40,7 @@ CREATE TABLE `usuarios_autorizados` (
 
 LOCK TABLES `usuarios_autorizados` WRITE;
 /*!40000 ALTER TABLE `usuarios_autorizados` DISABLE KEYS */;
-INSERT INTO `usuarios_autorizados` VALUES (1,'92783036','edward wayne cruz',0),(2,'42838785','priscila nicole bello',0),(3,'54957897','bruno valentino cruz gonzalez',0),(10,'77678362','gandalf mcfly of the system',0),(15,'34567897','falta_registrar',0);
+INSERT INTO `usuarios_autorizados` VALUES (1,'92783036','edward wayne cruz',0),(2,'42838785','priscila nicole bello',0),(3,'54957897','bruno valentino cruz gonzalez',0),(10,'77678362','gandalf mcfly of the system',1),(15,'34567897','falta_registrar',0);
 /*!40000 ALTER TABLE `usuarios_autorizados` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-20 23:48:19
+-- Dump completed on 2024-12-21 13:17:49

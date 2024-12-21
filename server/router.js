@@ -316,7 +316,7 @@ router.get('/modifica-usuario', autenticacion.autenticado, (req,res)=>{
     let muestra;
 
     if(infoUsuario.ROL_idrol === 1){
-        const usuarios = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+        const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
         conexion.query(usuarios, (err, resultados)=>{
             if(err){
                 throw err;
@@ -326,7 +326,7 @@ router.get('/modifica-usuario', autenticacion.autenticado, (req,res)=>{
                     if(err){
                         throw err;
                     }else{
-                        console.log(req.usuario);
+                        //console.log(req.usuario);
                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario});
                     }
                 });
@@ -396,13 +396,14 @@ router.get('/elimina-usuario/:id/:rol', autenticacion.autenticado, (req,res)=>{
     }
 });
 
-router.get('/modifica-permisos/:dni/:rol', autenticacion.autenticado,(req, res)=>{
+router.get('/modifica-permisos/:dni/:rol/:idrol', autenticacion.autenticado,(req, res)=>{
     const infoUsuario = req.usuario;
     let muestra;
 
     if(infoUsuario.ROL_idrol===1){
         const dni = req.params.dni;
         const rol = req.params.rol;
+        const idrol = req.params.idrol;
     
         const busca = `SELECT * FROM usuarios_autorizados WHERE dni = '${dni}';`;
         conexion.query(busca, (err, resultados)=>{
@@ -414,7 +415,7 @@ router.get('/modifica-permisos/:dni/:rol', autenticacion.autenticado,(req, res)=
                     if(err){
                         throw err;
                     }else{
-                        res.render('modifica-permisos', {rolActual: rol, resultados: resultados[0], rows, usuario: req.usuario})
+                        res.render('modifica-permisos', {rolActual: rol, idRolActual: idrol, resultados: resultados[0], rows, usuario: req.usuario})
                     }
                 })
             }
@@ -558,7 +559,7 @@ router.post('/nueva/:token', async(req, res)=>{
 })
 
 // Accion agregar autorizado
-router.post('/agregarAuth', (req,res)=>{
+router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
     const datos = req.body;
     const {dni, rol} = datos;
     let muestra;
@@ -586,18 +587,26 @@ router.post('/agregarAuth', (req,res)=>{
                         if (err){
                             throw err;
                         }else{
-                            res.render('agregar', {
-                                alert: true,
-                                alertTitle: "Autorizacion reingresada Correctamente!!",
-                                alertMessage: "El usuario ya puede ingresar al sistema nuevamente" ,
-                                alertIcon: 'success',
-                                ruta:'consulta'
-                            })
+                            const modificaRol = `UPDATE roles_autorizados SET ROL_idrol = ${rol} WHERE AUTH_idusuarios_autorizados = (SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni = '${dni}');`;
+                            conexion.query(modificaRol, (err)=>{
+                                if(err){
+                                    throw err;
+                                }else{
+                                    res.render('agregar', {
+                                        alert: true,
+                                        alertTitle: "Autorizacion reingresada Correctamente!!",
+                                        alertMessage: "El usuario ya puede ingresar al sistema nuevamente" ,
+                                        alertIcon: 'success',
+                                        ruta:'consulta',
+                                        usuario:req.usuario
+                                    });
+                                }
+                            });
                         }
                     });
                 }else{
                     muestra = "No se puede autorizar al mismo DNI!!"
-                    res.render('agregar', {muestra, rows: lista_roles});
+                    res.render('agregar', {rows: lista_roles, usuario: req.usuario, muestra});
                 }
             })
         }else{
@@ -612,7 +621,8 @@ router.post('/agregarAuth', (req,res)=>{
                         alertTitle: "Autorizacion agregada Correctamente!!",
                         alertMessage: "Cuando el usuario se registre podra ingresar al sistema" ,
                         alertIcon: 'success',
-                        ruta:'consulta'
+                        ruta:'consulta',
+                        usuario: req.usuario
                     })
                 }
             })
@@ -663,6 +673,175 @@ router.post('/filtraUsuarios', autenticacion.autenticado, (req,res)=>{
         });
     }
 
+});
+
+router.post('/modificarRoles/:rolActual', autenticacion.autenticado, (req, res) => {
+    const datos = req.body;
+    let {dni, nombre, rol, id} = datos;
+    nombre = nombre.toLowerCase();
+    const rolActual = req.params.rolActual;
+    let muestra;
+
+    const modifica = `UPDATE usuarios_autorizados SET dni = '${dni}' WHERE idusuarios_autorizados = ${id};`;
+    conexion.query(modifica, (err)=>{
+        if(err){
+            muestra = 'No se puede asignar un DNI ya registrado!!';
+            const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+            conexion.query(usuarios, (err, resultados)=>{
+                if(err){
+                    throw err;
+                }else{
+                    const roles = `SELECT * FROM rol;`;
+                    conexion.query(roles, (err, rows)=>{
+                        if(err){
+                            throw err;
+                        }else{
+                            //console.log(req.usuario);
+                            res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+                        }
+                    });
+                }
+            });
+            
+            //         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+            //         conexion.query(usuarios, (err, resultados)=>{
+            //             if(err){
+            //                 throw err;
+            //             }else{
+            //                 const roles = `SELECT * FROM rol;`;
+            //                 conexion.query(roles, (err, rows)=>{
+            //                     if(err){
+            //                         throw err;
+            //                     }else{
+            //                         //console.log(req.usuario);
+            //                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+            //                     }
+            //                 });
+            //             }
+            //         });
+            // const buscaAuth = `SELECT * FROM roles_autorizados WHERE AUTH_idusuarios_autorizados = ${id} AND ROL_idrol = (SELECT idrol FROM rol WHERE rol = '${rolActual}');`;
+            // conexion.query(buscaAuth, (err, resultados) => {
+            //     if(err){
+            //         throw err;
+            //     }else if(resultados.length > 0){
+            //         const modificaNombre = `UPDATE usuarios_autorizados SET nombre_completo = '${nombre}' WHERE idusuarios_autorizados = '${id}';`;
+            //         conexion.query(modificaNombre, (err) => {
+            //             if(err){
+            //                 throw err;
+            //             }else{
+            //                 const modificaRol = `UPDATE roles_autorizados SET ROL_idrol = ${rol} WHERE AUTH_idusuarios_autorizados = ${id};`;
+            //                 conexion.query(modificaRol, (err) => {
+            //                     if(err){
+            //                         muestra = 'No se puede asignar un Rol ya registrado!!';
+            //                         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+            //                         conexion.query(usuarios, (err, resultados)=>{
+            //                             if(err){
+            //                                 throw err;
+            //                             }else{
+            //                                 const roles = `SELECT * FROM rol;`;
+            //                                 conexion.query(roles, (err, rows)=>{
+            //                                     if(err){
+            //                                         throw err;
+            //                                     }else{
+            //                                         //console.log(req.usuario);
+            //                                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+            //                                     }
+            //                                 });
+            //                             }
+            //                         });
+            //                     }else{
+            //                         muestra = 'Usuario Modificado con Exito!!';
+            //                         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+            //                         conexion.query(usuarios, (err, resultados)=>{
+            //                             if(err){
+            //                                 throw err;
+            //                             }else{
+            //                                 const roles = `SELECT * FROM rol;`;
+            //                                 conexion.query(roles, (err, rows)=>{
+            //                                     if(err){
+            //                                         throw err;
+            //                                     }else{
+            //                                         //console.log(req.usuario);
+            //                                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+            //                                     }
+            //                                 });
+            //                             }
+            //                         });
+            //                     }
+            //                 });
+            //             }
+            //         });
+            //     }else{
+            //         muestra = 'No se puede asignar un DNI ya resgistrado!!';
+            //         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+            //         conexion.query(usuarios, (err, resultados)=>{
+            //             if(err){
+            //                 throw err;
+            //             }else{
+            //                 const roles = `SELECT * FROM rol;`;
+            //                 conexion.query(roles, (err, rows)=>{
+            //                     if(err){
+            //                         throw err;
+            //                     }else{
+            //                         //console.log(req.usuario);
+            //                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+            //                     }
+            //                 });
+            //             }
+            //         });
+            //     }
+            // });
+
+        }else{
+            const modificaNombre = `UPDATE usuarios_autorizados SET nombre_completo = '${nombre}' WHERE idusuarios_autorizados = '${id}';`;
+            conexion.query(modificaNombre, (err) => {
+                if(err){
+                    throw err;
+                }else{
+                    const modificaRol = `UPDATE roles_autorizados SET ROL_idrol = ${rol} WHERE AUTH_idusuarios_autorizados = ${id};`;
+                    conexion.query(modificaRol, (err) => {
+                        if(err){
+                            muestra = 'No se puede asignar un Rol ya resgistrado!!';
+                            const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+                            conexion.query(usuarios, (err, resultados)=>{
+                                if(err){
+                                    throw err;
+                                }else{
+                                    const roles = `SELECT * FROM rol;`;
+                                    conexion.query(roles, (err, rows)=>{
+                                        if(err){
+                                            throw err;
+                                        }else{
+                                            //console.log(req.usuario);
+                                            res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+                                        }
+                                    });
+                                }
+                            });
+                        }else{
+                            muestra = 'Usuario Modificado con Exito!!';
+                            const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+                            conexion.query(usuarios, (err, resultados)=>{
+                                if(err){
+                                    throw err;
+                                }else{
+                                    const roles = `SELECT * FROM rol;`;
+                                    conexion.query(roles, (err, rows)=>{
+                                        if(err){
+                                            throw err;
+                                        }else{
+                                            //console.log(req.usuario);
+                                            res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
 });
 
 // router.get('/set-cookie', (req, res)=>{
