@@ -10,15 +10,17 @@
     </div>
 
     <main class="contenedor sombras" style="max-width: 140rem;">
-        <div style="display:grid; grid-template-columns: 1fr 2fr 1fr;">
-            <div style="grid-column: 2/3;">
+        <div style="display:grid; grid-template-columns: auto 1fr;">
+            <div style="grid-column: 2/3; justify-self: flex-end;">
                 <% if(typeof usuario !== "undefined"){ %>
-                    <h2 class="capitalize" style="align-self: flex-end;">Bienvenido: <%= usuario.nombre %>!!</h2>
+                    <p class="capitalize" style="align-self: flex-end; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.nombre %></small></p>
                 <% } %>
             </div>
-            <div style="display: flex; justify-content: end;">
-                <a class="btn btn-outline-primary mt-4 mb-2" style="margin-right: 1rem;" href="/agregar">Agregar Usuarios</a>
-                <a class="btn btn-outline-danger mt-4 mb-2" href="/logout">Logout</a>
+            <div style="grid-column: 3/4;">
+                <div style="display: flex; justify-content: end;">
+                    <a class="btn btn-outline-primary mt-1 mb-4" style="margin-right: 1rem;" href="/agregar">Agregar Usuarios</a>
+                    <a class="btn btn-outline-danger mt-1 mb-4" href="/logout">Logout</a>
+                </div>
             </div>
         </div>
         <div class="consulta-barra">

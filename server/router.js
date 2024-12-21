@@ -293,7 +293,7 @@ router.get('/modifica-usuario', autenticacion.autenticado, (req,res)=>{
                 if(err){
                     throw err;
                 }else{
-                    res.render('modifica-usuario',{resultados, rows});
+                    res.render('modifica-usuario',{resultados, rows, usuario: req.usuario});
                 }
             })
         }
