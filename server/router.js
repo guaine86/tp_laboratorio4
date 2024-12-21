@@ -272,8 +272,8 @@ router.get('/verificar/:token/:tipo/:dni', async(req, res) => {
 
 // Ruta usuarios autorizados
 router.get('/agregar', autenticacion.autenticado ,(req,res)=>{
-    const carreras = `SELECT * FROM rol;`;
-    conexion.query(carreras,(err, resultados)=>{
+    const roles = `SELECT * FROM rol;`;
+    conexion.query(roles,(err, resultados)=>{
         if(err){
             throw err;
         }else{
@@ -309,6 +309,26 @@ router.get('/elimina-usuario/:id/:rol', autenticacion.autenticado, (req,res)=>{
     })
 })
 
+router.get('/modifica-permisos/:dni/:rol', autenticacion.autenticado,(req, res)=>{
+    const dni = req.params.dni;
+    const rol = req.params.rol;
+
+    const busca = `SELECT * FROM usuarios_autorizados WHERE dni = '${dni}';`;
+    conexion.query(busca, (err, resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            const roles = `SELECT * FROM rol;`;
+            conexion.query(roles, (err, rows) =>{
+                if(err){
+                    throw err;
+                }else{
+                    res.render('modifica-permisos', {rolActual: rol, resultados: resultados[0], rows, usuario: req.usuario})
+                }
+            })
+        }
+    })
+});
 
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
