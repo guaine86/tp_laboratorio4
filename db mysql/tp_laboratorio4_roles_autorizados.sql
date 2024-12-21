@@ -18,34 +18,31 @@ USE `tp_laboratorio4`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `usuarios`
+-- Table structure for table `roles_autorizados`
 --
 
-DROP TABLE IF EXISTS `usuarios`;
+DROP TABLE IF EXISTS `roles_autorizados`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuarios` (
-  `idusuarios` int NOT NULL AUTO_INCREMENT,
-  `usuario` varchar(45) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `email` varchar(45) NOT NULL,
-  `pass` varchar(255) NOT NULL,
-  `confirma` tinyint NOT NULL DEFAULT '0',
+CREATE TABLE `roles_autorizados` (
   `AUTH_idusuarios_autorizados` int NOT NULL,
-  PRIMARY KEY (`idusuarios`),
-  KEY `fk_usuarios_1_idx` (`AUTH_idusuarios_autorizados`),
-  CONSTRAINT `fk_usuarios_1` FOREIGN KEY (`AUTH_idusuarios_autorizados`) REFERENCES `usuarios_autorizados` (`idusuarios_autorizados`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `ROL_idrol` int NOT NULL,
+  `baja` tinyint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`AUTH_idusuarios_autorizados`,`ROL_idrol`),
+  KEY `fk_roles_autorizados_2_idx` (`ROL_idrol`),
+  CONSTRAINT `fk_roles_autorizados_1` FOREIGN KEY (`AUTH_idusuarios_autorizados`) REFERENCES `usuarios_autorizados` (`idusuarios_autorizados`),
+  CONSTRAINT `fk_roles_autorizados_2` FOREIGN KEY (`ROL_idrol`) REFERENCES `rol` (`idrol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `usuarios`
+-- Dumping data for table `roles_autorizados`
 --
 
-LOCK TABLES `usuarios` WRITE;
-/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'guaine86','edward wayne cruz','guaine86@gmail.com','$2a$08$YddmzPllfpKpg40Cq6SBlOvtIa3WYj2lAXoPv8Mf3X7P5vkgpTkCW',1,1),(6,'nicole24','priscila nicole bello','nicolepriscila192@gmail.com','$2a$08$lJzi2wiSLT2e4yeHyaMCueef1AI9w99oVLPypaHWU9IrSKtA6J/Fu',1,2),(8,'brunito1812','bruno valentino cruz gonzalez','ewcruz@yahoo.com.ar','$2a$08$/GslNskGp7Y94RshoHIqXuK/zApLuJVhNtuJ0NQWlDB1yl5y45A7m',1,3),(10,'gandalf','gandalf mcfly','edwardwaynecruz@gmail.com','$2a$08$mJ8ZeD9Di6pCUWBGqBuTEeaKULm2vqZWab1Wvt59kpmLhlf9vIWJO',1,10),(11,'gandalfito','gandalf mcfly of the system','informatica1.jea@gmail.com','$2a$08$ZyL3kwXvwced/2YJ0DXoEuojOsUTdFGDUGDFCBazi007OMZm2yZm.',0,10);
-/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
+LOCK TABLES `roles_autorizados` WRITE;
+/*!40000 ALTER TABLE `roles_autorizados` DISABLE KEYS */;
+INSERT INTO `roles_autorizados` VALUES (1,1,0),(2,2,0),(3,2,0),(10,2,0),(15,2,0);
+/*!40000 ALTER TABLE `roles_autorizados` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -57,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-20 23:48:21
+-- Dump completed on 2024-12-20 23:48:20

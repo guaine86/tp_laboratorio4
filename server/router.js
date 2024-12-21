@@ -283,12 +283,19 @@ router.get('/agregar', autenticacion.autenticado ,(req,res)=>{
 });
 
 router.get('/modifica-usuario', autenticacion.autenticado, (req,res)=>{
-    const usuarios = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
+    const usuarios = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
     conexion.query(usuarios, (err, resultados)=>{
         if(err){
             throw err;
         }else{
-            res.render('modifica-usuario',{resultados});
+            const roles = `SELECT * FROM rol;`;
+            conexion.query(roles, (err, rows)=>{
+                if(err){
+                    throw err;
+                }else{
+                    res.render('modifica-usuario',{resultados, rows});
+                }
+            })
         }
     })
 })
@@ -510,7 +517,51 @@ router.post('/agregarAuth', (req,res)=>{
         }
     })
 
-})
+});
+
+router.post('/filtraUsuarios', autenticacion.autenticado, (req,res)=>{
+    const datos = req.body;
+    const {rol: idrol, confirma} = datos;
+   
+    let lista_roles = [];
+    let consulta;
+
+    const roles = `SELECT * FROM rol;`;
+    conexion.query(roles, (err,resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            lista_roles = resultados;
+        }
+    });
+
+    if(idrol === 'todas' || confirma === 'todas'){
+        if(idrol !== 'todas'){
+            consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND r.idrol = ${idrol};`; 
+        }else if(confirma !== 'todas'){
+            consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND u.confirma = ${confirma};`;
+        }else{
+            consulta = 'SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;';
+        }
+        conexion.query(consulta, (err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                res.render('modifica-usuario',{resultados: registros, rows: lista_roles, usuario: req.usuario});
+            }
+        });
+    }else{
+        const filtroBusqueda = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND r.idrol = ${idrol} AND u.confirma = ${confirma};`;
+        conexion.query(filtroBusqueda,(err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                res.render('modifica_usuario',{resultados: registros, rows: lista_roles, usuario: req.usuario});
+            }
+        });
+    }
+
+});
 
 // router.get('/set-cookie', (req, res)=>{
 //     res.cookie('testCookie', 'cookieValue',{httpOnly: true});

@@ -35,7 +35,7 @@ CREATE TABLE `alumnos` (
   `domicilio` varchar(45) NOT NULL,
   `observaciones` varchar(140) DEFAULT '-',
   PRIMARY KEY (`idalumnos`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,7 @@ CREATE TABLE `alumnos` (
 
 LOCK TABLES `alumnos` WRITE;
 /*!40000 ALTER TABLE `alumnos` DISABLE KEYS */;
-INSERT INTO `alumnos` VALUES (19,'edward wayne','cruz quattrone','92783036','1986-03-05','1159773824','guaine86@gmail.com','av san martin 1860','-'),(20,'bruno valentino','cruz gonzalez','54957857','2007-12-18','1158773824','guaine86@gmail.com','av san martin 1860','-'),(21,'ed','cruz','92783099','2000-11-23','1135357541','ewcruz@yahoo.com.ar','av san martin 1860','-');
+INSERT INTO `alumnos` VALUES (19,'edward wayne','cruz quattrone','92783036','1986-03-05','1159773824','guaine86@gmail.com','av san martin 1860','-'),(20,'bruno valentino','cruz gonzalez','54957857','2007-12-18','1158773824','guaine86@gmail.com','av san martin 1860','-'),(21,'ed','cruz','92783099','2000-11-23','1135357541','ewcruz@yahoo.com.ar','av san martin 1860','-'),(22,'priscila','bello','42838785','2000-11-23','1123495654','nicolepriscila192@gmail.com','jose equiza 3879','.'),(23,'claudia ','cruz','17858535','1966-09-18','1159773824','guaine86@gmail.com','calle 35 858','-'),(24,'prueba','chu','55666777','2000-11-23','155464748','guaine86@gmail.com','av san martin 1899','-'),(25,'pepito','mujica','66777888','2000-11-23','1159773824','guaine86@gmail.com','alguno 1232','-'),(26,'shinu','mcfly','36678362','2000-11-23','35357541','guaine86@gmail.com','av san martin 1860','-'),(27,'charly','mcfly','56789013','2000-11-23','35357541','guaine86@gmail.com','av san martin 1860','-');
 /*!40000 ALTER TABLE `alumnos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -159,4 +159,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-19 11:41:34
+-- Dump completed on 2024-12-20 23:48:19
