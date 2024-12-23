@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `carrera`;
 CREATE TABLE `carrera` (
   `idcarrera` int NOT NULL AUTO_INCREMENT,
   `nomenclatura` varchar(65) NOT NULL,
-  `muestra` tinyint NOT NULL DEFAULT '1',
+  `baja` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`idcarrera`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,7 +38,7 @@ CREATE TABLE `carrera` (
 
 LOCK TABLES `carrera` WRITE;
 /*!40000 ALTER TABLE `carrera` DISABLE KEYS */;
-INSERT INTO `carrera` VALUES (5,'tecnicatura universitaria en programacion',1),(6,'tecnicatura universitaria en tecnologia de los alimentos',1),(7,'tecnicatura universitaria en diseño industrial',1),(8,'licenciatura en obstetricia',1);
+INSERT INTO `carrera` VALUES (5,'tecnicatura universitaria en programacion',0),(6,'tecnicatura universitaria en tecnologia de los alimentos',0),(7,'tecnicatura universitaria en diseño industrial',0),(8,'licenciatura en obstetricia',0);
 /*!40000 ALTER TABLE `carrera` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-21 13:17:48
+-- Dump completed on 2024-12-23  5:20:48

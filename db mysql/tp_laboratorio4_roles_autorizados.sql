@@ -27,6 +27,7 @@ DROP TABLE IF EXISTS `roles_autorizados`;
 CREATE TABLE `roles_autorizados` (
   `AUTH_idusuarios_autorizados` int NOT NULL,
   `ROL_idrol` int NOT NULL,
+  `confirma` tinyint NOT NULL DEFAULT '0',
   `baja` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`AUTH_idusuarios_autorizados`,`ROL_idrol`),
   KEY `fk_roles_autorizados_2_idx` (`ROL_idrol`),
@@ -41,7 +42,7 @@ CREATE TABLE `roles_autorizados` (
 
 LOCK TABLES `roles_autorizados` WRITE;
 /*!40000 ALTER TABLE `roles_autorizados` DISABLE KEYS */;
-INSERT INTO `roles_autorizados` VALUES (1,1,0),(2,2,0),(3,2,0),(10,2,0),(15,2,0);
+INSERT INTO `roles_autorizados` VALUES (1,1,1,0),(1,4,1,0),(2,1,1,0),(3,2,1,0),(10,4,1,0),(15,2,1,0),(37,4,0,0);
 /*!40000 ALTER TABLE `roles_autorizados` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-21 13:17:48
+-- Dump completed on 2024-12-23  5:20:44

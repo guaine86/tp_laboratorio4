@@ -18,28 +18,36 @@ USE `tp_laboratorio4`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `rol`
+-- Table structure for table `ofertas`
 --
 
-DROP TABLE IF EXISTS `rol`;
+DROP TABLE IF EXISTS `ofertas`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `rol` (
-  `idrol` int NOT NULL AUTO_INCREMENT,
-  `rol` varchar(45) NOT NULL,
-  `baja` tinyint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`idrol`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `ofertas` (
+  `idofertas` int NOT NULL AUTO_INCREMENT,
+  `nombre_contacto` varchar(100) NOT NULL,
+  `empresa` varchar(50) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `rubro` int NOT NULL,
+  `tipo_puesto` varchar(45) NOT NULL,
+  `descripcion` varchar(140) NOT NULL,
+  `confirma` tinyint DEFAULT '0',
+  `baja` tinyint DEFAULT '0',
+  PRIMARY KEY (`idofertas`),
+  KEY `fk_ofertas_1_idx` (`rubro`),
+  CONSTRAINT `fk_ofertas_1` FOREIGN KEY (`rubro`) REFERENCES `rubro` (`idrubro`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `rol`
+-- Dumping data for table `ofertas`
 --
 
-LOCK TABLES `rol` WRITE;
-/*!40000 ALTER TABLE `rol` DISABLE KEYS */;
-INSERT INTO `rol` VALUES (1,'admin',0),(2,'data-entry',0),(3,'empleador',0),(4,'postulante',0);
-/*!40000 ALTER TABLE `rol` ENABLE KEYS */;
+LOCK TABLES `ofertas` WRITE;
+/*!40000 ALTER TABLE `ofertas` DISABLE KEYS */;
+INSERT INTO `ofertas` VALUES (1,'edward wayne cruz','wayne inc','wayne86.cruz@gmail.com',1,'Jornada Completa','queremos alguien que programe todo el dia',1,0),(2,'brunito valentino','kakaroto sa','wayne86@gmail.com',3,'pasantia','estamos buscando enfermera para formar',0,0),(3,'brunito mcfly','kakaroto system','wayne86.cruz@gmail.com',3,'jornada completa','buscamos alguien para realizar diseños personalizados',1,0);
+/*!40000 ALTER TABLE `ofertas` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-23  5:20:45
+-- Dump completed on 2024-12-23  5:20:47
