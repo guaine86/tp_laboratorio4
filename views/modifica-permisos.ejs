@@ -35,8 +35,11 @@
     <main class="contenedor sombras" style="display: grid; align-items: center;">
         <% if(resultados){ %> 
         <div>
-           <h2 class="titulo mgb-2">Modificar rol y Usuario </h2>
-           <form class="formulario" action="/modificarRoles/<%= rolActual %>" method="post" enctype="text/html">
+           <div class="modifica-titulo">
+               <h2 class="titulo mgb-2">Modificar rol y Usuario </h2>
+               <a href="/elimina-usuario/<%= resultados.idusuarios_autorizados %>" class="btn btn-outline-danger mt-1 pt-2 mgb-2 link">Eliminar Usuario</a>
+           </div>
+           <form class="formulario" action="/modificarRoles/<%= idRolActual %>/<%= resultados.idusuarios_autorizados %>" method="post" enctype="text/html">
                <fieldset>
                    <div class="formulario-campos formulario-campos__login">
                         <div class="campo">

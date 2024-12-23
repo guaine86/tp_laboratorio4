@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Ofertas Confirmadas</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body class="body-consulta">
+    <div>
+        <%- include('./templates/header-nav.ejs') %>
+    </div>
+
+    <main class="contenedor sombras" style="max-width: 140rem;">
+        <div style="display:grid; grid-template-columns: auto 1fr; align-items: baseline;">
+            <div style="grid-column: 2/3; justify-self: flex-end;">
+                <% if(typeof usuario !== "undefined"){ %>
+                    <p class="capitalize" style="align-self: flex-end; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.nombre %></small></p>
+                <% } %>
+            </div>
+            <div style="grid-column: 3/4;">
+                <div style="display: flex; justify-content: end;">
+                <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>   
+                    <a class="btn btn-outline-primary mt-1 mb-4 link" style="margin-right: 1rem;" href="/agregar">Agregar Usuarios</a>
+                <% }} %>      
+                    <a class="btn btn-outline-danger mt-1 mb-4 link" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+        <div>
+            <% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; %> 
+		    <p class="contenedor centrar-texto <%= fondo %>">
+			    <%= muestra %>
+		    </p>
+	        <% } %>
+        </div>
+
+        <div class="consulta-barra">
+            <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md pt-1'></i></a>
+            <div>
+                <form class="consulta-form" action="/filtraRubros" method="post">
+                    <div class="consulta-form__select">
+                        <label for="rubro">Rubro:</label>
+                        <select class="capitalize" name="rubro" id="rubro"  title="Elija un rubro en las opciones listadas">
+                            <option class="input-select" value="todas" selected >Elija un rubro:</option>
+                            <option class="input-carrera" value="todas">Todas</option>
+                            <% if(typeof rows !== "undefined"){rows.forEach((rubro)=>{ %>
+                                <option class="input-carrera capitalize" value="<%= rubro.idrubro %>"><%= rubro.rubro %></option>
+                            <% })} %>
+                        </select>
+                    </div>
+                    <div class="consulta-form__select">
+                        <label for="puesto">Tipo de puesto:</label>
+                        <select class="capitalize" name="puesto" id="puesto"  title="Indique el tipo de puesto a cubrir">
+                            <option class="input-select" value="todas" selected>Indique tipo de puesto:</option>
+                            <option class="input-carrera" value="todas">Todas</option>
+
+                            <!-- <% if(typeof rows !== "undefined"){rows.forEach((carrera)=>{ %>
+                                <option class="input-carrera capitalize" value="<%= carrera.idcarrera %>"><%= carrera.nomenclatura %></option>
+                            <% })} %> -->
+                            <option class="input-carrera" >Pasantia</option>
+                            <option class="input-carrera" >Medio Tiempo</option>
+                            <option class="input-carrera" >Jornada Completa</option>
+                        </select>
+                    </div>                  
+                    <button class="btn btn-outline-primary mt-4 mb-2" type="submit"><i class='bx bx-search-alt-2 bx-md pt-1'></i></button>
+                </form>
+            </div>
+        </div>
+        <table class="table table-bordered table-striped text-center mt-2" style="vertical-align: middle;">
+            <thead>
+                <tr class="bg-warning text-white">
+                    <th><a href="#" class="encabezado"><span>ID </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><a href="#" class="encabezado"><span>Contacto </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <th><a href="#" class="encabezado"><span>Empresa </span><i class='bx bx-caret-down-circle'></i></a></th>
+                    <!-- <th><a href="#" class="encabezado"><span>DNI </span><i class='bx bx-caret-down-circle'></i></a></th> -->
+                    <th>Email</th>
+                    <th>Rubro</th>
+                    <th>Tipo Puesto</th>
+                    <th>Descripcion</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <% if(resultados.length === 0){ %>
+                    <p class="centrar-texto alerta"><strong>Aun no hay Ofertas Confirmadas!!</strong></p>
+            <% }else { %>
+            <tbody>
+                <% resultados.forEach((oferta)=>{ %>
+                <tr>
+                    <td ><%= oferta.idofertas %></td>
+                    <td class="capitalize"><%= oferta.nombre_contacto %></td>
+                    <td class="capitalize"><%= oferta.empresa %></td>
+                    <!-- <td><%= usuario.dni %></td> -->
+                    <td><%= oferta.email %></td>
+                    <td class="capitalize"><%= oferta.rubro %></td>
+                    <td class="capitalize"><%= oferta.tipo_puesto %></td>
+                    <td><%= oferta.descripcion %></td>
+                    <!-- <td class="capitalize"><% let confirma = (usuario.confirma === 1) ? 'si' : 'no' %><%= confirma %></td> -->
+                    <td>
+                        <!-- <a href="/modifica-permisos/<%= usuario.dni %>/<%= usuario.rol %>/<%= usuario.idrol %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
+                        <a href="/elimina-usuario/<%= usuario.id %>/<%= usuario.rol %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a> -->
+                        <a href="#" class="btn btn-outline-info mt-1 mb-1 px-2">postularse</a>
+                        <a href="#" class="btn btn-outline-danger mt-1 mb-1 px-4">borrar</a>
+                    </td>
+                </tr>
+                <% })} %>
+            </tbody>
+        </table>
+    </main>
+
+    <%- include('./templates/footer.ejs') %>
+    <script src="/js/consulta.js"></script>
+</body>
+</html>

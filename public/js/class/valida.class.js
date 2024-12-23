@@ -6,7 +6,7 @@ class ValidaCadena{
         this.mensaje;
     };
     asignaPatron(){
-        if (this.campo  === 'nombre' || this.campo === 'apellido'){
+        if (this.campo  === 'nombre' || this.campo === 'apellido' || this.campo === 'empresa'){
             this.patron = new RegExp(/^[a-zA-Z\s]*$/);
             this.mensaje = 'Este campo solo admite caracteres alfabeticos!!';
         }else if(this.campo === 'dni'){

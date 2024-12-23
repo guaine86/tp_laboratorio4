@@ -16,8 +16,13 @@
 					<legend>Ingrese sus datos y el perfil buscado</legend>
 					<div class="formulario-campos formulario-campos__login">	
 						<div class="campo">
-							<label for="nombre">Nombre:</label>
-							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="2" maxlength="35"  autocomplete="off">
+							<label for="nombre">Nombre de Contacto:</label>
+							<input class="input" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre Contacto" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 2 letras" minlength="2" maxlength="100"  autocomplete="off">
+						</div>
+
+                        <div class="campo">
+							<label for="empresa">Empresa:</label>
+							<input class="input" type="text" name="empresa" id="empresa" placeholder="Empresa" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 2 letras" minlength="2" maxlength="45"  autocomplete="off">
 						</div>
 
                         <div class="campo">
@@ -26,16 +31,16 @@
                         </div>
                         
                         <div class="campo">
-                            <label for="empresa">Empresa:</label>
-                             <select class="input capitalize" name="empresa" id="empresa"  title="Elija un rubro en las opciones listadas">
+                            <label for="rubroEmpresa">Rubro Empresa:</label>
+                             <select class="input capitalize" name="rubroEmpresa" id="rubroEmpresa"  title="Elija un rubro en las opciones listadas">
                                 <option class="input-select" selected disabled>Elija un rubro:</option>
-                                <!-- <% if(typeof rows !== "undefined"){rows.forEach((carrera)=>{ %>
-                                    <option class="input-carrera capitalize" value="<%= carrera.idcarrera %>"><%= carrera.nomenclatura %></option>
-                                <% })} %> -->
-                                <option class="input-carrera" >Programacion/IT</option>
+                                <% if(typeof rows !== "undefined"){rows.forEach((rubro)=>{ %>
+                                    <option class="input-carrera capitalize" value="<%= rubro.idrubro %>"><%= rubro.rubro %></option>
+                                <% })} %>
+                                <!-- <option class="input-carrera" >Programacion/IT</option>
                                 <option class="input-carrera" >Industria Alimenticia</option>
                                 <option class="input-carrera" >Diseño Industrial</option>
-                                <option class="input-carrera" >Medicina</option>
+                                <option class="input-carrera" >Medicina</option> -->
                              </select>
                         </div>
 

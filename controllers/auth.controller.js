@@ -134,7 +134,7 @@ exports.ingresar = async(req, res) => {
                 ruta: 'login'
             });
         }else{
-            const busca = `SELECT u.idusuarios, u.usuario, u.nombre, u.email, u.pass FROM usuarios as u INNER JOIN usuarios_autorizados as ua WHERE u.usuario = '${usuario}' AND u.confirma = 1 AND u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.baja = 0;`;
+            const busca = `SELECT u.idusuarios, u.usuario, u.nombre, u.email, u.pass FROM usuarios as u INNER JOIN usuarios_autorizados as ua WHERE u.usuario = '${usuario}' AND u.confirma = 1 AND u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.baja = 0 AND u.baja_rol = 0;`;
             conexion.query(busca, async(err, resultados)=>{
                 if(err){
                     throw err;

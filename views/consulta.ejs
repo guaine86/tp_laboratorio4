@@ -10,17 +10,18 @@
     </div>
 
     <main class="contenedor sombras" style="max-width: 140rem;">
-        <div style="display:grid; grid-template-columns: 1fr 2fr 1fr;">
-            <div style="grid-column: 2/3;">
+        <div class="consulta-encabezado" >
+            <div class="consulta-titulo">
                 <% if(typeof usuario !== "undefined"){ %>
-                    <h2 class="capitalize" style="align-self: flex-end;">Bienvenido: <%= usuario.nombre %>!!</h2>
+                <h2 class="capitalize">Bienvenido: <%= usuario.nombre %>!!</h2>
                 <% } %>
             </div>
-            <div style="display: flex; justify-content: end;">
+            <div class="consulta-enlaces">
+                <a class="btn btn-outline-primary mt-4 mb-2 link" style="margin-right: 1rem;" href="/ofertas">Ver ofertas</a>
                 <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>
-                <a class="btn btn-outline-primary mt-4 mb-2" style="margin-right: 1rem;" href="/agregar">Administrar Usuarios</a>
+                <a class="btn btn-outline-primary mt-4 mb-2 link" style="margin-right: 1rem;" href="/agregar">Administrar Usuarios</a>
                 <% }} %> 
-                <a class="btn btn-outline-danger mt-4 mb-2" href="/logout">Logout</a>
+                <a class="btn btn-outline-danger mt-4 mb-2 link" href="/logout">Logout</a>
             </div>
         </div>
         <div>
@@ -32,7 +33,7 @@
         </div>
 
         <div class="consulta-barra">
-            <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md'></i></a>
+            <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md pt-1'></i></a>
             <div>
                 <form class="consulta-form" action="/filtra" method="post">
                     <div class="consulta-form__select">
@@ -55,7 +56,7 @@
                         </select>
                     </div>
                     <!-- <a href="/consulta/<%= 5 %>/<%= 1 %>" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bx-search-alt-2 bx-md'></i></a> -->
-                     <button class="btn btn-outline-primary mt-4 mb-2" type="submit"><i class='bx bx-search-alt-2 bx-md'></i></button>
+                     <button class="btn btn-outline-primary mt-4 mb-2" type="submit"><i class='bx bx-search-alt-2 bx-md pt-1'></i></button>
                 </form>
             </div>
         </div>
@@ -97,8 +98,11 @@
                     <td><%= alumno.observaciones %></td>
                     <td><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></td>
                     <td>
-                        <a href="/modifica/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
-                        <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a>
+                        <a href="/modifica/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-info mt-1 mb-1 px-3">editar</a>
+                        <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2){ %>
+                        <a  href="/agregar/<%= alumno.dni %>/<%= 'postulante' %>" class="btn btn-outline-success mt-1 mb-1 px-4">alta</a>
+                        <% }} %> 
+                        <!-- <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a> -->
                     </td>
                 </tr>
                 <% })} %>

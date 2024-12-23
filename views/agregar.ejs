@@ -7,7 +7,7 @@
 <body class="body-consulta">
     <div>
         <%- include('./templates/header-nav.ejs') %>
-        <div style="display:grid; grid-template-columns:  auto 1fr;">
+        <div style="display:grid; grid-template-columns:  auto 1fr; align-items: baseline;">
             <div style="grid-column: 2/3; justify-self: flex-end;">
                 <% if(typeof usuario !== "undefined"){ %>
                     <p class="capitalize" style="align-self: flex-end; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.nombre %></small></p>
@@ -16,9 +16,9 @@
             <div style="grid-column: 3/4">
                 <div style="display: flex; justify-content: end; margin-right: 1rem;">
                     <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>   
-                    <a class="btn btn-outline-primary mt-1 mb-4" style="margin-right: 1rem;" href="/modifica-usuario">Modificar Usuarios</a>
+                    <a class="btn btn-outline-primary mt-1 mb-4 link" style="margin-right: 1rem;" href="/modifica-usuario">Modificar Usuarios</a>
                     <% }} %> 
-                    <a class="btn btn-outline-danger mt-1 mb-4" href="/logout">Logout</a>
+                    <a class="btn btn-outline-danger mt-1 mb-4 link" href="/logout">Logout</a>
                 </div>
             </div>
         </div>
@@ -41,15 +41,23 @@
                    <div class="formulario-campos formulario-campos__login">
                         <div class="campo">
                             <label for="dni">DNI:</label>
+                            <% if(typeof dni !== 'undefined'){ %>
+                            <input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" title="Este campo admite solo caracteres numericos con minimo 7 digitos y maximo 8" minlength="7" maxlength="8"  autocomplete="off" value="<%= dni %>">     
+                            <% }else{ %>
                             <input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" title="Este campo admite solo caracteres numericos con minimo 7 digitos y maximo 8" minlength="7" maxlength="8"  autocomplete="off">
+                            <% } %>
                         </div>
                         <div class="campo">
 							<label for="rol">Rol:</label>
 							 <select class="input capitalize" name="rol" id="rol"  title="Elija un rol entre las opciones listadas">
-								<option class="input-select" value="" selected >Elija un rol para asignar:</option>
-								<% if(typeof rows !== "undefined"){rows.forEach((rol)=>{ %>
-									<option class="input-carrera capitalize" value="<%= rol.idrol %>"><%= rol.rol %></option>
-								<% })} %>
+								<% if(typeof rol !=='undefined'){ %>
+                                    <option class="input-select" value="<%= idrol.idrol %>" selected ><%= rol %></option>
+                                <% }else{ %>
+                                    <option class="input-select" value="" selected >Elija un rol para asignar:</option>
+                                    <% if(typeof rows !== "undefined"){rows.forEach((rol)=>{ %>
+                                        <option class="input-carrera capitalize" value="<%= rol.idrol %>"><%= rol.rol %></option>
+                                    <% })} %>
+                                <% } %>
 							 </select>
 						</div>
                        

@@ -3,8 +3,6 @@
 <head>
     <title>Modifica</title>
     <%- include('./templates/head.ejs') %>
-
-    <link rel="stylesheet" href="../dist/css/main.css">
 </head>
 <body>
     <%- include('./templates/header-nav.ejs') %>
@@ -12,7 +10,11 @@
     <main class="contenedor sombras">         
         <% if(alumno){ %> 
         <section>
-            <h2 class="titulo mgb-2">Cambie Campos en el Formulario</h2>
+           <div class="modifica-titulo">
+            <!-- <div style="display: grid; grid-template-columns:1fr 5fr 1fr; column-gap: 2rem;"--> 
+                <h2 class="titulo mgb-2">Cambie Campos en el Formulario</h2>
+                <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 pt-2 mgb-2" style="font-size: 1.3rem;" >Borrar Inscripcion</a>
+            </div>
         
             <form class="formulario" action="/actualizar/<%= alumno.carrera %>" method="post" enctype="text/html">
                 <fieldset>
@@ -20,12 +22,12 @@
                     <div class="formulario-campos">	
                         <div class="campo">
                             <label for="nombre">Nombre:</label>
-                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="2" maxlength="35" required autocomplete="off">
+                            <input class="input capitalize" type="text" name="nombre" id="nombre" value="<%= alumno.nombre %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 2 letras" minlength="2" maxlength="35" required autocomplete="off">
                         </div>
     
                         <div class="campo">
                             <label for="apellido">Apellido/s:</label>
-                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 3 letras" minlength="2" maxlength="35" required autocomplete="off">
+                            <input class="input capitalize" type="text" name="apellido" id="apellido" value="<%= alumno.apellido %>" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 2 letras" minlength="2" maxlength="35" required autocomplete="off">
                         </div>
     
                         <div class="campo">
