@@ -177,7 +177,8 @@ exports.autenticado = async(req, res, next) =>{
     if(token){
         try {
             const decodificar = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRETO);
-            const consulta = `SELECT * FROM usuarios WHERE idusuarios = ${decodificar.id};`;
+            // const consulta = `SELECT * FROM usuarios WHERE idusuarios = ${decodificar.id};`;
+            const consulta = `SELECT u.idusuarios, u.usuario, u.nombre, u.email, u.pass, u.confirma, u.AUTH_idusuarios_autorizados, u.ROL_idrol, r.rol ,u.baja_rol FROM usuarios as u INNER JOIN rol as r WHERE u.idusuarios = ${decodificar.id} AND u.ROL_idrol = r.idrol;`
             conexion.query(consulta, (err, resultado) => {
                 if(err){
                     throw err;

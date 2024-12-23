@@ -41,7 +41,7 @@
                    <div class="formulario-campos formulario-campos__login">
                         <div class="campo">
                             <label for="dni">DNI:</label>
-                            <% if(typeof dni !== 'undefined'){ %>
+                            <% if(typeof dni !== 'undefined' && (typeof rol !== 'undefined' && idrol.idrol !== 3)){ %>
                             <input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" title="Este campo admite solo caracteres numericos con minimo 7 digitos y maximo 8" minlength="7" maxlength="8"  autocomplete="off" value="<%= dni %>">     
                             <% }else{ %>
                             <input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" title="Este campo admite solo caracteres numericos con minimo 7 digitos y maximo 8" minlength="7" maxlength="8"  autocomplete="off">
@@ -59,14 +59,30 @@
                                     <% })} %>
                                 <% } %>
 							 </select>
-						</div>
-                       
+						</div>   
                    </div>
-                   <div class="alinear-derecha flex">
-                       <input class="boton w100" type="submit" value="Enviar">
-                       <!-- <input class="boton w100" type="reset" value="Borrar"> -->
-                       <a class="boton w100" href="/consulta" target="_self">Cancelar</a>
-                   </div>
+
+                   <% if(typeof dni !== 'undefined' && idrol.idrol === 3){ %>
+                   <div class="campo-grilla">
+                        <div class="campo-grilla_radio">
+                            <div>
+                                <input type="radio" id="id" name="id" value="<%= dni %>" checked >
+                                <label for="id" class= >ID oferta: <%= dni %> </label>
+                            </div>
+                        </div>
+                        <div class="alinear-derecha flex">
+                            <input class="boton w100" type="submit" value="Enviar">
+                            <!-- <input class="boton w100" type="reset" value="Borrar"> -->
+                            <a class="boton w100" href="/consulta" target="_self">Cancelar</a>
+                        </div>
+                    </div>
+                    <% }else{ %>
+                    <div class="alinear-derecha flex">
+                        <input class="boton w100" type="submit" value="Enviar">
+                        <!-- <input class="boton w100" type="reset" value="Borrar"> -->
+                        <a class="boton w100" href="/consulta" target="_self">Cancelar</a>
+                    </div>
+                    <% } %>
                 </fieldset>
             </form>
        </div>

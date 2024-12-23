@@ -338,10 +338,10 @@ router.get('/agregar', autenticacion.autenticado ,(req,res)=>{
     }
 });
 
-router.get('/agregar/:dni/:rol', autenticacion.autenticado, (req, res) => {
+router.get('/agregar/:identifica/:rol', autenticacion.autenticado, (req, res) => {
     const infoUsuario = req.usuario;
     let muestra;
-    const dni = req.params.dni;
+    const dni = req.params.identifica;
     const rol = req.params.rol;
     if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
         const buscaIdRol = `SELECT idrol FROM rol WHERE rol = '${rol}';`;
@@ -755,8 +755,55 @@ router.post('/nueva/:token', async(req, res)=>{
 router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
     const datos = req.body;
     const {dni, rol} = datos;
+    const infoUsuario = req.usuario;
     let muestra;
 
+    // prueba envio mail segun tipo de rol
+    
+    // ***lista roles***
+    // 1 - admin
+    // 2 - data-entry
+    // 3 - empleador
+    // 4 - postulante
+
+    if (rol !== 1 || rol!== 2){
+        let busqueda = [];
+
+        if(rol === 3){
+            const formulario = req.body;
+            const {dni, rol, idofertas} = formulario;
+            const empleador = `SELECT nombre_contacto, email FROM ofertas WHERE confirma = 1 AND idofertas = ${idofertas};`;
+            conexion.query(empleador, async(err, resultado) => {
+                try {
+                    
+                } catch (error) {
+                    
+                }
+            }) 
+        }else if( rol === 4){
+
+        }
+        
+        const token = jwt.sign({}, process.env.JWT_SECRETO, {expiresIn: '1h'});
+        const link = `http://localhost:${process.env.PORT}/register`
+        mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: `${email}`,
+            subject: 'Aviso alta Usuario',
+            html: `
+                <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
+
+            `
+        }
+        transporter.sendMail(mailOptions, async(err, info) => {
+            try {
+                
+            } catch (error) {
+                throw err;
+            }
+        });
+    }
+// fin prueba envio mail
     lista_roles = [];
     const carreras = `SELECT * FROM rol WHERE baja = 0;`;
     conexion.query(carreras,(err, resultados)=>{
