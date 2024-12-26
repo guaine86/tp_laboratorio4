@@ -83,14 +83,25 @@
                                 <input type="radio" id="id" name="id" value="<%= alumno.idalumnos %>" checked >
                                 <label for="id" class= >ID: <%= alumno.idalumnos %> </label>
                             </div>
-                            <div>
-                                <label for="egresado">Egresado:</label>
-                                <select name="egresado" id="egresado">
-                                    <option class="input-select" value="<%= alumno.egresado %>" selected><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></option>
-                                    <option class="input-carrera" value="1">Si</option>
-                                    <option value="0" class="input-carrera">No</option>
-                                </select>
-                            </div>
+                            <% if(typeof infoUsuario !== 'undefined' && infoUsuario.ROL_idrol === 4){ %>
+                                <div style="display: none;">
+                                    <label for="egresado">Egresado:</label>
+                                    <select name="egresado" id="egresado">
+                                        <option class="input-select" value="<%= alumno.egresado %>" selected><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></option>
+                                        <option class="input-carrera" value="1">Si</option>
+                                        <option value="0" class="input-carrera">No</option>
+                                    </select>
+                                </div>
+                            <% }else{ %>
+                                <div>
+                                    <label for="egresado">Egresado:</label>
+                                    <select name="egresado" id="egresado">
+                                        <option class="input-select" value="<%= alumno.egresado %>" selected><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></option>
+                                        <option class="input-carrera" value="1">Si</option>
+                                        <option value="0" class="input-carrera">No</option>
+                                    </select>
+                                </div>
+                            <% } %>
                         </div>
                         <div class="alinear-derecha flex">
                             <input class="boton w100" type="submit" value="Confirmar">
