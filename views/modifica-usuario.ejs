@@ -79,7 +79,7 @@
                     <p class="centrar-texto alerta"><strong>Aun no hay Usuarios Registrados!!</strong></p>
             <% }else { %>
             <tbody>
-                <% resultados.forEach((usuario)=>{ %>
+                <% resultados.forEach((usuario, indice)=>{ %>
                 <tr>
                     <td ><%= usuario.id %></td>
                     <td><%= usuario.usuario %></td>
@@ -90,7 +90,7 @@
                     <td class="capitalize"><% let confirma = (usuario.confirma === 1) ? 'si' : 'no' %><%= confirma %></td>
                     <td class="capitalize"><% let baja = (usuario.baja_rol === 1) ? 'si' : 'no' %><%= baja %></td>
                     <td style="font-size: 1.3rem;">
-                        <a href="/modifica-permisos/<%= usuario.dni %>/<%= usuario.rol %>/<%= usuario.idrol %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
+                        <a href="/modifica-permisos/<%= tokenUsuarios[indice] %>/<%= usuario.rol %>/<%= usuario.idrol %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
                         <a href="/elimina-usuario/<%= usuario.idAUTH %>/<%= usuario.idrol %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a>
                     </td>
                 </tr>

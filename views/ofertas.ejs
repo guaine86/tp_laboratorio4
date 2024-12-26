@@ -83,7 +83,7 @@
                     <p class="centrar-texto alerta"><strong>Aun no hay Ofertas Confirmadas!!</strong></p>
             <% }else { %>
             <tbody>
-                <% resultados.forEach((oferta)=>{ %>
+                <% resultados.forEach((oferta, indice)=>{ %>
                 <tr>
                     <td ><%= oferta.idofertas %></td>
                     <td class="capitalize"><%= oferta.nombre_contacto %></td>
@@ -97,8 +97,8 @@
                     <td>
                         <!-- <a href="/modifica-permisos/<%= usuario.dni %>/<%= usuario.rol %>/<%= usuario.idrol %>" class="btn btn-outline-info mt-1 mb-1">editar</a>
                         <a href="/elimina-usuario/<%= usuario.id %>/<%= usuario.rol %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a> -->
-                        <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2){ %>
-                        <a  href="/agregar/<%= oferta.idofertas %>/<%= 'empleador' %>" class="btn btn-outline-success mt-1 mb-1 " style="padding: .5rem 2rem;" >alta</a>
+                        <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2){ %> 
+                        <a  href="/agregar/<%= 3 %>/<%= tokenOfertas[indice] %>" class="btn btn-outline-success mt-1 mb-1 " style="padding: .5rem 2rem;" >alta</a>
                         <% }} %>
                         <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 4){ %> 
                         <a href="#" class="btn btn-outline-info mt-1 mb-1 px-2">postularse</a>

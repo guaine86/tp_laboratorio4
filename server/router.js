@@ -4,10 +4,11 @@ const router = express.Router();
 const conexion = require('./bbdd.js');
 const crud = require('./crud.js');
 const autenticacion = require('../controllers/auth.controller.js');
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcryptjs = require('bcryptjs');
 const transporter = require('./email.js');
+const {promisify} = require('util');
+const queryDB = promisify(conexion.query).bind(conexion);
 
 // Configurar Nodemailer
 // const transporter = nodemailer.createTransport({
@@ -59,7 +60,23 @@ router.get('/consulta', autenticacion.autenticado,(req,res)=>{
         if(err){
             throw err;
         }else{
-            res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario});
+            
+            let tokenDatos = [];
+            // let decoded = [];
+            registros.forEach((registro) => {
+                // const nombre = registro.nombre.concat(' ',registro.apellido);
+                tokenDatos.push(jwt.sign({nombre: registro.nombre.concat(' ',registro.apellido), identifica: registro.dni, email: registro.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));  
+            });
+            // console.log(tokenDatos);
+            
+            // tokenDatos.forEach((token,indice) => {
+            //     decoded.push(jwt.verify(token, process.env.JWT_SECRETO))
+            //     console.log(indice);
+            //     console.log('nombre encripatado: ', tokenDatos[indice]);
+            // });
+            // console.log(decoded);
+
+            res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario, tokenDatos});
         }
     });
 });
@@ -188,6 +205,12 @@ router.get('/login', (req, res) => {
 // Ruta para el registro
 router.get('/register', (req, res) => {
     res.render('register');
+});
+
+router.get('/register/:idUsuarioAutorizado/:idRolAutorizado', (req, res) => {
+    const idUsuariosAutorizados = req.params.idUsuarioAutorizado
+    const idRolesAutorizados = req.params.idRolAutorizado;
+    res.render('register',{idUsuariosAutorizados, idRolesAutorizados});
 });
 
 // Ruta para el contacto
@@ -338,29 +361,23 @@ router.get('/agregar', autenticacion.autenticado ,(req,res)=>{
     }
 });
 
-router.get('/agregar/:identifica/:rol', autenticacion.autenticado, (req, res) => {
+router.get('/agregar/:idrol/:tokenDatos', autenticacion.autenticado, async(req, res) => {
     const infoUsuario = req.usuario;
     let muestra;
-    const dni = req.params.identifica;
-    const rol = req.params.rol;
+    const idrol = req.params.idrol;
+    const tokenDatos = req.params.tokenDatos;
+    const decoded = await promisify(jwt.verify)(tokenDatos, process.env.JWT_SECRETO);
+    const dni = decoded.identifica;
+
     if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
-        const buscaIdRol = `SELECT idrol FROM rol WHERE rol = '${rol}';`;
-        conexion.query(buscaIdRol, (err, resultado)=>{
+        const buscaRol = `SELECT rol FROM rol WHERE idrol = ${idrol};`;
+        conexion.query(buscaRol, (err, resultado) =>  {
             if(err){
                 throw err;
             }else{
-                res.render('agregar', {dni, idrol: resultado[0], rol, usuario: req.usuario});
+                res.render('agregar', {idrol, dni, rol: resultado[0], tokenDatos, usuario: req.usuario});
             }
-        });
-        
-        // const roles = `SELECT * FROM rol WHERE baja = 0;`;
-        // conexion.query(roles,(err, resultados)=>{
-        //     if(err){
-        //         throw err;
-        //     }else{
-        //         res.render('agregar',{rows: resultados, usuario: req.usuario});
-        //     }
-        // });
+        })
     }else{
         muestra = "No esta autorizado para ver esta pagina!!";
         const consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
@@ -391,13 +408,16 @@ router.get('/modifica-usuario', autenticacion.autenticado, (req,res)=>{
             if(err){
                 throw err;
             }else{
+                let tokenUsuarios = [];
+                resultados.forEach((usuario) => {
+                    tokenUsuarios.push(jwt.sign({dni: usuario.dni, rol: usuario.rol, idrol: usuario.idrol}, process.env.JWT_SECRETO, {expiresIn: '7d'}))
+                });
                 const roles = `SELECT * FROM rol WHERE baja = 0;`;
                 conexion.query(roles, (err, rows)=>{
                     if(err){
                         throw err;
                     }else{
-                        //console.log(req.usuario);
-                        res.render('modifica-usuario',{resultados, rows, usuario: req.usuario});
+                        res.render('modifica-usuario',{resultados, rows, tokenUsuarios,usuario: req.usuario});
                     }
                 });
             }
@@ -528,12 +548,14 @@ router.get('/elimina-usuario/:idAuth', autenticacion.autenticado, (req,res)=>{
 });
 
 
-router.get('/modifica-permisos/:dni/:rol/:idrol', autenticacion.autenticado,(req, res)=>{
+router.get('/modifica-permisos/:dni/:rol/:idrol', autenticacion.autenticado,async(req, res)=>{
     const infoUsuario = req.usuario;
     let muestra;
 
     if(infoUsuario.ROL_idrol===1){
-        const dni = req.params.dni;
+        let dni = req.params.dni;
+        const decoded = await promisify(jwt.verify)(dni, process.env.JWT_SECRETO);
+        dni = decoded.dni;
         const rol = req.params.rol;
         const idrol = req.params.idrol;
     
@@ -591,10 +613,15 @@ router.get('/ofertas', autenticacion.autenticado, (req, res) => {
         if(err){
             throw err;
         }else{
+            let tokenOfertas = [];
+            resultados.forEach((oferta) => {
+                tokenOfertas.push(jwt.sign({nombre: oferta.nombre_contacto, identifica: oferta.idofertas , email: oferta.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));
+            });
+            
             const rubros = `SELECT * FROM rubro WHERE baja = 0;`;
             conexion.query(rubros, async(err, rows) => {
                 try {
-                    res.render('ofertas', {resultados, rows, usuario: req.usuario})
+                    res.render('ofertas', {resultados, rows, usuario: req.usuario, tokenOfertas})
                 } catch (error) {
                     throw err
                 }
@@ -654,6 +681,8 @@ router.post('/enviar-correo', async(req, res) => {
                         <h1 style="text-transform: capitalize;">Hola, ${nombre}</h1>
                         <p>Gracias por contactarte con nosotros!! Por favor, verifica tu correo asi podemos contactarnos con vos haciendo click en el siguiente enlace:</p>
                         <a href="${verificacionLink}">Verificar email contacto</a>
+                        <p><b>ID Oferta:</b> ${idofertas}</p>
+                        <p><i>Si queres hacerte un usuario con nuestra plataforma, responde este mail dandonos tu nro de DNI e indicando el ID de tu oferta</i></p>
                     `
                 }
                 await transporter.sendMail(mailOptionsVerifica);
@@ -674,15 +703,16 @@ router.post('/enviar-correo', async(req, res) => {
                     alertIcon: "info",
                     ruta: 'contacto'
                 });
+            }else{
+                //res.send('Correo Enviado con Exito!!');
+                res.render('contacto', {
+                    alert: true,
+                    alertTitle: "Correo Enviado con Exito",
+                    alertMessage: "En breve nos pondremos en contacto con ud. Confirme su oferta con el link enviado a su email" ,
+                    alertIcon: 'success',
+                    ruta:'index'
+                });
             }
-            //res.send('Correo Enviado con Exito!!');
-            res.render('contacto', {
-                alert: true,
-                alertTitle: "Correo Enviado con Exito",
-                alertMessage: "En breve nos pondremos en contacto con ud. Confirme su oferta con el link enviado a su email" ,
-                alertIcon: 'success',
-                ruta:'index'
-            })
         });
         
     }catch (error){
@@ -728,7 +758,14 @@ router.post('/nueva/:token', async(req, res)=>{
         const modifica = `UPDATE usuarios SET pass = '${passHash}' WHERE email = '${decoded.email}'`
         conexion.query(modifica, (err)=>{
             if(err){
-                throw err;
+                res.render('nuevo-pass',{
+                    alert: true,
+                    alertTitle: "Error de actualizacion de datos!!",
+                    alertMessage: "No hay usuarios registrados con ese email" ,
+                    alertIcon: 'info',
+                    ruta:'login'
+                })
+                // throw err;
             }else{
                 res.render('nuevo-pass',{
                     alert: true,
@@ -752,58 +789,23 @@ router.post('/nueva/:token', async(req, res)=>{
 })
 
 // Accion agregar autorizado
-router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
+router.post('/agregarAuth/:token',autenticacion.autenticado, async(req,res)=>{
     const datos = req.body;
     const {dni, rol} = datos;
     const infoUsuario = req.usuario;
-    let muestra;
+    const token = req.params.token;
+    let email = 'email';
+    let nombre = 'nombre';
 
-    // prueba envio mail segun tipo de rol
-    
-    // ***lista roles***
-    // 1 - admin
-    // 2 - data-entry
-    // 3 - empleador
-    // 4 - postulante
-
-    if (rol !== 1 || rol!== 2){
-        let busqueda = [];
-
-        if(rol === 3){
-            const formulario = req.body;
-            const {dni, rol, idofertas} = formulario;
-            const empleador = `SELECT nombre_contacto, email FROM ofertas WHERE confirma = 1 AND idofertas = ${idofertas};`;
-            conexion.query(empleador, async(err, resultado) => {
-                try {
-                    
-                } catch (error) {
-                    
-                }
-            }) 
-        }else if( rol === 4){
-
-        }
-        
-        const token = jwt.sign({}, process.env.JWT_SECRETO, {expiresIn: '1h'});
-        const link = `http://localhost:${process.env.PORT}/register`
-        mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: `${email}`,
-            subject: 'Aviso alta Usuario',
-            html: `
-                <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
-
-            `
-        }
-        transporter.sendMail(mailOptions, async(err, info) => {
-            try {
-                
-            } catch (error) {
-                throw err;
-            }
-        });
+    if (token !== 'token'){
+        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRETO);
+        email = decoded.email;
+        nombre = decoded.nombre;
     }
-// fin prueba envio mail
+    
+    let muestra;
+    let flagInserta = 0;
+    
     lista_roles = [];
     const carreras = `SELECT * FROM rol WHERE baja = 0;`;
     conexion.query(carreras,(err, resultados)=>{
@@ -833,14 +835,29 @@ router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
                                     const modificaRolUsuarioMultiple = `UPDATE roles_autorizados SET ROL_idrol = ${rol}, baja = 0 WHERE AUTH_idusuarios_autorizados = (SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni = '${dni}') AND ROL_idrol = ${rol};`;
                                     conexion.query(modificaRolUsuarioMultiple, (err) => {
                                         if(err){
-                                            console.log(err);
-                                            muestra = "No se puede reingresar al mismo DNI con otro Rol!!"
-                                            res.render('agregar', {rows: lista_roles, usuario: req.usuario, muestra});
+                                            // console.log(err);
+                                            // console.log(infoUsuario);
+                                            if(infoUsuario.ROL_idrol === 1){
+
+                                                muestra = "No se puede reingresar al mismo DNI con otro Rol!!"
+                                                res.render('agregar', {rows: lista_roles, usuario: req.usuario, muestra});
+
+                                            }else{
+                                                res.render('agregar', {
+                                                    alert: true,
+                                                    alertTitle: "Advertencia!!",
+                                                    alertMessage: "No se puede reingresar al mismo DNI con otro Rol" ,
+                                                    alertIcon: 'info',
+                                                    ruta:'consulta',
+                                                    usuario:req.usuario
+                                                });
+
+                                            }
                                         }else{
                                             res.render('agregar', {
                                                 alert: true,
                                                 alertTitle: "Autorizacion reingresada Correctamente!!",
-                                                alertMessage: "El usuario ya puede ingresar al sistema nuevamente con el usuario recien autorizado" ,
+                                                alertMessage: "El usuario ya puede ingresar al sistema nuevamente con el usuario recien autorizado, recuerde que si cambio de rol debe hacerse un nuevo usuario" ,
                                                 alertIcon: 'success',
                                                 ruta:'consulta',
                                                 usuario:req.usuario
@@ -853,7 +870,7 @@ router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
                                     res.render('agregar', {
                                         alert: true,
                                         alertTitle: "Autorizacion reingresada Correctamente!!",
-                                        alertMessage: "El usuario ya puede ingresar al sistema nuevamente" ,
+                                        alertMessage: "El usuario ya puede ingresar al sistema nuevamente, recuerde que si cambio de rol debe hacerse un nuevo usuario" ,
                                         alertIcon: 'success',
                                         ruta:'consulta',
                                         usuario:req.usuario
@@ -870,12 +887,32 @@ router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
                             if(resultado.length > 0){
                                 let idAuth = resultado[0]
                                 const insertaRol = `INSERT INTO roles_autorizados (AUTH_idusuarios_autorizados, ROL_idrol) VALUES (${idAuth.idusuarios_autorizados}, ${rol});`;
-                                conexion.query(insertaRol, (err) => {
+                                conexion.query(insertaRol, (err, insertado) => {
                                     if(err){
-                                        console.log(err);
-                                        muestra = "No se puede autorizar al mismo DNI con el mismo Rol!!"
-                                        res.render('agregar', {rows: lista_roles, usuario: req.usuario, muestra});
+                                        // console.log(err);
+                                        // console.log(infoUsuario);
+                                        
+                                        
+                                        if(infoUsuario.ROL_idrol === 1){
+
+                                            muestra = "No se puede reingresar al mismo DNI con otro Rol!!"
+                                            res.render('agregar', {rows: lista_roles, usuario: req.usuario, muestra});
+
+                                        }else{
+                                            res.render('agregar', {
+                                                alert: true,
+                                                alertTitle: "Advertencia!!",
+                                                alertMessage: "No se puede reingresar al mismo DNI con otro Rol" ,
+                                                alertIcon: 'info',
+                                                ruta:'consulta',
+                                                usuario:req.usuario
+                                            });
+
+                                        }
+                                        // muestra = "No se puede autorizar al mismo DNI con el mismo Rol!!"
+                                        // res.render('agregar', {rows: lista_roles, usuario: req.usuario, muestra});
                                     }else{
+                                        flagInserta = 1
                                         res.render('agregar', {
                                             alert: true,
                                             alertTitle: "Autorizacion al nuevo Rol agregada Correctamente!!",
@@ -900,10 +937,11 @@ router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
         }else{
             const id_creado = insertado.insertId;
             const agrega2= `INSERT INTO roles_autorizados (AUTH_idusuarios_autorizados, ROL_idrol) VALUES (${id_creado}, ${rol});`;
-            conexion.query(agrega2, (err)=>{
+            conexion.query(agrega2, (err, idInsertado)=>{
                 if(err){
                     throw err;
                 }else{
+                   flagInserta = 1;
                     res.render('agregar', {
                         alert: true,
                         alertTitle: "Autorizacion agregada Correctamente!!",
@@ -915,8 +953,80 @@ router.post('/agregarAuth',autenticacion.autenticado,(req,res)=>{
                 }
             })
         }
-    })
+    });
 
+    // prueba envio mail segun tipo de rol
+    
+    // ***lista roles***
+    // 1 - admin
+    // 2 - data-entry
+    // 3 - empleador
+    // 4 - postulante
+    
+    console.log(flagInserta)
+ 
+    if( email !== 'email'){
+        if(rol !== 1 && rol!== 2){
+            const buscaRolAutorizado = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni = ${dni};`;
+            conexion.query(buscaRolAutorizado, async (err, resultado) => {
+                if(err){
+                    throw err;
+                }else{
+                    const idUsuario = resultado[0];
+                    // let nombre;
+                    // console.log(idUsuario.idusuarios_autorizados);
+                    // // if(rol === 3){
+                    //     const formulario = req.body;
+                    //     const {dni, rol, idofertas} = formulario;
+                    //     const empleador = `SELECT nombre_contacto as nombre FROM ofertas WHERE confirma = 1 AND idofertas = ${idofertas};`;
+                    //     const [resultado] =  await queryDB(empleador);
+                    //     if(resultado.length > 0){
+                    //         nombre = resultado[0];
+                    //         console.log(nombre);
+                    //     }
+                    //     // conexion.query(empleador, async(err, resultado) => {
+                    //     //     try {
+                    //     //         nombre = resultado[0]
+                    //     //         console.log(nombre)
+                    //     //     } catch (error) {
+                    //     //         console.log(error);
+                    //     //         throw err;
+                    //     //     }
+                    //     // }) 
+                    // }else if( rol === 4){
+                    //     const postulante = `SELECT concat(nombre, ' ', apellido) as nombre FROM alumnos WHERE dni = '${dni}';`;
+                    //     conexion.query(postulante, async(err, resultado) => {
+                    //         try{
+                    //             nombre = resultado[0];
+                    //             console.log(nombre)
+                    //         } catch (error) {
+                    //             console.log(error);
+                    //             throw err;
+                    //         }
+                    //     });
+                    // }
+                    // console.log(nombre)
+                    // const token = jwt.sign({idRolesAutorizados}, process.env.JWT_SECRETO, {expiresIn: '7d'});
+                    const link = `http://localhost:${process.env.PORT}/register/${idUsuario.idusuarios_autorizados}/${rol}`
+                    mailOptions = {
+                        from: process.env.EMAIL_USER,
+                        to: email,
+                        subject: 'Aviso alta Usuario',
+                        html: `
+                            <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
+                                <p>Queriamos informarte que ya podes registrarte como usuario!! Por favor, ingresa tus datos haciendo click en el siguiente enlace:</p>
+                                <a href="${link}">Registrar usuario autorizado</a>
+                                <p><i>Una vez que te hagas un usuario te llegara un mail de validacion</i></p>
+            
+                        `
+                    };
+                    transporter.sendMail(mailOptions);
+                }
+            });
+        }
+    }
+
+    // fin prueba envio mail
 });
 
 router.post('/filtraUsuarios', autenticacion.autenticado, (req,res)=>{
@@ -1058,13 +1168,17 @@ router.post('/modificarRoles/:idRolActual/:idAuth', autenticacion.autenticado, (
                 if(err){
                     throw err;
                 }else{
+                    let tokenUsuarios = [];
+                    resultados.forEach((usuario) => {
+                        tokenUsuarios.push(jwt.sign({dni: usuario.dni, rol: usuario.rol, idrol: usuario.idrol}, process.env.JWT_SECRETO, {expiresIn: '7d'}))
+                    });
                     const roles = `SELECT * FROM rol WHERE baja = 0;`;
                     conexion.query(roles, (err, rows)=>{
                         if(err){
                             throw err;
                         }else{
                             //console.log(req.usuario);
-                            res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+                            res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra, tokenUsuarios});
                         }
                     });
                 }
@@ -1176,13 +1290,17 @@ router.post('/modificarRoles/:idRolActual/:idAuth', autenticacion.autenticado, (
                                 if(err){
                                     throw err;
                                 }else{
+                                    let tokenUsuarios = [];
+                                    resultados.forEach((usuario) => {
+                                        tokenUsuarios.push(jwt.sign({dni: usuario.dni, rol: usuario.rol, idrol: usuario.idrol}, process.env.JWT_SECRETO, {expiresIn: '7d'}))
+                                    });
                                     const roles = `SELECT * FROM rol WHERE baja = 0;`;
                                     conexion.query(roles, (err, rows)=>{
                                         if(err){
                                             throw err;
                                         }else{
                                             //console.log(req.usuario);
-                                            res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+                                            res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra, tokenUsuarios});
                                         }
                                     });
                                 }
@@ -1198,13 +1316,17 @@ router.post('/modificarRoles/:idRolActual/:idAuth', autenticacion.autenticado, (
                                         if(err){
                                             throw err;
                                         }else{
+                                            let tokenUsuarios = [];
+                                            resultados.forEach((usuario) => {
+                                                tokenUsuarios.push(jwt.sign({dni: usuario.dni, rol: usuario.rol, idrol: usuario.idrol}, process.env.JWT_SECRETO, {expiresIn: '7d'}))
+                                            });
                                             const roles = `SELECT * FROM rol WHERE baja = 0;`;
                                             conexion.query(roles, (err, rows)=>{
                                                 if(err){
                                                     throw err;
                                                 }else{
                                                     //console.log(req.usuario);
-                                                    res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
+                                                    res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra, tokenUsuarios});
                                                 }
                                             });
                                         }

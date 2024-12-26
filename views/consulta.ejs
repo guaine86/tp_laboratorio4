@@ -87,7 +87,7 @@
                     <p class="centrar-texto alerta"><strong>Aun no hay alumnos cargados!!</strong></p>
             <% }else { %>
             <tbody>
-                <% resultados.forEach((alumno)=>{ %>
+                <% resultados.forEach((alumno, indice)=>{ %>
                 <tr>
                     <td ><%= alumno.idalumnos %></td>
                     <td class="capitalize"><%= alumno.nombre %></td>
@@ -102,8 +102,8 @@
                     <td><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></td>
                     <td>
                         <a href="/modifica/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-info mt-1 mb-1 px-3">editar</a>
-                        <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2){ %>
-                        <a  href="/agregar/<%= alumno.dni %>/<%= 'postulante' %>" class="btn btn-outline-success mt-1 mb-1 px-4">alta</a>
+                        <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2){ let nombre = alumno.nombre.concat(' ', alumno.apellido) %>
+                        <a  href="agregar/<%= 4 %>/<%= tokenDatos[indice] %>" class="btn btn-outline-success mt-1 mb-1 px-4">alta</a>
                         <% }} %> 
                         <!-- <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a> -->
                     </td>

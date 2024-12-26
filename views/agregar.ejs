@@ -36,12 +36,16 @@
 
         <div>
            <h2 class="titulo mgb-2">Agregar autorizacion Usuario</h2>
-           <form class="formulario" action="/agregarAuth" method="post" enctype="text/html">
+           <% if(typeof tokenDatos !== 'undefined' ){ %>
+            <form class="formulario" action="/agregarAuth/<%= tokenDatos %>" method="post" enctype="text/html">
+           <% }else{ %>
+            <form class="formulario" action="/agregarAuth/<%= 'token' %>" method="post" enctype="text/html">
+           <% } %>
                <fieldset>
                    <div class="formulario-campos formulario-campos__login">
                         <div class="campo">
                             <label for="dni">DNI:</label>
-                            <% if(typeof dni !== 'undefined' && (typeof rol !== 'undefined' && idrol.idrol !== 3)){ %>
+                            <% if(typeof dni !== 'undefined' && (typeof rol !== 'undefined' && idrol !== '3')){ %>
                             <input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" title="Este campo admite solo caracteres numericos con minimo 7 digitos y maximo 8" minlength="7" maxlength="8"  autocomplete="off" value="<%= dni %>">     
                             <% }else{ %>
                             <input class="input" type="text" name="dni" id="dni" placeholder="DNI (solo numeros)" pattern="^[0-9]*$" title="Este campo admite solo caracteres numericos con minimo 7 digitos y maximo 8" minlength="7" maxlength="8"  autocomplete="off">
@@ -51,7 +55,7 @@
 							<label for="rol">Rol:</label>
 							 <select class="input capitalize" name="rol" id="rol"  title="Elija un rol entre las opciones listadas">
 								<% if(typeof rol !=='undefined'){ %>
-                                    <option class="input-select" value="<%= idrol.idrol %>" selected ><%= rol %></option>
+                                    <option class="input-select" value="<%= idrol %>" selected ><%= rol.rol %></option>
                                 <% }else{ %>
                                     <option class="input-select" value="" selected >Elija un rol para asignar:</option>
                                     <% if(typeof rows !== "undefined"){rows.forEach((rol)=>{ %>
@@ -62,7 +66,7 @@
 						</div>   
                    </div>
 
-                   <% if(typeof dni !== 'undefined' && idrol.idrol === 3){ %>
+                   <% if(typeof dni !== 'undefined' && idrol === '3'){ %>
                    <div class="campo-grilla">
                         <div class="campo-grilla_radio">
                             <div>

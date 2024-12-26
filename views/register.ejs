@@ -18,7 +18,11 @@
     <main class="contenedor sombras" style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
         <h2 class="titulo mgb-2">Registrarse</h2>
         <p class="alerta">El registro esta habilitado solo para usuarios autorizados por DNI!!</p>
+        <% if(typeof idUsuariosAutorizados !=='undefined' && typeof idRolesAutorizados){ %>
+        <form class="formulario" action="/registrar/<%= idUsuariosAutorizados %>/<%= idRolesAutorizados %>" method="post" enctype="text/html">
+        <% }else{ %>
         <form class="formulario" action="/registrar" method="post" enctype="text/html">
+        <% } %>
             <fieldset>
                 <div class="formulario-campos formulario-campos__login">
                     <div class="campo">
