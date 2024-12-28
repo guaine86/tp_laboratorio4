@@ -58,7 +58,7 @@ router.get('/consulta', autenticacion.autenticado,(req,res)=>{
         }
     });
 
-    if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
+    if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2 || infoUsuario.ROL_idrol === 3){
         consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
     }else if(infoUsuario.ROL_idrol === 4){
         consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1 AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
@@ -282,15 +282,40 @@ router.get('/verificar/:token/:tipo/:dni', async(req, res) => {
                 if(err){
                     throw err;
                 }else{
-                    res.render('verificar',{
-                            alert: true,
-                            alertTitle: `${titulo}`,
-                            alertMessage: `${mensaje}`,
-                            alertIcon: "success",
-                            showConfirmationButton: true,
-                            timer: false,
-                            ruta: 'login'
+                    const buscaUsuario = `SELECT AUTH_idusuarios_autorizados, ROL_idrol FROM usuarios WHERE email = '${email}';`;
+                    conexion.query(buscaUsuario, async(err, resultado) => {
+                        if(err){
+                            throw err;
+                        }else{
+                            const idAuth = resultado[0].AUTH_idusuarios_autorizados;
+                            const idRol = resultado[0].ROL_idrol;
+                            const confirmaRolAutorizado = `UPDATE roles_autorizados SET confirma = 1 WHERE AUTH_idusuarios_autorizados = ${idAuth} AND ROL_idrol = ${idRol};`;
+                            conexion.query(confirmaRolAutorizado, async(err) => {
+                                if(err){
+                                    throw err;
+                                }else{
+                                    res.render('verificar',{
+                                        alert: true,
+                                        alertTitle: `${titulo}`,
+                                        alertMessage: `${mensaje}`,
+                                        alertIcon: "success",
+                                        showConfirmationButton: true,
+                                        timer: false,
+                                        ruta: 'login'
+                                    });                                 
+                                }
+                            });
+                        }
                     });
+                    // res.render('verificar',{
+                    //         alert: true,
+                    //         alertTitle: `${titulo}`,
+                    //         alertMessage: `${mensaje}`,
+                    //         alertIcon: "success",
+                    //         showConfirmationButton: true,
+                    //         timer: false,
+                    //         ruta: 'login'
+                    // });
                 }
             });
         }else if(tipo === 'oferta'){
@@ -657,6 +682,7 @@ router.get('/ofertas', autenticacion.autenticado, (req, res) => {
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
 router.post('/registrar', autenticacion.registrar);
+router.post('/registrar/:idAuth/:idRol', autenticacion.registrar)
 router.post('/ingresar', autenticacion.ingresar);
 router.get('/logout', autenticacion.logout);
 

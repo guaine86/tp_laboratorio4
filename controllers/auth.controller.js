@@ -14,6 +14,13 @@ exports.registrar = async(req,res) => {
         let passHash = await bcryptjs.hash(pass, 8);
         const token = jwt.sign({email}, process.env.JWT_SECRETO, {expiresIn: '1h'});
 
+        let idAuth;
+        let idRol;
+        if(typeof req.params.idAuth !== 'undefined' && typeof req.params.idRol !== 'undefined'){
+            idAuth = req.params.idAuth;
+            idRol = req.params.idRol;
+        }
+        
         let muestra;
         let modifica;
 
@@ -80,13 +87,21 @@ exports.registrar = async(req,res) => {
                             }
                             else{
                                 // const buscaAuth = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni ='${dni}';`;
-                                const buscaAuth = `SELECT ua.idusuarios_autorizados, ra.ROL_idrol FROM usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN usuarios as u WHERE ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ua.dni '${dni}' AND u.usuario = '${usuario}';`
-                                conexion.query(buscaAuth, (err, resultado)=>{
+                                // const buscaAuth = `SELECT ua.idusuarios_autorizados, ra.ROL_idrol FROM usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN usuarios as u WHERE ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ua.dni = '${dni}' AND u.usuario = '${usuario}';`
+                                const buscaAuth = `SELECT ua.idusuarios_autorizados, ra.ROL_idrol FROM usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN usuarios as u WHERE ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ua.dni = '${dni}' AND ra.confirma = 0 LIMIT 1;`
+                                
+                                conexion.query(buscaAuth, async(err, resultado)=>{
                                     if(err){
                                         throw err;
+                                    // }else if(resultado.length > 1){
+
+                                    
                                     }else{
-                                        const idAuth = resultado[0].idusuarios_autorizados;
-                                        const idRol = resultado[0].ROL_idrol;
+                                        console.log(resultado);
+                                        if(resultado.length > 0 && (typeof req.params.idAuth === 'undefined' && typeof req.params.idRol === 'undefined')){
+                                            idAuth = resultado[0].idusuarios_autorizados;
+                                            idRol = resultado[0].ROL_idrol;
+                                        }
 
                                         const cargaNombre = `UPDATE usuarios_autorizados SET nombre_completo = '${nombre}' WHERE idusuarios_autorizados = ${idAuth};`;
                                         conexion.query(cargaNombre,(err,resultado)=>{
