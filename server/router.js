@@ -9,6 +9,17 @@ const bcryptjs = require('bcryptjs');
 const transporter = require('./email.js');
 const {promisify} = require('util');
 const queryDB = promisify(conexion.query).bind(conexion);
+const multer = require('multer');
+// const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+const upload = multer({storage: storage});
 
 // Configurar Nodemailer
 // const transporter = nodemailer.createTransport({
@@ -678,6 +689,12 @@ router.get('/ofertas', autenticacion.autenticado, (req, res) => {
         }
     });
 });
+
+router.get('/postulacion/:email', autenticacion.autenticado, (req, res) => {
+    const email = req.params.email;
+    console.log(email);
+    res.render('postulacion', {usuario: req.usuario, email: email});
+})
 
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
@@ -1418,6 +1435,23 @@ router.post('/modificarRoles/:idRolActual/:idAuth', autenticacion.autenticado, (
         }
     });
 });
+
+router.post('/postula/:email', autenticacion.autenticado ,upload.single('curriculum'), async (req, res) => {
+    try {
+        const email = req.params.email;
+        const cv = req.file;
+        const datos = req.body;
+        console.log(datos);
+        let muestra;
+        
+        //res.send('subida exitosa!!');
+        muestra = "Subida de CV exitosa"
+        res.render('postulacion', {muestra, usuario: req.usuario, email});
+    } catch (error) {
+        muestra = "No pudimos Subir tu  CV!!";
+        res.render('postulacion', {muestra, usuario: req.usuario, email});
+    }
+})
 
 // router.get('/set-cookie', (req, res)=>{
 //     res.cookie('testCookie', 'cookieValue',{httpOnly: true});

@@ -28,5 +28,5 @@ const usuario = (function(){
         }else{
             return
         }
-    })
+    });
 })();

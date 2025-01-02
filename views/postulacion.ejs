@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Subi tu CV</title>
+    <%- include('./templates/head.ejs') %>
+    <style>
+        input[type="file"]{
+            width: 0.1rem;
+            height: 0.1rem;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: 1;
+        }
+        input[type="file"] + label{
+            width: 100%;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            display: inline-block;
+            overflow: hidden;
+            padding: 1rem 3rem;
+            background-color: var(--verde);
+            border-radius: .5rem;
+            text-align: center;
+        }
+        input[type="file"] + label:hover{
+            background-color: var(--amarillo);
+        }
+        input[type="file"] + label i{
+            width: 1em;
+            height: 1em;
+            vertical-align: middle;
+            fill: currentColor;
+            margin-top: -0.25rem;           
+        }
+    </style>
+</head>
+<body class="body-consulta">
+    <div>
+        <%- include('./templates/header-nav.ejs') %>
+        <div style="display:grid; grid-template-columns:  auto 1fr; align-items: baseline;">
+            <div style="grid-column: 2/3; justify-self: flex-end;">
+                <% if(typeof usuario !== "undefined"){ %>
+                    <p class="capitalize" style="align-self: flex-end; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.nombre %></small></p>
+                <% } %>
+            </div>
+            <div style="grid-column: 3/4">
+                <div style="display: flex; justify-content: end; margin-right: 1rem;">
+                    <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>   
+                    <a class="btn btn-outline-primary mt-1 mb-4 link" style="margin-right: 1rem;" href="/modifica-usuario">Modificar Usuarios</a>
+                    <% }} %> 
+                    <a class="btn btn-outline-danger mt-1 mb-4 link" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div>     
+        <% if(typeof muestra !== "undefined"){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; %> 
+            <p class="contenedor centrar-texto <%= fondo %>">
+                <%= muestra %>
+            </p>
+	    <% } %>
+    </div>
+
+    <main class="contenedor sombras" style="display: grid; align-items: center;">
+       <div>
+           <h2 class="titulo mgb-2">Postulate a esta busqueda</h2>
+           <% if(typeof email !== 'undefined'){ %>
+            <form class="formulario" action="/postula/<%= email %>" method="post" enctype="multipart/form-data">
+           <% } %>
+               <fieldset>
+                   <div class="formulario-campos formulario-campos__login" style="margin-bottom: 1rem;">
+                       <div class="campo">
+                           <label for="nombre">Nombre Completo:</label>
+                           <input class="input capitalize" type="text" name="nombre" id="nombre" placeholder="Ingrese nombre completo" pattern="^[a-zA-Z\s]+$" title="Este campo admite solo caracteres alfabeticos y minimo 2 letras" minlength="2" maxlength="100" value="<%= usuario.nombre %>" autocomplete="off">
+                       </div>
+                       <div class="campo">
+                           <label for="observaciones">Contanos de vos:</label>
+                           <textarea class="input" name="observaciones" id="observaciones" maxlength="140"></textarea>
+                       </div>
+                        <div class="campo">
+                            <label for="cv1">Subi tu curriculum:</label>
+                            <input type="file" class="input" name="curriculum" id="cv1" title="Subi tu CV">
+                            <label for="cv1" class=""><i class='bx bx-upload bx-md'></i><span>&nbsp; Seleccionar Archivo</span></label>
+                        </div>
+                   </div>
+                   <div class="alinear-derecha flex">
+                       <input class="boton w100" type="submit" value="Enviar">
+                       <!-- <input class="boton w100" type="reset" value="Borrar"> -->
+                       <a class="boton w100" href="/ofertas" target="_self">Cancelar</a>
+                   </div>
+                </fieldset>
+            </form>
+       </div>
+    </main>
+
+    <%- include('./templates/footer.ejs') %> 
+    <script type="module" src="/js/postulacion.js"></script>
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <% if(typeof alert !== "undefined"){if(alert){ %>
+        <script > 
+            Swal.fire({
+                icon: "<%= alertIcon %>",
+                title: "<%= alertTitle %>",
+                text: "<%= alertMessage %>",
+            })
+            .then
+            setTimeout(()=>{
+                window.location = "/<%= ruta %>"
+            },3000);
+    </script>
+    <% }} %>
+</body>
+</html>

@@ -92,10 +92,14 @@ exports.registrar = async(req,res) => {
                                 
                                 conexion.query(buscaAuth, async(err, resultado)=>{
                                     if(err){
-                                        throw err;
-                                    // }else if(resultado.length > 1){
-
-                                    
+                                        return res.render('register',{
+                                            alert: true,
+                                            alertTitle: "Advertencia",
+                                            alertMessage: "Ingreso algun dato invalido" ,
+                                            alertIcon: "info",
+                                            ruta: 'index'
+                                        });
+                                        // throw err;   
                                     }else{
                                         console.log(resultado);
                                         if(resultado.length > 0 && (typeof req.params.idAuth === 'undefined' && typeof req.params.idRol === 'undefined')){
@@ -203,7 +207,8 @@ exports.autenticado = async(req, res, next) =>{
                 return next()
             });
         } catch (error) {
-            console.log(error)
+            res.render('login');
+            // console.log(error)
         }
     }else{
         res.render('login');
