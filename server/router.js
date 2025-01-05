@@ -9,26 +9,22 @@ const bcryptjs = require('bcryptjs');
 const transporter = require('./email.js');
 const {promisify} = require('util');
 const queryDB = promisify(conexion.query).bind(conexion);
+const fs = require('fs');
+const checkMagicNumber = require('./fileType.js');
 const multer = require('multer');
-// const storage = multer.memoryStorage();
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/')
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname)
-    }
-  })
-const upload = multer({storage: storage});
-
-// Configurar Nodemailer
-// const transporter = nodemailer.createTransport({
-//     service: 'Gmail',
-//     auth:{
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASS
+const storage = multer.memoryStorage();
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'uploads/')
 //     },
-// });
+//     filename: function (req, file, cb) {
+//       cb(null, file.originalname)
+//     }
+//   })
+const upload = multer({
+    storage: storage, 
+    limits: { fileSize: 5 * 1024 * 1024 }, 
+});
 
 // Ruta Principal
 router.get('/',(req,res)=>{
@@ -667,7 +663,9 @@ router.get('/modifica-permisos/:dni/:rol/:idrol', autenticacion.autenticado,asyn
     }
 });
 
-router.get('/ofertas', autenticacion.autenticado, (req, res) => {
+router.get('/ofertas/:muestra?', autenticacion.autenticado, (req, res) => {
+    let muestra = req.params.muestra;
+    // console.log(muestra);
     const ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1`;
     conexion.query(ofertas, (err, resultados) => {
         if(err){
@@ -681,7 +679,7 @@ router.get('/ofertas', autenticacion.autenticado, (req, res) => {
             const rubros = `SELECT * FROM rubro WHERE baja = 0;`;
             conexion.query(rubros, async(err, rows) => {
                 try {
-                    res.render('ofertas', {resultados, rows, usuario: req.usuario, tokenOfertas})
+                    res.render('ofertas', {resultados, rows, usuario: req.usuario, tokenOfertas, muestra})
                 } catch (error) {
                     throw err
                 }
@@ -690,10 +688,9 @@ router.get('/ofertas', autenticacion.autenticado, (req, res) => {
     });
 });
 
-router.get('/postulacion/:email', autenticacion.autenticado, (req, res) => {
-    const email = req.params.email;
-    console.log(email);
-    res.render('postulacion', {usuario: req.usuario, email: email});
+router.get('/postulacion/:tokenOfertas', autenticacion.autenticado, (req, res) => {
+    const token = req.params.tokenOfertas;
+    res.render('postulacion', {usuario: req.usuario, token});
 })
 
 router.post('/validar', crud.validar);
@@ -1259,96 +1256,6 @@ router.post('/modificarRoles/:idRolActual/:idAuth', autenticacion.autenticado, (
                     });
                 }
             });
-            
-            //         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
-            //         conexion.query(usuarios, (err, resultados)=>{
-            //             if(err){
-            //                 throw err;
-            //             }else{
-            //                 const roles = `SELECT * FROM rol;`;
-            //                 conexion.query(roles, (err, rows)=>{
-            //                     if(err){
-            //                         throw err;
-            //                     }else{
-            //                         //console.log(req.usuario);
-            //                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
-            //                     }
-            //                 });
-            //             }
-            //         });
-            // const buscaAuth = `SELECT * FROM roles_autorizados WHERE AUTH_idusuarios_autorizados = ${id} AND ROL_idrol = (SELECT idrol FROM rol WHERE rol = '${rolActual}');`;
-            // conexion.query(buscaAuth, (err, resultados) => {
-            //     if(err){
-            //         throw err;
-            //     }else if(resultados.length > 0){
-            //         const modificaNombre = `UPDATE usuarios_autorizados SET nombre_completo = '${nombre}' WHERE idusuarios_autorizados = '${id}';`;
-            //         conexion.query(modificaNombre, (err) => {
-            //             if(err){
-            //                 throw err;
-            //             }else{
-            //                 const modificaRol = `UPDATE roles_autorizados SET ROL_idrol = ${rol} WHERE AUTH_idusuarios_autorizados = ${id};`;
-            //                 conexion.query(modificaRol, (err) => {
-            //                     if(err){
-            //                         muestra = 'No se puede asignar un Rol ya registrado!!';
-            //                         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
-            //                         conexion.query(usuarios, (err, resultados)=>{
-            //                             if(err){
-            //                                 throw err;
-            //                             }else{
-            //                                 const roles = `SELECT * FROM rol;`;
-            //                                 conexion.query(roles, (err, rows)=>{
-            //                                     if(err){
-            //                                         throw err;
-            //                                     }else{
-            //                                         //console.log(req.usuario);
-            //                                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
-            //                                     }
-            //                                 });
-            //                             }
-            //                         });
-            //                     }else{
-            //                         muestra = 'Usuario Modificado con Exito!!';
-            //                         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
-            //                         conexion.query(usuarios, (err, resultados)=>{
-            //                             if(err){
-            //                                 throw err;
-            //                             }else{
-            //                                 const roles = `SELECT * FROM rol;`;
-            //                                 conexion.query(roles, (err, rows)=>{
-            //                                     if(err){
-            //                                         throw err;
-            //                                     }else{
-            //                                         //console.log(req.usuario);
-            //                                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
-            //                                     }
-            //                                 });
-            //                             }
-            //                         });
-            //                     }
-            //                 });
-            //             }
-            //         });
-            //     }else{
-            //         muestra = 'No se puede asignar un DNI ya resgistrado!!';
-            //         const usuarios = `SELECT u.idusuarios as id, u.usuario, ua.nombre_completo as nombre, ua.dni, u.email, r.rol, r.idrol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;`;
-            //         conexion.query(usuarios, (err, resultados)=>{
-            //             if(err){
-            //                 throw err;
-            //             }else{
-            //                 const roles = `SELECT * FROM rol;`;
-            //                 conexion.query(roles, (err, rows)=>{
-            //                     if(err){
-            //                         throw err;
-            //                     }else{
-            //                         //console.log(req.usuario);
-            //                         res.render('modifica-usuario',{resultados, rows, usuario: req.usuario, muestra});
-            //                     }
-            //                 });
-            //             }
-            //         });
-            //     }
-            // });
-
         }else{
             const modificaNombre = `UPDATE usuarios_autorizados SET nombre_completo = '${nombre}' WHERE idusuarios_autorizados = '${id}';`;
             conexion.query(modificaNombre, (err) => {
@@ -1436,20 +1343,128 @@ router.post('/modificarRoles/:idRolActual/:idAuth', autenticacion.autenticado, (
     });
 });
 
-router.post('/postula/:email', autenticacion.autenticado ,upload.single('curriculum'), async (req, res) => {
+router.post('/postula/:token', autenticacion.autenticado ,upload.single('curriculum'), async (req, res) => {
     try {
-        const email = req.params.email;
+        let token = req.params.token;
+        const infoUsuario = req.usuario;
+        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRETO);
+        const email = decoded.email;
+        const idofertas = decoded.identifica;
+        const nombreContacto = decoded.nombre;
         const cv = req.file;
         const datos = req.body;
-        console.log(datos);
+        const {nombre, observaciones} = datos;
         let muestra;
+        // console.log(cv);
+
+        if (!checkMagicNumber(cv.buffer)) {
+            // return res.status(400).send('Tipo de archivo no permitido.');
+            muestra = 'No se puede subir ese tipo de archivo!!';
+            res.render('postulacion', {
+                alert: true,
+                alertTitle: "El Curriculum NO se pudo subir!!",
+                alertMessage: "Ese tipo de archivo no esta permitido" ,
+                alertIcon: 'info',
+                ruta:`ofertas/${muestra}`, 
+                usuario: req.usuario, 
+                token
+            });
+        }
         
-        //res.send('subida exitosa!!');
-        muestra = "Subida de CV exitosa"
-        res.render('postulacion', {muestra, usuario: req.usuario, email});
+        const mailOptionsPostula = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Postulacion Recibida a Oferta Laboral',
+            html: `
+                <h1 style="text-transform: capitalize;">Hola, ${nombreContacto}</h1>
+                <p>Te enviamos adjunto a este email el CV de un interesado en tu propuesta laboral!!</p>
+                <p>Su nombre es <b style="text-transform: capitalize">${nombre}</b>, y nos cuenta lo siguiente sobre sus intereses:</p>
+                <p>${observaciones}</p>
+                <p><b>ID Oferta Postulada:</b> ${idofertas}</p>
+                <p><i>Si queres hacerte un usuario con nuestra plataforma, responde este mail dandonos tu nro de DNI e indicando el ID de tu oferta</i></p>
+            `,
+            attachments: [
+                {
+                    filename: cv.originalname,
+                    content: cv.buffer           
+                    //path: `./uploads/${cv.originalname}`                
+                }
+            ]
+        }
+        const envia = () => {
+            transporter.sendMail(mailOptionsPostula);
+        }
+        
+        const cargaPostulacion = `INSERT INTO usuario_postula_oferta (OFERTAS_idofertas, USUARIOS_idusuarios) VALUES (${idofertas}, ${infoUsuario.idusuarios});`;
+        conexion.query(cargaPostulacion, (err) => {
+            if(err){
+                const buscaBaja = `SELECT * FROM usuario_postula_oferta WHERE (OFERTAS_idofertas = ${idofertas} AND USUARIOS_idusuarios = ${infoUsuario.idusuarios} AND baja = 1);`;
+                conexion.query(buscaBaja, (err, resultados) => {
+                    if (err){
+                        throw err;
+                    }else if(resultados.length > 0){
+                        const actualizaPostulacion = `UPDATE usuario_postula_oferta SET baja = 0 WHERE (OFERTAS_idofertas = ${idofertas} AND USUARIOS_idusuarios = ${infoUsuario.idusuarios});`;
+                        conexion.query(actualizaPostulacion, (err) => {
+                            if(err){
+                                throw err;
+                            }else{
+                                muestra = 'Te volviste a postular a esta Oferta con exito!!';
+                                res.render('postulacion', {
+                                    alert: true,
+                                    alertTitle: "Curriculum subido Correctamente!!",
+                                    alertMessage: "El empleador ya recibio tu CV previamente",
+                                    alertIcon: 'success',
+                                    ruta:`ofertas/${muestra}`, 
+                                    usuario: req.usuario, 
+                                    token
+                                });
+                            }
+                        });
+                    }else{
+                        muestra = 'No se puede volver a postular a la misma oferta!!';
+                        res.render('postulacion', {
+                            alert: true,
+                            alertTitle: "El Curriculum NO se pudo subir!!",
+                            alertMessage: "Ya estas postulado a esta Oferta" ,
+                            alertIcon: 'info',
+                            ruta:`ofertas/${muestra}`, 
+                            usuario: req.usuario, 
+                            token
+                        });
+
+                    }
+                });
+            }else{
+                muestra = "Subida de CV exitosa";
+                envia();
+                //transporter.sendMail(mailOptionsPostula);
+                // res.redirect('/ofertas/' + muestra);
+                res.render('postulacion', {
+                                            alert: true,
+                                            alertTitle: "Curriculum subido Correctamente!!",
+                                            alertMessage: "El empleador recibira un email con tus datos" ,
+                                            alertIcon: 'success',
+                                            ruta:`ofertas/${muestra}`, 
+                                            usuario: req.usuario, 
+                                            token
+                                        });
+            }
+        });
+
+        // muestra = "Subida de CV exitosa";
+        // // res.redirect('/ofertas/' + muestra);
+        // res.render('postulacion', {
+        //                             alert: true,
+        //                             alertTitle: "Curriculum subido Correctamente!!",
+        //                             alertMessage: "El empleador recibira un email con tus datos" ,
+        //                             alertIcon: 'success',
+        //                             ruta:`ofertas/${muestra}`, 
+        //                             usuario: req.usuario, 
+        //                             token
+        //                         });
     } catch (error) {
         muestra = "No pudimos Subir tu  CV!!";
-        res.render('postulacion', {muestra, usuario: req.usuario, email});
+        res.render('postulacion', {muestra, usuario: req.usuario, token: req.params.token});
     }
 })
 

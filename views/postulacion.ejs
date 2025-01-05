@@ -69,8 +69,8 @@
     <main class="contenedor sombras" style="display: grid; align-items: center;">
        <div>
            <h2 class="titulo mgb-2">Postulate a esta busqueda</h2>
-           <% if(typeof email !== 'undefined'){ %>
-            <form class="formulario" action="/postula/<%= email %>" method="post" enctype="multipart/form-data">
+           <% if(typeof token !== 'undefined'){ %>
+            <form class="formulario" action="/postula/<%= token %>" method="post" enctype="multipart/form-data">
            <% } %>
                <fieldset>
                    <div class="formulario-campos formulario-campos__login" style="margin-bottom: 1rem;">
@@ -84,7 +84,7 @@
                        </div>
                         <div class="campo">
                             <label for="cv1">Subi tu curriculum:</label>
-                            <input type="file" class="input" name="curriculum" id="cv1" title="Subi tu CV">
+                            <input type="file" class="input" name="curriculum" id="cv1" title="Subi tu CV" accept="image/*,.pdf,.doc,.docx,.odt">
                             <label for="cv1" class=""><i class='bx bx-upload bx-md'></i><span>&nbsp; Seleccionar Archivo</span></label>
                         </div>
                    </div>

@@ -101,7 +101,7 @@
                         <a  href="/agregar/<%= 3 %>/<%= tokenOfertas[indice] %>" class="btn btn-outline-success mt-1 mb-1 " style="padding: .5rem 2rem;" >alta</a>
                         <% }} %>
                         <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 4){ %> 
-                        <a href="/postulacion/<%= oferta.email %>" class="btn btn-outline-info mt-1 mb-1 px-2">postularse</a>
+                        <a href="/postulacion/<%= tokenOfertas[indice] %>" class="btn btn-outline-info mt-1 mb-1 px-2">postularse</a>
                         <% }} %>
                         <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 3){ %>
                         <a href="#" class="btn btn-outline-danger mt-1 mb-1 px-4">borrar</a>

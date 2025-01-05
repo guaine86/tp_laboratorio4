@@ -25,8 +25,9 @@ const postula = (()=>{
         const datos = Object.fromEntries(
             new FormData(evento.target)
         )
-        //console.log(datos)
-        if(!datos.nombre || !datos.curriculum ){
+        // console.log(datos)
+        // console.log(datos.curriculum.name)
+        if(!datos.nombre || !datos.curriculum.name ){
             evento.preventDefault();
             Swal.fire({
                 icon: "error",
