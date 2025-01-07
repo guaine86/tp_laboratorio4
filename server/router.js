@@ -665,21 +665,34 @@ router.get('/modifica-permisos/:dni/:rol/:idrol', autenticacion.autenticado,asyn
 
 router.get('/ofertas/:muestra?', autenticacion.autenticado, (req, res) => {
     let muestra = req.params.muestra;
-    // console.log(muestra);
+    const infoUsuario = req.usuario;
+    // const ofertas = `SELECT DISTINCTROW o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion, uo.baja FROM ofertas as o INNER JOIN rubro as r INNER JOIN usuario_postula_oferta as uo ON o.rubro = r.idrubro AND o.confirma = 1 AND NOT (uo.OFERTAS_idofertas = o.idofertas AND uo.USUARIOS_idusuarios = ${infoUsuario.idusuarios}) ORDER BY 1;`;
     const ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1`;
     conexion.query(ofertas, (err, resultados) => {
         if(err){
             throw err;
         }else{
             let tokenOfertas = [];
+            let postulaciones = [];
             resultados.forEach((oferta) => {
                 tokenOfertas.push(jwt.sign({nombre: oferta.nombre_contacto, identifica: oferta.idofertas , email: oferta.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));
+                
+                const postulado = `SELECT * FROM usuario_postula_oferta WHERE (OFERTAS_idofertas = ${oferta.idofertas} AND USUARIOS_idusuarios = ${infoUsuario.idusuarios}) AND baja = 0;`;
+                conexion.query(postulado, (err, postulacion) => {
+                    if(err){
+                        throw err;
+                    }else if(postulacion.length > 0){
+                        const idOferta = postulacion[0].OFERTAS_idofertas;
+                        postulaciones.push(idOferta);
+                    }
+                });
             });
             
             const rubros = `SELECT * FROM rubro WHERE baja = 0;`;
             conexion.query(rubros, async(err, rows) => {
                 try {
-                    res.render('ofertas', {resultados, rows, usuario: req.usuario, tokenOfertas, muestra})
+                    // console.log(postulaciones);
+                    res.render('ofertas', {resultados, rows, usuario: req.usuario, tokenOfertas, muestra, postulaciones})
                 } catch (error) {
                     throw err
                 }
@@ -1149,18 +1162,10 @@ router.post('/filtraUsuarios', autenticacion.autenticado, (req,res)=>{
 router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
     const datos = req.body;
     const {rubro: idrubro, puesto} = datos;
+    const infoUsuario = req.usuario;
    
     let lista_rubros = [];
     let consulta;
-
-    const roles = `SELECT * FROM rubro WHERE baja = 0;`;
-    conexion.query(roles, (err,resultados)=>{
-        if(err){
-            throw err;
-        }else{
-            lista_rubros = resultados;
-        }
-    });
 
     if(idrubro === 'todas' || puesto === 'todas'){
         if(idrubro !== 'todas'){
@@ -1177,16 +1182,67 @@ router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
             if(err){
                 throw err;
             }else{
-                res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario});
+                let tokenOfertas = [];
+                let postulaciones = [];
+                registros.forEach((oferta) => {
+                    tokenOfertas.push(jwt.sign({nombre: oferta.nombre_contacto, identifica: oferta.idofertas , email: oferta.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));
+
+                    const postulado = `SELECT * FROM usuario_postula_oferta WHERE (OFERTAS_idofertas = ${oferta.idofertas} AND USUARIOS_idusuarios = ${infoUsuario.idusuarios}) AND baja = 0;`;
+                    conexion.query(postulado, (err, postulacion) => {
+                        if(err){
+                            throw err;
+                        }else if(postulacion.length > 0){
+                            const idOferta = postulacion[0].OFERTAS_idofertas;
+                            postulaciones.push(idOferta);
+                        }
+                    });
+                });
+                
+                const roles = `SELECT * FROM rubro WHERE baja = 0;`;
+                conexion.query(roles, (err,resultados)=>{
+                    if(err){
+                        throw err;
+                    }else{
+                        lista_rubros = resultados;
+                        // console.log(postulaciones);
+                        res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario, tokenOfertas, postulaciones});
+                    }
+                });
+
             }
         });
     }else{
-        const filtroBusqueda = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND r.idrubro = ${idrubro} AND o.tipo_puesto = '${puesto};';`;          
+        const filtroBusqueda = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND r.idrubro = ${idrubro} AND o.tipo_puesto = '${puesto}';`;          
         conexion.query(filtroBusqueda,(err, registros)=>{
             if(err){
                 throw err;
             }else{
-                res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario});
+                let tokenOfertas = [];
+                let postulaciones = [];
+                registros.forEach((oferta) => {
+                    tokenOfertas.push(jwt.sign({nombre: oferta.nombre_contacto, identifica: oferta.idofertas , email: oferta.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));
+                    
+                    const postulado = `SELECT * FROM usuario_postula_oferta WHERE (OFERTAS_idofertas = ${oferta.idofertas} AND USUARIOS_idusuarios = ${infoUsuario.idusuarios}) AND baja = 0;`;
+                    conexion.query(postulado, (err, postulacion) => {
+                        if(err){
+                            throw err;
+                        }else if(postulacion.length > 0){
+                            const idOferta = postulacion[0].OFERTAS_idofertas;
+                            postulaciones.push(idOferta);
+                        }
+                    });
+                });
+                
+                const roles = `SELECT * FROM rubro WHERE baja = 0;`;
+                conexion.query(roles, (err,resultados)=>{
+                    if(err){
+                        throw err;
+                    }else{
+                        lista_rubros = resultados;
+                        res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario, tokenOfertas, postulaciones});
+                    }
+                });
+
             }
         });
     }
