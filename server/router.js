@@ -666,8 +666,15 @@ router.get('/modifica-permisos/:dni/:rol/:idrol', autenticacion.autenticado,asyn
 router.get('/ofertas/:muestra?', autenticacion.autenticado, (req, res) => {
     let muestra = req.params.muestra;
     const infoUsuario = req.usuario;
-    // const ofertas = `SELECT DISTINCTROW o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion, uo.baja FROM ofertas as o INNER JOIN rubro as r INNER JOIN usuario_postula_oferta as uo ON o.rubro = r.idrubro AND o.confirma = 1 AND NOT (uo.OFERTAS_idofertas = o.idofertas AND uo.USUARIOS_idusuarios = ${infoUsuario.idusuarios}) ORDER BY 1;`;
-    const ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0`;
+    let ofertas;
+    if(infoUsuario.ROL_idrol === 3){
+        ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND o.email = '${infoUsuario.email}';`;
+        // console.log(ofertas);
+    }else{
+        // const ofertas = `SELECT DISTINCTROW o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion, uo.baja FROM ofertas as o INNER JOIN rubro as r INNER JOIN usuario_postula_oferta as uo ON o.rubro = r.idrubro AND o.confirma = 1 AND NOT (uo.OFERTAS_idofertas = o.idofertas AND uo.USUARIOS_idusuarios = ${infoUsuario.idusuarios}) ORDER BY 1;`;
+        ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0`;
+    }
+    
     conexion.query(ofertas, (err, resultados) => {
         if(err){
             throw err;
@@ -730,11 +737,38 @@ router.get('/elimina-oferta/:tokenOferta', autenticacion.autenticado, async(req,
         res.redirect(`/ofertas/${muestra}`);
 
     } catch (error) {
-        muestra = 'Problema al procesar el token!!';
+        muestra = 'Error al procesar el token!!';
         res.redirect(`/ofertas/${muestra}`);
     }
 
 });
+
+router.get('/modifica-oferta/:tokenOferta', autenticacion.autenticado, async(req, res) => {
+    const infoUsuario = req.usuario;
+    const token = req.params.tokenOferta;
+    let muestra;
+
+    try {
+        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRETO);
+        const idOferta = decoded.identifica;
+        const oferta = `SELECT * FROM ofertas WHERE idofertas = ${idOferta};`;
+        const resultado = await queryDB(oferta);
+        
+        const rubros = `SELECT * FROM rubro;`;
+        const lista_rubros = await queryDB(rubros);
+
+        const rubro = `SELECT rubro FROM rubro WHERE idrubro = ${resultado[0].rubro};`;
+        const rubro_nombre = await queryDB(rubro);
+        // console.log(rubro);
+
+        res.render('modifica-oferta', {resultados: resultado[0], usuario: infoUsuario, rows: lista_rubros, nomenclatura: rubro_nombre[0]});
+
+    } catch (error) {
+        muestra = 'Error al procesar los Datos!!';
+        res.redirect(`/ofertas/${muestra}`);
+    }
+});
+
 
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);

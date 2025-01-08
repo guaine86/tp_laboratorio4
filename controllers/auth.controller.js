@@ -101,7 +101,7 @@ exports.registrar = async(req,res) => {
                                         });
                                         // throw err;   
                                     }else{
-                                        console.log(resultado);
+                                        // console.log(resultado);
                                         if(resultado.length > 0 && (typeof req.params.idAuth === 'undefined' && typeof req.params.idRol === 'undefined')){
                                             idAuth = resultado[0].idusuarios_autorizados;
                                             idRol = resultado[0].ROL_idrol;
