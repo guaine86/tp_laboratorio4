@@ -46,7 +46,7 @@ CREATE TABLE `ofertas` (
 
 LOCK TABLES `ofertas` WRITE;
 /*!40000 ALTER TABLE `ofertas` DISABLE KEYS */;
-INSERT INTO `ofertas` VALUES (1,'edward wayne cruz','wayne inc','wayne86.cruz@gmail.com',1,'Jornada Completa','queremos alguien que programe todo el dia',1,0),(2,'brunito valentino','kakaroto sa','wayne86@gmail.com',3,'pasantia','estamos buscando enfermera para formar',0,0),(3,'brunito mcfly','kakaroto system','wayne86.cruz@gmail.com',3,'jornada completa','buscamos alguien para realizar diseños personalizados',1,0);
+INSERT INTO `ofertas` VALUES (1,'edward wayne cruz','wayne inc','wayne86.cruz@gmail.com',1,'Jornada Completa','queremos alguien que programe todo el dia',1,0),(2,'brunito valentino','kakaroto sa','wayne86@gmail.com',3,'pasantia','estamos buscando enfermera para formar',1,0),(3,'brunito mcfly','kakaroto system','wayne86.cruz@gmail.com',3,'jornada completa','buscamos alguien para realizar diseños personalizados',1,1);
 /*!40000 ALTER TABLE `ofertas` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -59,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-23  5:20:47
+-- Dump completed on 2025-01-08 10:16:45

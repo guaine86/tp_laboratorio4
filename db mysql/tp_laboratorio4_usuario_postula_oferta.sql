@@ -18,32 +18,32 @@ USE `tp_laboratorio4`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `roles_autorizados`
+-- Table structure for table `usuario_postula_oferta`
 --
 
-DROP TABLE IF EXISTS `roles_autorizados`;
+DROP TABLE IF EXISTS `usuario_postula_oferta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `roles_autorizados` (
-  `AUTH_idusuarios_autorizados` int NOT NULL,
-  `ROL_idrol` int NOT NULL,
-  `confirma` tinyint NOT NULL DEFAULT '0',
+CREATE TABLE `usuario_postula_oferta` (
+  `OFERTAS_idofertas` int NOT NULL,
+  `USUARIOS_idusuarios` int NOT NULL,
+  `fecha_postulacion` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `baja` tinyint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`AUTH_idusuarios_autorizados`,`ROL_idrol`),
-  KEY `fk_roles_autorizados_2_idx` (`ROL_idrol`),
-  CONSTRAINT `fk_roles_autorizados_1` FOREIGN KEY (`AUTH_idusuarios_autorizados`) REFERENCES `usuarios_autorizados` (`idusuarios_autorizados`),
-  CONSTRAINT `fk_roles_autorizados_2` FOREIGN KEY (`ROL_idrol`) REFERENCES `rol` (`idrol`)
+  PRIMARY KEY (`OFERTAS_idofertas`,`USUARIOS_idusuarios`),
+  KEY `fk_usuario_postula_oferta_2_idx` (`USUARIOS_idusuarios`),
+  CONSTRAINT `fk_usuario_postula_oferta_1` FOREIGN KEY (`OFERTAS_idofertas`) REFERENCES `ofertas` (`idofertas`),
+  CONSTRAINT `fk_usuario_postula_oferta_2` FOREIGN KEY (`USUARIOS_idusuarios`) REFERENCES `usuarios` (`idusuarios`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `roles_autorizados`
+-- Dumping data for table `usuario_postula_oferta`
 --
 
-LOCK TABLES `roles_autorizados` WRITE;
-/*!40000 ALTER TABLE `roles_autorizados` DISABLE KEYS */;
-INSERT INTO `roles_autorizados` VALUES (1,1,1,0),(1,4,1,0),(2,2,1,0),(3,2,1,0),(10,2,1,0),(10,4,0,0),(99,2,1,0),(99,3,1,0),(99,4,1,0);
-/*!40000 ALTER TABLE `roles_autorizados` ENABLE KEYS */;
+LOCK TABLES `usuario_postula_oferta` WRITE;
+/*!40000 ALTER TABLE `usuario_postula_oferta` DISABLE KEYS */;
+INSERT INTO `usuario_postula_oferta` VALUES (1,12,'2025-01-04 16:18:10',1),(2,12,'2025-01-06 16:22:31',1),(3,12,'2025-01-06 22:11:04',1);
+/*!40000 ALTER TABLE `usuario_postula_oferta` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

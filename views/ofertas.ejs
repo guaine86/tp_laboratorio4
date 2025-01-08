@@ -104,7 +104,7 @@
                         <a href="/postulacion/<%= tokenOfertas[indice] %>" class="btn btn-outline-info mt-1 mb-1 px-2">postularse</a>
                         <% }} %>
                         <% if (typeof usuario!== "undefined" && typeof postulaciones !== 'undefined'){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 3 || postulaciones.includes(oferta.idofertas)){ %>
-                        <a href="#" class="btn btn-outline-danger mt-1 mb-1 px-4">borrar</a>
+                        <a href="/elimina-oferta/<%= tokenOfertas[indice] %>" class="btn btn-outline-danger mt-1 mb-1 px-4">borrar</a>
                         <% }} %>
                     </td>
                 </tr>

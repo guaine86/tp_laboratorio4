@@ -667,7 +667,7 @@ router.get('/ofertas/:muestra?', autenticacion.autenticado, (req, res) => {
     let muestra = req.params.muestra;
     const infoUsuario = req.usuario;
     // const ofertas = `SELECT DISTINCTROW o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion, uo.baja FROM ofertas as o INNER JOIN rubro as r INNER JOIN usuario_postula_oferta as uo ON o.rubro = r.idrubro AND o.confirma = 1 AND NOT (uo.OFERTAS_idofertas = o.idofertas AND uo.USUARIOS_idusuarios = ${infoUsuario.idusuarios}) ORDER BY 1;`;
-    const ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1`;
+    const ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0`;
     conexion.query(ofertas, (err, resultados) => {
         if(err){
             throw err;
@@ -704,7 +704,37 @@ router.get('/ofertas/:muestra?', autenticacion.autenticado, (req, res) => {
 router.get('/postulacion/:tokenOfertas', autenticacion.autenticado, (req, res) => {
     const token = req.params.tokenOfertas;
     res.render('postulacion', {usuario: req.usuario, token});
-})
+});
+
+router.get('/elimina-oferta/:tokenOferta', autenticacion.autenticado, async(req, res) => {
+    const infoUsuario = req.usuario;
+    const token = req.params.tokenOferta;
+    let muestra;
+    let elimina;
+    try {
+        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRETO);
+        const idOferta = decoded.identifica;
+        
+        if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 3){
+            elimina = `UPDATE ofertas SET baja = 1 WHERE idofertas = ${idOferta};`;
+            muestra = 'Oferta eliminada con Exito!!';
+        }else if(infoUsuario.ROL_idrol === 4){
+            elimina = `UPDATE usuario_postula_oferta SET baja = 1 WHERE OFERTAS_idofertas = ${idOferta} AND USUARIOS_idusuarios = ${infoUsuario.idusuarios};`;
+            muestra = 'Postulacion eliminada con Exito!!';
+        }
+    
+        const actualiza = await queryDB(elimina);
+        // console.log(actualiza);
+        
+        // muestra = 'Probando la ruta';
+        res.redirect(`/ofertas/${muestra}`);
+
+    } catch (error) {
+        muestra = 'Problema al procesar el token!!';
+        res.redirect(`/ofertas/${muestra}`);
+    }
+
+});
 
 router.post('/validar', crud.validar);
 router.post('/actualizar/:carrera_anterior', crud.actualizar);
@@ -1169,13 +1199,13 @@ router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
 
     if(idrubro === 'todas' || puesto === 'todas'){
         if(idrubro !== 'todas'){
-            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND r.idrubro = ${idrubro};`;          
+            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro};`;          
             // consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND r.idrol = ${idrol};`; 
         }else if(puesto !== 'todas'){
-            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.tipo_puesto = '${puesto}';`;          
+            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND o.tipo_puesto = '${puesto}';`;          
             // consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND u.confirma = ${confirma};`;
         }else{
-            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1`;          
+            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0`;          
             // consulta = 'SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;';
         }
         conexion.query(consulta, (err, registros)=>{
@@ -1212,7 +1242,7 @@ router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
             }
         });
     }else{
-        const filtroBusqueda = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND r.idrubro = ${idrubro} AND o.tipo_puesto = '${puesto}';`;          
+        const filtroBusqueda = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro} AND o.tipo_puesto = '${puesto}';`;          
         conexion.query(filtroBusqueda,(err, registros)=>{
             if(err){
                 throw err;
