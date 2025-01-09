@@ -35,7 +35,7 @@
 
         <div class="consulta-barra">
             <% if(typeof usuario !== 'undefined'){ if(usuario.ROL_idrol === 3){ %>
-            <a href="/contacto" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md pt-1'></i></a>
+            <a href="/contacto/<%= tokenUsuario %>" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md pt-1'></i></a>
             <% }else{ %> 
             <a href="/" class="btn btn-outline-primary mt-4 mb-2"><i class='bx bxs-plus-circle bx-md pt-1'></i></a>
             <% }} %>

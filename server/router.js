@@ -50,23 +50,39 @@ router.get('/index',(req,res)=>{
 });
 
 // Ruta Consultas
-router.get('/consulta', autenticacion.autenticado,(req,res)=>{
+router.get('/consulta', autenticacion.autenticado,async (req,res)=>{
     const infoUsuario = req.usuario;
     let lista_carreras = [];
     let consulta;
 
     // console.log(infoUsuario);
     const carreras = `SELECT * FROM carrera WHERE baja = 0;`;
-    conexion.query(carreras, (err,resultados)=>{
-        if(err){
-            throw err;
-        }else{
-            lista_carreras = resultados;
-        }
-    });
+    lista_carreras = await queryDB(carreras);
+    // console.log(lista_carreras);
+    // conexion.query(carreras, (err,resultados)=>{
+    //     if(err){
+    //         throw err;
+    //     }else{
+    //         lista_carreras = resultados;
+    //     }
+    // });
 
-    if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2 || infoUsuario.ROL_idrol === 3){
+    if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2 ){
         consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
+    }else if(infoUsuario.ROL_idrol === 3){
+        const busca = `SELECT distinct dni, u.usuario FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
+        const datosAlumno = await queryDB(busca);
+        let lista_dni = [];
+        datosAlumno.forEach(alumno =>  lista_dni.push(alumno.dni));
+        
+        if(lista_dni.length > 0){
+            lista_dni = lista_dni;
+        }
+        else{
+            lista_dni = '0000000';
+        }
+        
+        consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1 AND dni IN (${lista_dni});`;
     }else if(infoUsuario.ROL_idrol === 4){
         consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1 AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
     }
@@ -108,76 +124,6 @@ router.get('/consulta', autenticacion.autenticado,(req,res)=>{
 //         }
 //     });
 // });
-
-router.post('/filtra', autenticacion.autenticado, (req,res)=>{
-    const datos = req.body;
-    const {carrera: id_carrera, egresado} = datos;
-    const infoUsuario = req.usuario;
-   
-    let lista_carreras = [];
-    let consulta;
-    let filtroBusqueda;
-
-    const carreras = `SELECT * FROM carrera WHERE baja = 0;`;
-    conexion.query(carreras, (err,resultados)=>{
-        if(err){
-            throw err;
-        }else{
-            lista_carreras = resultados;
-        }
-    });
-
-    if(id_carrera === 'todas' || egresado === 'todas'){
-        if(id_carrera !== 'todas'){
-            if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
-                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera};`; 
-            }else if(infoUsuario.ROL_idrol === 4){
-                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`; 
-            }
-        }else if(egresado !== 'todas'){
-            if(infoUsuario.ROL_idrol === 1 || infoUsuario.Rol_idrol === 2){
-                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.egresado = ${egresado};`;
-            }else if(infoUsuario.ROL_idrol === 4){
-                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.egresado = ${egresado} AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
-            }
-        }else{
-            if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
-                consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1;';
-            }else if(infoUsuario.ROL_idrol === 4){
-                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
-            }
-        }
-        conexion.query(consulta, (err, registros)=>{
-            if(err){
-                throw err;
-            }else{
-                let tokenDatos = [];
-                registros.forEach((registro) => {
-                    tokenDatos.push(jwt.sign({nombre: registro.nombre.concat(' ',registro.apellido), identifica: registro.dni, email: registro.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));  
-                });
-                res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario, tokenDatos});
-            }
-        });
-    }else{
-        if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
-            filtroBusqueda = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND ac.egresado = ${egresado};`;
-        }else if(infoUsuario.ROL_idrol === 4){
-            filtroBusqueda = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND ac.egresado = ${egresado} AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
-        }
-        conexion.query(filtroBusqueda,(err, registros)=>{
-            if(err){
-                throw err;
-            }else{
-                let tokenDatos = [];
-                registros.forEach((registro) => {
-                    tokenDatos.push(jwt.sign({nombre: registro.nombre.concat(' ',registro.apellido), identifica: registro.dni, email: registro.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));  
-                });
-                res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario, tokenDatos});
-            }
-        });
-    }
-
-});
 
 // Ruta Editar Registros
 router.get('/modifica/:id/:carrera', autenticacion.autenticado,(req,res)=>{
@@ -245,15 +191,29 @@ router.get('/register/:idUsuarioAutorizado/:idRolAutorizado', (req, res) => {
 });
 
 // Ruta para el contacto
-router.get('/contacto', (req, res) => {
-    const rubros = `SELECT * FROM rubro WHERE baja = 0;`;
-    conexion.query(rubros, (err, rows) => {
-        if(err){
-            throw err;
-        }else{
-            res.render('contacto', {rows});
+router.get('/contacto/:email?', async (req, res) => {
+    let muestra;
+    let email;
+    let infoUsuario;
+    try {
+        if(typeof req.params.email !== 'undefined'){
+            const decoded = await promisify(jwt.verify)(req.params.email, process.env.JWT_SECRETO);
+            email = decoded.infoUsuario.email;
+            infoUsuario = decoded.infoUsuario;
         }
-    })
+
+        const rubros = `SELECT * FROM rubro WHERE baja = 0;`;
+        conexion.query(rubros, (err, rows) => {
+            if(err){
+                throw err;
+            }else{
+                res.render('contacto', {rows, email, usuario: infoUsuario});
+            }
+        })
+    } catch (error) {
+        muestra = 'No se pudo cargar correctamente la pagina!!';
+        res.redirect(`/ofertas/${muestra}`);
+    }
 });
 
 // Ruta Reestablecer contraseña
@@ -663,10 +623,12 @@ router.get('/modifica-permisos/:dni/:rol/:idrol', autenticacion.autenticado,asyn
     }
 });
 
-router.get('/ofertas/:muestra?', autenticacion.autenticado, (req, res) => {
+router.get('/ofertas/:muestra?', autenticacion.autenticado, async (req, res) => {
     let muestra = req.params.muestra;
     const infoUsuario = req.usuario;
+    const tokenUsuario = await promisify(jwt.sign)({infoUsuario}, process.env.JWT_SECRETO, {expiresIn: '7d'});
     let ofertas;
+
     if(infoUsuario.ROL_idrol === 3){
         ofertas = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND o.email = '${infoUsuario.email}';`;
         // console.log(ofertas);
@@ -699,7 +661,7 @@ router.get('/ofertas/:muestra?', autenticacion.autenticado, (req, res) => {
             conexion.query(rubros, async(err, rows) => {
                 try {
                     // console.log(postulaciones);
-                    res.render('ofertas', {resultados, rows, usuario: req.usuario, tokenOfertas, muestra, postulaciones})
+                    res.render('ofertas', {resultados, rows, usuario: req.usuario, tokenOfertas, muestra, postulaciones, tokenUsuario})
                 } catch (error) {
                     throw err
                 }
@@ -1118,65 +1080,214 @@ router.post('/agregarAuth/:token',autenticacion.autenticado, async(req,res)=>{
     if( email !== 'email'){
         if(rol !== 1 && rol!== 2){
             const buscaRolAutorizado = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni = ${dni};`;
-            conexion.query(buscaRolAutorizado, async (err, resultado) => {
-                if(err){
-                    throw err;
-                }else{
-                    const idUsuario = resultado[0];
-                    // let nombre;
-                    // console.log(idUsuario.idusuarios_autorizados);
-                    // // if(rol === 3){
-                    //     const formulario = req.body;
-                    //     const {dni, rol, idofertas} = formulario;
-                    //     const empleador = `SELECT nombre_contacto as nombre FROM ofertas WHERE confirma = 1 AND idofertas = ${idofertas};`;
-                    //     const [resultado] =  await queryDB(empleador);
-                    //     if(resultado.length > 0){
-                    //         nombre = resultado[0];
-                    //         console.log(nombre);
-                    //     }
-                    //     // conexion.query(empleador, async(err, resultado) => {
-                    //     //     try {
-                    //     //         nombre = resultado[0]
-                    //     //         console.log(nombre)
-                    //     //     } catch (error) {
-                    //     //         console.log(error);
-                    //     //         throw err;
-                    //     //     }
-                    //     // }) 
-                    // }else if( rol === 4){
-                    //     const postulante = `SELECT concat(nombre, ' ', apellido) as nombre FROM alumnos WHERE dni = '${dni}';`;
-                    //     conexion.query(postulante, async(err, resultado) => {
-                    //         try{
-                    //             nombre = resultado[0];
-                    //             console.log(nombre)
-                    //         } catch (error) {
-                    //             console.log(error);
-                    //             throw err;
-                    //         }
-                    //     });
-                    // }
-                    // console.log(nombre)
-                    // const token = jwt.sign({idRolesAutorizados}, process.env.JWT_SECRETO, {expiresIn: '7d'});
-                    const link = `http://localhost:${process.env.PORT}/register/${idUsuario.idusuarios_autorizados}/${rol}`
-                    mailOptions = {
-                        from: process.env.EMAIL_USER,
-                        to: email,
-                        subject: 'Aviso alta Usuario',
-                        html: `
-                            <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
-                                <p>Queriamos informarte que ya podes registrarte como usuario!! Por favor, ingresa tus datos haciendo click en el siguiente enlace:</p>
-                                <a href="${link}">Registrar usuario autorizado</a>
-                                <p><i>Una vez que te hagas un usuario te llegara un mail de validacion</i></p>
+            const idUsuario = await queryDB(buscaRolAutorizado);
+
+            const link = `http://localhost:${process.env.PORT}/register/${idUsuario[0].idusuarios_autorizados}/${rol}`
+            mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: 'Aviso alta Usuario',
+                html: `
+                    <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
+                        <p>Queriamos informarte que ya podes registrarte como usuario!! Por favor, ingresa tus datos haciendo click en el siguiente enlace:</p>
+                        <a href="${link}">Registrar usuario autorizado</a>
+                        <p><i>Una vez que te hagas un usuario te llegara un mail de validacion</i></p>
+    
+                `
+            };
+            transporter.sendMail(mailOptions);
             
-                        `
-                    };
-                    transporter.sendMail(mailOptions);
-                }
-            });
+            // conexion.query(buscaRolAutorizado, async (err, resultado) => {
+            //     if(err){
+            //         throw err;
+            //     }else{
+            //         const idUsuario = resultado[0];
+            //         console.log(idUsuario);
+            //         // let nombre;
+            //         // console.log(idUsuario.idusuarios_autorizados);
+            //         // // if(rol === 3){
+            //         //     const formulario = req.body;
+            //         //     const {dni, rol, idofertas} = formulario;
+            //         //     const empleador = `SELECT nombre_contacto as nombre FROM ofertas WHERE confirma = 1 AND idofertas = ${idofertas};`;
+            //         //     const [resultado] =  await queryDB(empleador);
+            //         //     if(resultado.length > 0){
+            //         //         nombre = resultado[0];
+            //         //         console.log(nombre);
+            //         //     }
+            //         //     // conexion.query(empleador, async(err, resultado) => {
+            //         //     //     try {
+            //         //     //         nombre = resultado[0]
+            //         //     //         console.log(nombre)
+            //         //     //     } catch (error) {
+            //         //     //         console.log(error);
+            //         //     //         throw err;
+            //         //     //     }
+            //         //     // }) 
+            //         // }else if( rol === 4){
+            //         //     const postulante = `SELECT concat(nombre, ' ', apellido) as nombre FROM alumnos WHERE dni = '${dni}';`;
+            //         //     conexion.query(postulante, async(err, resultado) => {
+            //         //         try{
+            //         //             nombre = resultado[0];
+            //         //             console.log(nombre)
+            //         //         } catch (error) {
+            //         //             console.log(error);
+            //         //             throw err;
+            //         //         }
+            //         //     });
+            //         // }
+            //         // console.log(nombre)
+            //         // const token = jwt.sign({idRolesAutorizados}, process.env.JWT_SECRETO, {expiresIn: '7d'});
+            //         const link = `http://localhost:${process.env.PORT}/register/${idUsuario.idusuarios_autorizados}/${rol}`
+            //         mailOptions = {
+            //             from: process.env.EMAIL_USER,
+            //             to: email,
+            //             subject: 'Aviso alta Usuario',
+            //             html: `
+            //                 <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
+            //                     <p>Queriamos informarte que ya podes registrarte como usuario!! Por favor, ingresa tus datos haciendo click en el siguiente enlace:</p>
+            //                     <a href="${link}">Registrar usuario autorizado</a>
+            //                     <p><i>Una vez que te hagas un usuario te llegara un mail de validacion</i></p>
+            
+            //             `
+            //         };
+            //         transporter.sendMail(mailOptions);
+            //     }
+            // });
         }
     }
 
     // fin prueba envio mail
+});
+
+router.post('/filtra', autenticacion.autenticado, async (req,res) => {
+    const datos = req.body;
+    const {carrera: id_carrera, egresado} = datos;
+    const infoUsuario = req.usuario;
+   
+    let lista_carreras = [];
+    let consulta;
+    let filtroBusqueda;
+
+    const carreras = `SELECT * FROM carrera WHERE baja = 0;`;
+    conexion.query(carreras, (err,resultados)=>{
+        if(err){
+            throw err;
+        }else{
+            lista_carreras = resultados;
+        }
+    });
+
+    if(id_carrera === 'todas' || egresado === 'todas'){
+        if(id_carrera !== 'todas'){
+            if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera};`; 
+            }else if(infoUsuario.ROL_idrol === 3){
+                const busca = `SELECT distinct dni, u.usuario FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
+                const datosAlumno = await queryDB(busca);
+                let lista_dni = [];
+                datosAlumno.forEach(alumno =>  lista_dni.push(alumno.dni));
+                
+                if(lista_dni.length > 0){
+                    lista_dni = lista_dni;
+                }
+                else{
+                    lista_dni = '0000000';
+                }
+                
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND a.dni IN (${lista_dni});`;
+                
+            }else if(infoUsuario.ROL_idrol === 4){
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`; 
+            }
+        }else if(egresado !== 'todas'){
+            if(infoUsuario.ROL_idrol === 1 || infoUsuario.Rol_idrol === 2){
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.egresado = ${egresado};`;
+            }else if(infoUsuario.ROL_idrol === 3){
+                const busca = `SELECT distinct dni, u.usuario FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
+                const datosAlumno = await queryDB(busca);
+                let lista_dni = [];
+                datosAlumno.forEach(alumno =>  lista_dni.push(alumno.dni));
+                
+                if(lista_dni.length > 0){
+                    lista_dni = lista_dni;
+                }
+                else{
+                    lista_dni = '0000000';
+                }
+                
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1 AND ac.egresado = ${egresado} AND a.dni IN (${lista_dni});`;
+                
+            }else if(infoUsuario.ROL_idrol === 4){
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.egresado = ${egresado} AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
+            }
+        }else{
+            if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
+                consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1;';
+            }else if(infoUsuario.ROL_idrol === 3){
+                const busca = `SELECT distinct dni, u.usuario FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
+                const datosAlumno = await queryDB(busca);
+                let lista_dni = [];
+                datosAlumno.forEach(alumno =>  lista_dni.push(alumno.dni));
+                
+                if(lista_dni.length > 0){
+                    lista_dni = lista_dni;
+                }
+                else{
+                    lista_dni = '0000000';
+                }
+                
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1 AND a.dni IN (${lista_dni});`;
+                
+            }else if(infoUsuario.ROL_idrol === 4){
+                consulta = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
+            }
+        }
+        conexion.query(consulta, (err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                let tokenDatos = [];
+                registros.forEach((registro) => {
+                    tokenDatos.push(jwt.sign({nombre: registro.nombre.concat(' ',registro.apellido), identifica: registro.dni, email: registro.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));  
+                });
+                res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario, tokenDatos});
+            }
+        });
+    }else{
+        if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2){
+            filtroBusqueda = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND ac.egresado = ${egresado};`;
+        }else if(infoUsuario.ROL_idrol === 3){
+            const busca = `SELECT distinct dni, u.usuario FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
+            const datosAlumno = await queryDB(busca);
+            let lista_dni = [];
+            datosAlumno.forEach(alumno =>  lista_dni.push(alumno.dni));
+            
+            if(lista_dni.length > 0){
+                lista_dni = lista_dni;
+            }
+            else{
+                lista_dni = '0000000';
+            }
+            
+            filtroBusqueda = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND ac.egresado = ${egresado} AND a.dni IN (${lista_dni});`;
+            
+        }else if(infoUsuario.ROL_idrol === 4){
+            filtroBusqueda = `SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.CARRERA_idcarrera = ${id_carrera} AND ac.egresado = ${egresado} AND a.dni = (SELECT dni FROM usuarios_autorizados WHERE idusuarios_autorizados = ${infoUsuario.AUTH_idusuarios_autorizados});`;
+        }
+        
+        conexion.query(filtroBusqueda,(err, registros)=>{
+            if(err){
+                throw err;
+            }else{
+                let tokenDatos = [];
+                registros.forEach((registro) => {
+                    tokenDatos.push(jwt.sign({nombre: registro.nombre.concat(' ',registro.apellido), identifica: registro.dni, email: registro.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));  
+                });
+                res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario, tokenDatos});
+            }
+        });
+    }
+
 });
 
 router.post('/filtraUsuarios', autenticacion.autenticado, (req,res)=>{
@@ -1223,11 +1334,11 @@ router.post('/filtraUsuarios', autenticacion.autenticado, (req,res)=>{
 
 });
 
-router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
+router.post('/filtraRubros', autenticacion.autenticado, async (req,res)=>{
     const datos = req.body;
     const {rubro: idrubro, puesto} = datos;
     const infoUsuario = req.usuario;
-   
+    const tokenUsuario = await promisify(jwt.sign)({infoUsuario}, process.env.JWT_SECRETO, {expiresIn: '7d'});
     let lista_rubros = [];
     let consulta;
 
@@ -1281,7 +1392,7 @@ router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
                     }else{
                         lista_rubros = resultados;
                         // console.log(postulaciones);
-                        res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario, tokenOfertas, postulaciones});
+                        res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario, tokenOfertas, postulaciones, tokenUsuario});
                     }
                 });
 
@@ -1322,7 +1433,7 @@ router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
                         throw err;
                     }else{
                         lista_rubros = resultados;
-                        res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario, tokenOfertas, postulaciones});
+                        res.render('ofertas',{resultados: registros, rows: lista_rubros, usuario: req.usuario, tokenOfertas, postulaciones, tokenUsuario});
                     }
                 });
 

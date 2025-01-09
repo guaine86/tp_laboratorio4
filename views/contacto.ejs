@@ -5,7 +5,24 @@
     <%- include('./templates/head.ejs') %>
 </head>
 <body>
-    <%- include('./templates/header-nav.ejs') %>
+    <div>
+        <%- include('./templates/header-nav.ejs') %>
+        <% if(typeof usuario !== "undefined"){ %>
+        <div style="display:grid; grid-template-columns:  auto 1fr;">
+            <div style="grid-column: 2/3; justify-self: flex-end;">
+                <p class="capitalize" style="align-self: flex-end; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.nombre %></small></p>
+            </div>
+            <div style="grid-column: 3/4">
+                <div style="display: flex; justify-content: end; margin-right: 1rem;">
+                        <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>   
+                            <a class="btn btn-outline-primary mt-1 mb-4" style="margin-right: 1rem;" href="/modifica-usuario">Modificar Usuarios</a>
+                            <% }} %> 
+                            <a class="btn btn-outline-danger mt-1 mb-4" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
 
     <main class="contenedor sombras">
         <section>
@@ -26,8 +43,12 @@
 						</div>
 
                         <div class="campo">
-                              <label for="email">Correo:</label>
+                            <label for="email">Correo:</label>
+                            <% if(typeof email !== 'undefined'){ %>
+                            <input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Formato valido (algo@mail.com)" maxlength="30"  autocomplete="off" value="<%= email %>" >
+                            <% }else{ %>
                             <input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Formato valido (algo@mail.com)" maxlength="30"  autocomplete="off">
+                            <% } %>
                         </div>
                         
                         <div class="campo">
