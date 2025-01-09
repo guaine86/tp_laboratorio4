@@ -1233,14 +1233,26 @@ router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
 
     if(idrubro === 'todas' || puesto === 'todas'){
         if(idrubro !== 'todas'){
-            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro};`;          
-            // consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND r.idrol = ${idrol};`; 
+            if(infoUsuario.ROL_idrol === 3){
+                consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro} AND o.email = '${infoUsuario.email}';`;
+            }else{
+                consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro};`;          
+                // consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND r.idrol = ${idrol};`; 
+            }
         }else if(puesto !== 'todas'){
-            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND o.tipo_puesto = '${puesto}';`;          
-            // consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND u.confirma = ${confirma};`;
+            if(infoUsuario.ROL_idrol === 3){
+                consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND o.tipo_puesto = '${puesto}' AND o.email = '${infoUsuario.email}';`;          
+            }else{
+                consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND o.tipo_puesto = '${puesto}';`;          
+                // consulta = `SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0 AND u.confirma = ${confirma};`;
+            }
         }else{
-            consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0`;          
-            // consulta = 'SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;';
+            if(infoUsuario.ROL_idrol === 3){
+                consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND o.email = '${infoUsuario.email}';`;          
+            }else{
+                consulta = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0`;          
+                // consulta = 'SELECT u.idusuarios as id, u.usuario, u.nombre, ua.dni, u.email, r.rol, u.confirma FROM usuarios as u INNER JOIN usuarios_autorizados as ua INNER JOIN roles_autorizados as ra INNER JOIN rol as r WHERE u.AUTH_idusuarios_autorizados = ua.idusuarios_autorizados AND ua.idusuarios_autorizados = ra.AUTH_idusuarios_autorizados AND ra.ROL_idrol = r.idrol AND ua.baja = 0;';
+            }
         }
         conexion.query(consulta, (err, registros)=>{
             if(err){
@@ -1276,7 +1288,14 @@ router.post('/filtraRubros', autenticacion.autenticado, (req,res)=>{
             }
         });
     }else{
-        const filtroBusqueda = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro} AND o.tipo_puesto = '${puesto}';`;          
+        let filtroBusqueda;
+        
+        if(infoUsuario.ROL_idrol === 3){
+            filtroBusqueda = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro} AND o.tipo_puesto = '${puesto}' AND o.email = '${infoUsuario.email}';`;          
+        }else{
+            filtroBusqueda = `SELECT o.idofertas, o.nombre_contacto, o.empresa, o.email, r.idrubro, r.rubro, o.tipo_puesto, o.descripcion FROM ofertas as o INNER JOIN rubro as r ON o.rubro = r.idrubro AND o.confirma = 1 AND o.baja = 0 AND r.idrubro = ${idrubro} AND o.tipo_puesto = '${puesto}';`;          
+        }
+
         conexion.query(filtroBusqueda,(err, registros)=>{
             if(err){
                 throw err;
@@ -1586,7 +1605,28 @@ router.post('/postula/:token', autenticacion.autenticado ,upload.single('curricu
         muestra = "No pudimos Subir tu  CV!!";
         res.render('postulacion', {muestra, usuario: req.usuario, token: req.params.token});
     }
-})
+});
+
+router.post('/modificaOferta', autenticacion.autenticado, async(req, res) => {
+    let muestra;
+    try {
+        const datos = req.body;
+        let {nombre, empresa, email, rubroEmpresa, puesto, mensaje, id} = datos;
+        nombre = nombre.toLowerCase();
+        empresa = empresa.toLowerCase();
+        puesto = puesto.toLowerCase();
+        mensaje = mensaje.toLowerCase();
+
+        const actualizaOferta = `UPDATE ofertas SET nombre_contacto = '${nombre}', empresa = '${empresa}', rubro = ${rubroEmpresa}, tipo_puesto = '${puesto}', descripcion = '${mensaje}' WHERE idofertas = ${id};`;
+        const modifica = await queryDB(actualizaOferta);
+
+        muestra = 'Oferta modificada con Exito!!';
+        res.redirect(`/ofertas/${muestra}`);
+    } catch (error) {
+        muestra = 'No pudimos actualizar los Datos de la Oferta!!';
+        res.redirect(`/ofertas/${muestra}`);
+    }
+});
 
 // router.get('/set-cookie', (req, res)=>{
 //     res.cookie('testCookie', 'cookieValue',{httpOnly: true});

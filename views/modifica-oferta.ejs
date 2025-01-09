@@ -53,27 +53,23 @@
 
                         <div class="campo">
                             <label for="email">Correo:</label>
-                            <input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Formato valido (algo@mail.com)" maxlength="30"  autocomplete="off" value="<%= resultados.email %>" disabled>
+                            <input class="input" type="email" name="email" id="email" placeholder="Email (algo@server.com)" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Formato valido (algo@mail.com)" maxlength="30"  autocomplete="off" value="<%= resultados.email %>">
                         </div>
                         
                         <div class="campo">
                             <label for="rubroEmpresa">Rubro Empresa:</label>
                              <select class="input capitalize" name="rubroEmpresa" id="rubroEmpresa"  title="Elija un rubro en las opciones listadas">
-                                <option class="input-select" selected value="<%= resultados.rubro %>" disabled><%= nomenclatura.rubro %></option>
+                                <option class="input-select" selected value="<%= resultados.rubro %>"><%= nomenclatura.rubro %></option>
                                 <% if(typeof rows !== "undefined"){rows.forEach((rubro)=>{ %>
                                     <option class="input-carrera capitalize" value="<%= rubro.idrubro %>"><%= rubro.rubro %></option>
                                 <% })} %>
-                                <!-- <option class="input-carrera" >Programacion/IT</option>
-                                <option class="input-carrera" >Industria Alimenticia</option>
-                                <option class="input-carrera" >Diseño Industrial</option>
-                                <option class="input-carrera" >Medicina</option> -->
                              </select>
                         </div>
 
                         <div class="campo">
                             <label for="puesto">Tipo de puesto:</label>
                              <select class="input capitalize" name="puesto" id="puesto"  title="Indique el tipo de puesto a cubrir">
-                                <option class="input-select" value="<%= resultados.tipo_puesto %>" selected disabled><%= resultados.tipo_puesto %></option>
+                                <option class="input-select" value="<%= resultados.tipo_puesto %>" selected><%= resultados.tipo_puesto %></option>
                                 <!-- <% if(typeof rows !== "undefined"){rows.forEach((carrera)=>{ %>
                                     <option class="input-carrera capitalize" value="<%= carrera.idcarrera %>"><%= carrera.nomenclatura %></option>
                                 <% })} %> -->
@@ -92,15 +88,16 @@
                     <div class="campo-grilla">
                         <div class="campo-grilla__radio">
                             <div>
-                                <input type="radio" id="id" name="id" value="<%= resultados.idusuarios_autorizados %>" checked >
-                                <label for="id" class= >ID Autorizado: <%= resultados.idofertas %> </label>
+                                <input type="radio" id="id" name="id" value="<%= resultados.idofertas %>" checked >
+                                <label for="id" class= >ID Oferta: <%= resultados.idofertas %> </label>
                             </div>
                         </div>
                     </div>   
 					
 					<div class="alinear-derecha flex">
 						<input class="boton w100" type="submit" value="Enviar">
-						<input class="boton w100" type="reset" value="Borrar">
+						<!-- <input class="boton w100" type="reset" value="Borrar"> -->
+                        <a class="boton w100" href="/ofertas" target="_self">Cancelar</a>
 					</div>
 				</fieldset>
 			</form>
