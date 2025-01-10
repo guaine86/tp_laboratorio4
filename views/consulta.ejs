@@ -16,15 +16,20 @@
                 <h2 class="capitalize">Bienvenido: <%= usuario.nombre %>!!</h2>
                 <% } %>
             </div>
-            <div class="consulta-enlaces">
-                <% if(typeof usuario !== "undefined"){ %>
-                <p class="capitalize mt-4" style="align-self: baseline; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.rol %></small></p>
+            <div class="consulta-grilla">
+                <% if(typeof usuario !== 'undefined'){ %>
+                <h3><b><% const info = (usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2) ? 'Alumnos Cargados:' : (usuario.ROL_idrol === 3) ? 'Alumnos Postulados:' : 'Tus Inscripciones Confirmadas:'; %><%= info %></b></h3>
                 <% } %>
-                <a class="btn btn-outline-primary mt-4 mb-2 link" style="margin-right: 1rem;" href="/ofertas">Ver ofertas</a>
-                <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>
-                <a class="btn btn-outline-primary mt-4 mb-2 link" style="margin-right: 1rem;" href="/agregar">Administrar Usuarios</a>
-                <% }} %> 
-                <a class="btn btn-outline-danger mt-4 mb-2 link" href="/logout">Logout</a>
+                <div class="consulta-enlaces">
+                    <% if(typeof usuario !== "undefined"){ %>
+                    <p class="capitalize mt-4" style="align-self: baseline; margin-bottom: 0px; margin-right: 1rem;"><small><%= usuario.rol %></small></p>
+                    <% } %>
+                    <a class="btn btn-outline-primary mt-4 mb-2 link" style="margin-right: 1rem;" href="/ofertas">Ver ofertas</a>
+                    <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1){ %>
+                    <a class="btn btn-outline-primary mt-4 mb-2 link" style="margin-right: 1rem;" href="/agregar">Administrar Usuarios</a>
+                    <% }} %> 
+                    <a class="btn btn-outline-danger mt-4 mb-2 link" href="/logout">Logout</a>
+                </div>
             </div>
         </div>
         <div>
