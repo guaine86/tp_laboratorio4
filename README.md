@@ -1,4 +1,4 @@
-# Tp Laboratorio 4
+# Tp Practicas Profesionales
 
 ![logo cudi](https://www.cudi.ar/wp-content/uploads/2023/10/cropped-Screenshot-2023-10-20-at-20.33.03.png)
 
@@ -20,6 +20,12 @@ Utilizamos las siquientes librerias:
 * ***express*** - para crear el servidor local
 * ***mysql2*** - para hacer la conexion con la BBDD
 * ***ejs*** - como motor de vistas y plantillas
+* ***jsonwebtoken*** - para manejar informacion necesaria del usuario en el recorrido del sitio de forma segura
+* ***cookieparser*** - para el manejo de la sesion actual en el navegador
+* ***bcryptjs*** - para guardar las contraseñas del usuario encriptadas en la base de datos
+* ***dotenv*** - para el manejo de las variables de entorno
+* ***nodemailer*** - para el envio de correo electronico
+* ***multer*** para subir archivos a nuestro sitio 
 * ***nodemon*** - para ver los cambios aplicados en el navegador
 * ***babel*** - para minificar, ofuscar y traducir el Js apto para navegadores viejos
 * ***webpack*** - para empaquetar los modulos usados en los archivos estaticos
