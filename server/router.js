@@ -53,6 +53,7 @@ router.get('/index',(req,res)=>{
 router.get('/consulta', autenticacion.autenticado,async (req,res)=>{
     const infoUsuario = req.usuario;
     let lista_carreras = [];
+    let lista_idofertas = [];
     let consulta;
 
     // console.log(infoUsuario);
@@ -70,10 +71,14 @@ router.get('/consulta', autenticacion.autenticado,async (req,res)=>{
     if(infoUsuario.ROL_idrol === 1 || infoUsuario.ROL_idrol === 2 ){
         consulta = 'SELECT a.idalumnos ,a.nombre, a.apellido, a.dni, a.fecha_nac, a.telefono, a.email, a.domicilio, c.nomenclatura as carrera, a.observaciones, ac.egresado FROM alumnos as a INNER JOIN alumno_cursa_carrera as ac INNER JOIN carrera as c WHERE a.idalumnos = ac.ALUMNOS_idalumnos AND ac.CARRERA_idcarrera = c.idcarrera AND ac.confirma = 1 AND ac.muestra = 1;';
     }else if(infoUsuario.ROL_idrol === 3){
-        const busca = `SELECT distinct dni, u.usuario FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
+        // const busca = `SELECT distinct dni, u.usuario FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
+        const busca = `SELECT distinct dni, u.usuario, o.idofertas FROM usuarios_autorizados as ua INNER JOIN usuarios as u INNER JOIN usuario_postula_oferta as uo INNER JOIN ofertas as o ON ua.idusuarios_autorizados = u.AUTH_idusuarios_autorizados AND uo.USUARIOS_idusuarios = u.idusuarios AND uo.OFERTAS_idofertas = o.idofertas AND o.email = '${infoUsuario.email}';`;
         const datosAlumno = await queryDB(busca);
         let lista_dni = [];
-        datosAlumno.forEach(alumno =>  lista_dni.push(alumno.dni));
+        datosAlumno.forEach((alumno) => {
+            lista_dni.push(alumno.dni);
+            lista_idofertas.push({dni: alumno.dni, idofertas: alumno.idofertas});
+        });
         
         if(lista_dni.length > 0){
             lista_dni = lista_dni;
@@ -96,7 +101,7 @@ router.get('/consulta', autenticacion.autenticado,async (req,res)=>{
                 tokenDatos.push(jwt.sign({nombre: registro.nombre.concat(' ',registro.apellido), identifica: registro.dni, email: registro.email}, process.env.JWT_SECRETO, {expiresIn: '7d'}));  
             });
 
-            res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario, tokenDatos});
+            res.render('consulta',{resultados: registros, rows: lista_carreras, usuario: req.usuario, tokenDatos, lista_idofertas});
         }
     });
 });

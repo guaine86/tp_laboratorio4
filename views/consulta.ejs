@@ -82,7 +82,11 @@
                     <th><a href="#" class="encabezado"><span>Carrera </span><i class='bx bx-caret-down-circle'></i></a></th>
                     <th>Observaciones</th>
                     <th>Egresado</th>
+                    <% if(typeof usuario !== 'undefined'){ if(usuario.ROL_idrol === 3) { %>
+                    <th>Oferta</th>
+                    <% }else{ %>
                     <th>Acciones</th>
+                    <% }} %>
                 </tr>
             </thead>
             <% if(resultados.length === 0){ %>
@@ -106,9 +110,20 @@
                     <td><%= alumno.observaciones %></td>
                     <td><% let egresadoMsj = (alumno.egresado === 0) ? 'No' : 'Si'; %><%= egresadoMsj %></td>
                     <td>
+                        <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2 || usuario.ROL_idrol === 4){ %> 
                         <a href="/modifica/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-info mt-1 mb-1 px-3">editar</a>
+                        <% }} %>
                         <% if (typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 1 || usuario.ROL_idrol === 2){ let nombre = alumno.nombre.concat(' ', alumno.apellido) %>
                         <a  href="agregar/<%= 4 %>/<%= tokenDatos[indice] %>" class="btn btn-outline-success mt-1 mb-1 px-4">alta</a>
+                        <% }} %>
+                        <% if(typeof usuario!== "undefined"){ if(usuario.ROL_idrol === 3){ %>
+                            <% let lista = []; %>
+                            <% lista_idofertas.forEach((dato)=>{ %>
+                                <% if(dato.dni === alumno.dni){ %>
+                                    <% lista.push(dato.idofertas) %>
+                                <% } %>
+                            <% })%>
+                        <span><%= lista %></span>        
                         <% }} %> 
                         <!-- <a href="/elimina/<%= alumno.idalumnos %>/<%= alumno.carrera %>" class="btn btn-outline-danger mt-1 mb-1">borrar</a> -->
                     </td>
