@@ -34,7 +34,7 @@ Utilizamos las siquientes librerias:
 
 #### Una vez instalados los paquetes de node, ejecutar el servidor
 ```
-npm run start
+npm start
 ```
 
 ***
