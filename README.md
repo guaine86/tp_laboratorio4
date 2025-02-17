@@ -31,6 +31,8 @@ Utilizamos las siquientes librerias:
 * ***webpack*** - para empaquetar los modulos usados en los archivos estaticos
 * ***normalize*** - para quitar los estilos predeterminados por los navegadores
 * ***modernizr*** - para poder cargar imagenes webp si el navegador las soporta
+* ***Railway*** - para el despligue del sitio
+* ***Clever-Cloud*** - para alojar la Base de Datos MySQL
 
 #### Una vez instalados los paquetes de node, ejecutar el servidor
 ```
