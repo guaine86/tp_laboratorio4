@@ -290,14 +290,14 @@ h1.titulo span{
 .servicios h3{
 	color: var(--verde);
 	font-weight: normal;
-  margin-bottom: 1rem;
+  	margin-bottom: 1rem;
 }
 
 .servicios p{
 	line-height: 2;
 	text-align: center;
-  margin-top: 1rem;
-  padding: 2rem;
+  	margin-top: 1rem;
+  	padding: 2rem;
 }
 
 .servicios .iconos{

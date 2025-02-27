@@ -1084,23 +1084,52 @@ router.post('/agregarAuth/:token',autenticacion.autenticado, async(req,res)=>{
  
     if( email !== 'email'){
         if(rol !== 1 && rol!== 2){
-            const buscaRolAutorizado = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni = ${dni};`;
-            const idUsuario = await queryDB(buscaRolAutorizado);
-
-            const link = `http://localhost:${process.env.PORT}/register/${idUsuario[0].idusuarios_autorizados}/${rol}`
-            mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: email,
-                subject: 'Aviso alta Usuario',
-                html: `
-                    <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
-                        <p>Queriamos informarte que ya podes registrarte como usuario!! Por favor, ingresa tus datos haciendo click en el siguiente enlace:</p>
-                        <a href="${link}">Registrar usuario autorizado</a>
-                        <p><i>Una vez que te hagas un usuario te llegara un mail de validacion</i></p>
+            const buscaRolAutorizado = `SELECT idusuarios_autorizados FROM usuarios_autorizados WHERE dni = '${dni}';`;
+            // let idUsuario = [];
+            // idUsuario = await queryDB(buscaRolAutorizado);
+            // console.log(idUsuario);
+            conexion.query(buscaRolAutorizado, async(err, resultados) => {
+                try {
+                    if(resultados.length>0){
+                        // console.log(resultados[0]);
+                        const link = `http://localhost:${process.env.PORT}/register/${resultados[0].idusuarios_autorizados}/${rol}`
+                        mailOptions = {
+                            from: process.env.EMAIL_USER,
+                            to: email,
+                            subject: 'Aviso alta Usuario',
+                            html: `
+                                <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
+                                    <p>Queriamos informarte que ya podes registrarte como usuario!! Por favor, ingresa tus datos haciendo click en el siguiente enlace:</p>
+                                    <a href="${link}">Registrar usuario autorizado</a>
+                                    <p><i>Una vez que te hagas un usuario te llegara un mail de validacion</i></p>
+                
+                            `
+                        };
+                        transporter.sendMail(mailOptions);
+                      
+                    }else{
+                        console.log('algo esta mal en la consulta')
+                    }
+                } catch (error) {
+                    throw err;
+                }
+            })
+            
+            // const link = `http://localhost:${process.env.PORT}/register/${idUsuario[0].idusuarios_autorizados}/${rol}`
+            // mailOptions = {
+            //     from: process.env.EMAIL_USER,
+            //     to: email,
+            //     subject: 'Aviso alta Usuario',
+            //     html: `
+            //         <h1 style="text-transform: capitalize;">Hola ${nombre}!!</h1>
+            //             <p>Queriamos informarte que ya podes registrarte como usuario!! Por favor, ingresa tus datos haciendo click en el siguiente enlace:</p>
+            //             <a href="${link}">Registrar usuario autorizado</a>
+            //             <p><i>Una vez que te hagas un usuario te llegara un mail de validacion</i></p>
     
-                `
-            };
-            transporter.sendMail(mailOptions);
+            //     `
+            // };
+            // transporter.sendMail(mailOptions);
+     
             
             // conexion.query(buscaRolAutorizado, async (err, resultado) => {
             //     if(err){
